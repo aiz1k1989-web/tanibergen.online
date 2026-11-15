@@ -10,9 +10,20 @@
   const lightboxCount = document.getElementById("lightboxCount");
   const total = photos.length;
   let activeIndex = 0;
+  let adjacentPreload = null;
 
   const pad = n => String(n).padStart(2, "0");
   const displayPhotos = photos.filter(photo => photo.file !== featuredPath);
+
+  const preloadNext = index => {
+    if (!total) return;
+    const nextPhoto = photos[(index + 1) % total];
+    if (adjacentPreload) adjacentPreload.onload = adjacentPreload.onerror = null;
+    adjacentPreload = new Image();
+    adjacentPreload.decoding = "async";
+    adjacentPreload.fetchPriority = "low";
+    adjacentPreload.src = nextPhoto.file;
+  };
 
   const openLightbox = index => {
     if (!total || !lightboxImage) return;
@@ -23,6 +34,7 @@
     lightbox.classList.add("open");
     lightbox.setAttribute("aria-hidden", "false");
     document.body.classList.add("lightbox-open");
+    preloadNext(activeIndex);
   };
 
   const closeLightbox = () => {
@@ -42,7 +54,6 @@
   });
 
   if (grid) {
-    const featuredIndex = photos.findIndex(photo => photo.file === featuredPath);
     displayPhotos.forEach(photo => {
       const index = photos.indexOf(photo);
       const button = document.createElement("button");
@@ -54,6 +65,7 @@
       image.alt = "";
       image.loading = "lazy";
       image.decoding = "async";
+      image.fetchPriority = "low";
       image.addEventListener("error", () => button.remove(), { once: true });
       button.appendChild(image);
       button.addEventListener("click", () => openLightbox(index));
@@ -69,11 +81,9 @@
   if (prev) prev.addEventListener("click", () => openLightbox(activeIndex - 1));
   if (next) next.addEventListener("click", () => openLightbox(activeIndex + 1));
   if (close) close.addEventListener("click", closeLightbox);
-  if (lightbox) {
-    lightbox.addEventListener("click", event => {
-      if (event.target === lightbox) closeLightbox();
-    });
-  }
+  if (lightbox) lightbox.addEventListener("click", event => {
+    if (event.target === lightbox) closeLightbox();
+  });
   document.addEventListener("keydown", event => {
     if (!lightbox || !lightbox.classList.contains("open")) return;
     if (event.key === "Escape") closeLightbox();
@@ -95,19 +105,14 @@
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
       return Array.isArray(saved) ? saved : [];
-    } catch (_) {
-      return [];
-    }
+    } catch (_) { return []; }
   };
   const saveNotes = notes => {
     try {
       localStorage.setItem(storageKey, JSON.stringify(notes));
       return true;
-    } catch (_) {
-      return false;
-    }
+    } catch (_) { return false; }
   };
-
   const pageUrl = () => location.origin + location.pathname;
   const issueUrl = (notes, single) => {
     const title = single
