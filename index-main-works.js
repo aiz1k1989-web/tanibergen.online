@@ -35,3 +35,4 @@ window.TANIBERGEN_WORKS.sort(function(a, b) {
   if (b.file === "4/1.webp") return 1;
   return a.order - b.order;
 });
+window.TANIBERGEN_WORKS.forEach(function(item, index) { item.order = index + 1; });
