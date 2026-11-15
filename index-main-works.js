@@ -28,3 +28,10 @@ TANIBERGEN_SERIES.forEach((count, seriesIndex) => {
     });
   }
 });
+
+// Keep the selected opening photograph at the front of the sequence.
+window.TANIBERGEN_WORKS.sort(function(a, b) {
+  if (a.file === "4/1.webp") return -1;
+  if (b.file === "4/1.webp") return 1;
+  return a.order - b.order;
+});
