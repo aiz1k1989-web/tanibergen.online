@@ -417,16 +417,9 @@
         meta.appendChild(caption);
         meta.appendChild(count);
 
-        var progress = document.createElement("div");
-        progress.className = "featured-progress";
-        progress.setAttribute("aria-hidden", "true");
-        var fill = document.createElement("span");
-        fill.className = "featured-progress-fill";
-        progress.appendChild(fill);
 
         figure.appendChild(trigger);
         figure.appendChild(meta);
-        figure.appendChild(progress);
         dom.sequenceView.appendChild(figure);
 
         state.activeIndex = index;
@@ -438,86 +431,67 @@
 
       function extractDominantColor(image) {
         var canvas = document.createElement("canvas");
-        canvas.width = 40;
-        canvas.height = 40;
+        canvas.width = 64; canvas.height = 64;
         var ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) throw new Error("Canvas unavailable");
-        ctx.drawImage(image, 0, 0, 40, 40);
-        var pixels = ctx.getImageData(0, 0, 40, 40).data;
-        var bins = [
-          { label: "Red", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Orange", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Yellow", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Green", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Cyan", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Blue", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Violet", weight: 0, r: 0, g: 0, b: 0 },
-          { label: "Pink", weight: 0, r: 0, g: 0, b: 0 }
-        ];
-        var total = 0, chromatic = 0, saturationSum = 0;
+        ctx.drawImage(image, 0, 0, 64, 64);
+        var pixels = ctx.getImageData(0, 0, 64, 64).data;
+        var labels = ["Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Violet", "Pink"];
+        var bins = labels.map(function(label) { return { label: label, weight: 0, pixels: 0, r: 0, g: 0, b: 0 }; });
+        var total = 0, chromaticPixels = 0, saturationTotal = 0;
         var gray = { r: 0, g: 0, b: 0, n: 0 };
+        var redPixels = 0, redWeight = 0, allColorWeight = 0;
         for (var i = 0; i < pixels.length; i += 4) {
           if (pixels[i + 3] < 180) continue;
           var r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
-          var max = Math.max(r, g, b), min = Math.min(r, g, b);
-          var delta = max - min;
+          var max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
           var saturation = max === 0 ? 0 : delta / max;
-          total++;
-          saturationSum += saturation;
+          var luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+          total++; saturationTotal += saturation;
           gray.r += r; gray.g += g; gray.b += b; gray.n++;
-          if (saturation < 0.16 || max < 22) continue;
-          chromatic++;
+          if (saturation < 0.105 || max < 24 || luminance < 0.055) continue;
+          chromaticPixels++;
           var hue = 0;
-          if (delta) {
+          if (delta > 0) {
             if (max === r) hue = 60 * (((g - b) / delta) % 6);
             else if (max === g) hue = 60 * ((b - r) / delta + 2);
             else hue = 60 * ((r - g) / delta + 4);
           }
           if (hue < 0) hue += 360;
-          var index = hue < 15 || hue >= 345 ? 0 :
-            hue < 45 ? 1 : hue < 70 ? 2 : hue < 165 ? 3 :
-            hue < 195 ? 4 : hue < 255 ? 5 : hue < 290 ? 6 : 7;
-          var weight = saturation * (0.35 + max / 255);
-          var bin = bins[index];
-          bin.weight += weight;
+          var index = hue < 16 || hue >= 344 ? 0 : hue < 43 ? 1 : hue < 68 ? 2 : hue < 165 ? 3 : hue < 195 ? 4 : hue < 255 ? 5 : hue < 292 ? 6 : 7;
+          var visibility = 0.35 + 0.65 * Math.min(1, luminance * 1.35);
+          var weight = Math.pow(saturation, 1.25) * visibility;
+          var bin = bins[index]; bin.weight += weight; bin.pixels++;
           bin.r += r * weight; bin.g += g * weight; bin.b += b * weight;
+          allColorWeight += weight;
+          if (index === 0) { redPixels++; redWeight += weight; }
         }
-        var chromaRatio = chromatic / Math.max(1, total);
-        var meanSaturation = saturationSum / Math.max(1, total);
-        if (chromaRatio < 0.13 || meanSaturation < 0.105) {
-          return {
-            category: "Black & white",
-            color: {
-              r: gray.r / Math.max(1, gray.n),
-              g: gray.g / Math.max(1, gray.n),
-              b: gray.b / Math.max(1, gray.n)
-            }
-          };
-        }
-        bins.sort(function (a, b) { return b.weight - a.weight; });
-        var dominant = bins[0];
-        var totalWeight = bins.reduce(function (sum, bin) { return sum + bin.weight; }, 0);
-        var share = dominant.weight / Math.max(0.001, totalWeight);
-        var category = share < 0.205 ? "Mixed colour" : dominant.label;
+        var pixelCount = Math.max(1, total);
+        var chromaRatio = chromaticPixels / pixelCount;
+        var meanSaturation = saturationTotal / pixelCount;
+        var averageGray = { r: gray.r / Math.max(1, gray.n), g: gray.g / Math.max(1, gray.n), b: gray.b / Math.max(1, gray.n) };
+        if (chromaRatio < 0.24 && meanSaturation < 0.19) return { category: "Black & white", color: averageGray };
+        var dominant = bins.reduce(function(best, bin) { return bin.weight > best.weight ? bin : best; }, bins[0]);
+        var dominantShare = dominant.weight / Math.max(0.001, allColorWeight);
+        var redPixelShare = redPixels / Math.max(1, chromaticPixels);
+        var redWeightShare = redWeight / Math.max(0.001, allColorWeight);
+        var category = dominantShare < 0.23 ? "Mixed colour" : dominant.label;
+        if (redPixelShare > 0.19 && redWeightShare > 0.20) category = "Red";
         var n = Math.max(0.001, dominant.weight);
-        return {
-          category: category,
-          color: { r: dominant.r / n, g: dominant.g / n, b: dominant.b / n }
-        };
+        return { category: category, color: { r: dominant.r / n, g: dominant.g / n, b: dominant.b / n } };
       }
-
       function getCachedColor(work) {
         try {
-          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v2") || "{}");
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v3") || "{}");
           return colorCacheMemory[work.file] || null;
         } catch (e) { colorCacheMemory = {}; return null; }
       }
 
       function saveColorCache(cache) {
         try {
-          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v2") || "{}");
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v3") || "{}");
           Object.keys(cache).forEach(function (key) { colorCacheMemory[key] = cache[key]; });
-          localStorage.setItem("tanibergen-color-v2", JSON.stringify(colorCacheMemory));
+          localStorage.setItem("tanibergen-color-v3", JSON.stringify(colorCacheMemory));
         } catch (e) {}
       }
 
@@ -530,9 +504,9 @@
           img.fetchPriority = "low";
           img.onload = function () {
             try { resolve(extractDominantColor(img)); }
-            catch (e) { resolve({ r: 128, g: 128, b: 128 }); }
+            catch (e) { resolve({ category: "Mixed colour", color: { r: 128, g: 128, b: 128 } }); }
           };
-          img.onerror = function () { resolve({ r: 128, g: 128, b: 128 }); };
+          img.onerror = function () { resolve({ category: "Mixed colour", color: { r: 128, g: 128, b: 128 } }); };
           img.src = safeUrl(work.file);
         });
       }
