@@ -1,0 +1,1485 @@
+single_html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TANIBERGEN — Selected Works</title>
+  <meta name="description" content="TANIBERGEN — Independent photography portfolio and visual archive.">
+  <meta name="theme-color" content="#ECE9E2">
+  <style>
+    :root {
+      --bg: #ECE9E2;
+      --surface: #E2DED5;
+      --ink: #141413;
+      --muted: #66635C;
+      --rule: #CFCAC0;
+      --accent: #A93824;
+      --lb-bg: #111110;
+      --lb-ink: #EAE7E0;
+      --lb-muted: #9C988F;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --header-h: 52px;
+      --rail-w: 224px;
+      --gutter: 32px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: clip;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+    }
+
+    body.is-locked { overflow: hidden; }
+
+    button {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 1.5px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--bg);
+      z-index: 200;
+    }
+
+    .skip-link:focus { left: 16px; top: 16px; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: var(--header-h);
+      background: rgba(236, 233, 226, 0.94);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .header-inner {
+      height: 100%;
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      letter-spacing: 0.14em;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .mode-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .mode-btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.15s ease;
+    }
+
+    .mode-btn:hover, .mode-btn.is-active { color: var(--ink); }
+
+    .mode-btn.is-active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 11px;
+      height: 1.5px;
+      background: var(--accent);
+    }
+
+    .mobile-series-bar { display: none; }
+
+    .workspace {
+      max-width: 1680px;
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+      display: grid;
+      grid-template-columns: var(--rail-w) minmax(0, 1fr);
+      gap: 48px;
+    }
+
+    .rail {
+      border-right: 1px solid var(--rule);
+      padding-right: 24px;
+    }
+
+    .rail-sticky {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      padding: 28px 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .rail-label, .mono-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .rail-counter {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 10px;
+    }
+
+    .rail-progress {
+      width: 100%;
+      height: 1px;
+      background: var(--rule);
+      position: relative;
+    }
+
+    .rail-progress-fill {
+      height: 1px;
+      width: 0%;
+      background: var(--ink);
+      transition: width 0.2s ease;
+    }
+
+    .series-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .series-btn {
+      width: 100%;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 4px 0;
+      transition: color 0.15s ease;
+    }
+
+    .series-btn:hover { color: var(--ink); }
+    .series-btn.is-active { color: var(--ink); font-weight: 500; }
+    .series-btn.is-active .series-count { color: var(--accent); }
+
+    .series-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rail-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .rail-link {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .rail-link:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .rail-domain {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stage {
+      min-width: 0;
+      padding: 36px 0 96px;
+    }
+
+    .stage:focus { outline: none; }
+
+    .sequence-view {
+      display: flex;
+      flex-direction: column;
+      gap: 88px;
+    }
+
+    .plate-item { width: 100%; min-width: 0; }
+    .plate-item.scale-compact { max-width: 50%; }
+    .plate-item.scale-medium { max-width: 66%; }
+    .plate-item.scale-wide { max-width: 84%; }
+    .plate-item.scale-full { max-width: 100%; }
+    .plate-item.align-left { margin-right: auto; }
+    .plate-item.align-center { margin-left: auto; margin-right: auto; }
+    .plate-item.align-right { margin-left: auto; }
+
+    .plate-trigger {
+      display: block;
+      width: 100%;
+      text-align: left;
+      cursor: zoom-in;
+    }
+
+    .plate-frame {
+      position: relative;
+      width: 100%;
+      background: var(--surface);
+      overflow: hidden;
+    }
+
+    .plate-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+    }
+
+    .plate-frame.is-loaded .plate-img { opacity: 1; }
+    .plate-frame.is-loaded .plate-placeholder { display: none; }
+    .plate-frame.is-missing .plate-img { display: none; }
+
+    .plate-placeholder {
+      position: absolute;
+      inset: 0;
+      padding: 16px;
+      border: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    .plate-placeholder.is-compact { padding: 10px; font-size: 10px; }
+
+    .ph-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .ph-center {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      word-break: break-word;
+    }
+
+    .ph-file { color: var(--ink); }
+
+    .ph-hint {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .plate-meta {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .plate-meta-left {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .plate-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .plate-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .plate-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .empty-state {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 40px 0;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: end;
+      gap: 40px 20px;
+    }
+
+    .contact-cell {
+      width: 100%;
+      min-width: 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule);
+      cursor: zoom-in;
+    }
+
+    .contact-cell:hover .contact-name { color: var(--ink); }
+
+    .contact-label {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .contact-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+
+    .contact-name {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .info-drawer[hidden] { display: none; }
+
+    .info-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .info-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(20, 20, 19, 0.28);
+    }
+
+    .info-panel {
+      position: relative;
+      z-index: 1;
+      width: min(460px, 100%);
+      height: 100%;
+      background: var(--bg);
+      border-left: 1px solid var(--rule);
+      padding: 20px 28px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .info-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-top .mono-label { margin: 0; }
+
+    .text-btn {
+      min-height: 44px;
+      padding: 0 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .info-title {
+      margin: 0 0 16px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+
+    .info-statement {
+      margin: 0 0 28px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .info-meta {
+      margin: 0;
+      border-top: 1px solid var(--rule);
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr);
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .info-row dt {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .info-row dd {
+      margin: 0;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    .info-row a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .lightbox[hidden] { display: none; }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--lb-bg);
+      color: var(--lb-ink);
+      display: flex;
+      flex-direction: column;
+      padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    }
+
+    .lb-topbar {
+      height: 52px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .lb-counter {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      font-variant-numeric: tabular-nums;
+      color: var(--lb-muted);
+    }
+
+    .lb-close {
+      min-height: 44px;
+      padding: 0 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--lb-ink);
+    }
+
+    .lb-stage {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr) 64px;
+      align-items: center;
+      padding: 0 8px 20px;
+    }
+
+    .lb-nav {
+      height: 64px;
+      width: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--lb-muted);
+      transition: color 0.15s ease, opacity 0.2s ease;
+    }
+
+    .lb-nav:hover { color: var(--lb-ink); }
+
+    .lb-figure {
+      margin: 0;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .lb-media-wrap {
+      width: min(86vw, calc((100dvh - 136px) * var(--lb-ar, 1.3333)));
+      max-width: 100%;
+      max-height: calc(100dvh - 136px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .lb-frame {
+      position: relative;
+      width: 100%;
+      background: #1C1C1A;
+    }
+
+    .lb-frame .plate-placeholder { border-color: #2E2E2B; color: var(--lb-muted); }
+    .lb-frame .ph-file { color: var(--lb-ink); }
+
+    .lb-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .lb-frame.is-loaded .lb-img { opacity: 1; }
+    .lb-frame.is-loaded .plate-placeholder { display: none; }
+    .lb-frame.is-missing .lb-img { display: none; }
+
+    .lb-caption {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: var(--lb-muted);
+      text-align: center;
+      max-width: 90vw;
+      transition: opacity 0.2s ease;
+    }
+
+    .lb-mobile-controls { display: none; }
+
+    .lightbox.hud-hidden .lb-topbar,
+    .lightbox.hud-hidden .lb-nav,
+    .lightbox.hud-hidden .lb-caption {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1100px) {
+      .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+      :root { --gutter: 16px; --header-h: 48px; }
+      .workspace { grid-template-columns: minmax(0, 1fr); gap: 0; }
+      .rail { display: none; }
+
+      .mobile-series-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 var(--gutter);
+        height: 44px;
+        border-bottom: 1px solid var(--rule);
+        background: var(--bg);
+      }
+
+      .mobile-series-scroll {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        min-width: 0;
+      }
+
+      .mobile-series-scroll::-webkit-scrollbar { display: none; }
+
+      .mobile-series-btn {
+        min-height: 40px;
+        white-space: nowrap;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+
+      .mobile-series-btn.is-active {
+        color: var(--ink);
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+        text-underline-offset: 5px;
+      }
+
+      .mobile-counter {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        flex-shrink: 0;
+      }
+
+      .stage { padding: 20px 0 64px; }
+      .sequence-view { gap: 48px; }
+
+      .plate-item.scale-compact,
+      .plate-item.scale-medium,
+      .plate-item.scale-wide,
+      .plate-item.scale-full {
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .plate-meta { flex-direction: column; gap: 4px; }
+      .mode-nav { gap: 14px; }
+      .lb-topbar { padding: 0 16px; }
+      .lb-stage { grid-template-columns: minmax(0, 1fr); padding: 0 12px 12px; position: relative; }
+      .lb-nav { display: none; }
+
+      .lb-media-wrap {
+        width: min(94vw, calc((100dvh - 176px) * var(--lb-ar, 1.3333)));
+        max-height: calc(100dvh - 176px);
+      }
+
+      .lb-mobile-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px 12px;
+        flex-shrink: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .lb-m-btn {
+        min-height: 44px;
+        min-width: 80px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--lb-muted);
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .lb-m-btn:last-child { justify-content: flex-end; }
+      .lightbox.hud-hidden .lb-mobile-controls { opacity: 0; pointer-events: none; }
+    }
+
+    @media (max-width: 600px) {
+      .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
+      .info-panel { padding: 16px 20px 28px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-stage">Skip to photographs</a>
+
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <button type="button" class="brand-btn" id="brand-reset" aria-label="TANIBERGEN — Reset to all works">
+        <span class="brand-name">TANIBERGEN</span>
+      </button>
+
+      <nav class="mode-nav" aria-label="View mode">
+        <button type="button" class="mode-btn is-active" data-view="sequence" aria-pressed="true">Sequence</button>
+        <button type="button" class="mode-btn" data-view="contact" aria-pressed="false">Contact</button>
+        <button type="button" class="mode-btn" id="info-toggle" aria-expanded="false" aria-controls="info-drawer">Info</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mobile-series-bar" aria-label="Series filter">
+    <div class="mobile-series-scroll" id="mobile-series-list"></div>
+    <div class="mobile-counter" id="mobile-counter" aria-live="polite">01 / 01</div>
+  </div>
+
+  <div class="workspace">
+    <aside class="rail" aria-label="Archive navigation">
+      <div class="rail-sticky">
+        <div class="rail-block">
+          <div class="rail-label">Plate</div>
+          <div class="rail-counter" id="rail-counter" aria-live="polite">01 / 01</div>
+          <div class="rail-progress" aria-hidden="true">
+            <div class="rail-progress-fill" id="rail-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-label">Series</div>
+          <ul class="series-list" id="desktop-series-list"></ul>
+        </div>
+
+        <div class="rail-block rail-footer">
+          <a class="rail-link" id="rail-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a>
+          <span class="rail-domain" id="rail-domain">tanibergen.online</span>
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-stage" class="stage" tabindex="-1">
+      <section id="sequence-view" class="sequence-view" aria-label="Photograph sequence"></section>
+      <section id="contact-view" class="contact-view" aria-label="Contact sheet" hidden></section>
+    </main>
+  </div>
+
+  <aside id="info-drawer" class="info-drawer" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+    <div class="info-backdrop" data-close-info></div>
+    <div class="info-panel">
+      <div class="info-top">
+        <span class="mono-label">Index / Colophon</span>
+        <button type="button" class="text-btn" id="info-close" aria-label="Close info panel">Close [Esc]</button>
+      </div>
+      <div class="info-body">
+        <h1 class="info-title" id="info-title">TANIBERGEN</h1>
+        <p class="info-statement" id="info-statement"></p>
+        <dl class="info-meta">
+          <div class="info-row">
+            <dt>Instagram</dt>
+            <dd><a id="info-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a></dd>
+          </div>
+          <div class="info-row">
+            <dt>Contact</dt>
+            <dd><a id="info-email" href="mailto:hello@tanibergen.online">hello@tanibergen.online</a></dd>
+          </div>
+          <div class="info-row">
+            <dt>Domain</dt>
+            <dd id="info-domain">tanibergen.online</dd>
+          </div>
+          <div class="info-row">
+            <dt>Format</dt>
+            <dd id="info-note"></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </aside>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Fullscreen photograph viewer" hidden>
+    <div class="lb-topbar">
+      <div class="lb-counter" id="lb-counter">01 / 01</div>
+      <button type="button" class="lb-close" id="lb-close" aria-label="Close fullscreen viewer">Close [Esc]</button>
+    </div>
+
+    <div class="lb-stage" id="lb-stage">
+      <button type="button" class="lb-nav lb-prev" id="lb-prev" aria-label="Previous photograph">
+        <span aria-hidden="true">&larr;</span>
+      </button>
+
+      <figure class="lb-figure" id="lb-figure">
+        <div class="lb-media-wrap" id="lb-media-wrap"></div>
+        <figcaption class="lb-caption" id="lb-caption"></figcaption>
+      </figure>
+
+      <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="Next photograph">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+
+    <div class="lb-mobile-controls">
+      <button type="button" class="lb-m-btn" id="lb-m-prev" aria-label="Previous photograph">&larr; Prev</button>
+      <button type="button" class="lb-m-btn" id="lb-m-next" aria-label="Next photograph">Next &rarr;</button>
+    </div>
+  </div>
+
+  <script>
+    window.TANIBERGEN_CONFIG = {
+      title: "TANIBERGEN",
+      domain: "tanibergen.online",
+      instagramHandle: "@isaac_4u",
+      instagramUrl: "https://instagram.com/isaac_4u",
+      email: "hello@tanibergen.online",
+      statement: "Independent photographer. Working across cities, interiors, portraits, and everyday environments.",
+      note: "All plates preserve original proportions without cropping or applied filters."
+    };
+
+    window.TANIBERGEN_WORKS = window.TANIBERGEN_WORKS || [
+      { id: "01", file: "images/placeholder-01-vertical.jpg", title: "Placeholder 01 — Vertical (2:3)", series: "Places", location: "Location", year: "2026", width: 1200, height: 1800, scale: "medium", align: "left", order: 1 },
+      { id: "02", file: "images/placeholder-02-horizontal.jpg", title: "Placeholder 02 — Horizontal (3:2)", series: "Places", location: "Location", year: "2026", width: 1800, height: 1200, scale: "wide", align: "center", order: 2 },
+      { id: "03", file: "images/placeholder-03-square.jpg", title: "Placeholder 03 — Square (1:1)", series: "People", location: "Location", year: "2026", width: 1500, height: 1500, scale: "compact", align: "right", order: 3 },
+      { id: "04", file: "images/placeholder-04-panoramic.jpg", title: "Placeholder 04 — Panoramic (21:9)", series: "Studies", location: "Location", year: "2026", width: 2100, height: 900, scale: "full", align: "center", order: 4 },
+      { id: "05", file: "images/placeholder-05-portrait-45.jpg", title: "Placeholder 05 — Portrait (4:5)", series: "People", location: "Location", year: "2026", width: 1200, height: 1500, scale: "medium", align: "right", order: 5 },
+      { id: "06", file: "images/placeholder-06-landscape-1610.jpg", title: "Placeholder 06 — Horizontal (16:10)", series: "Studies", location: "Location", year: "2026", width: 1920, height: 1200, scale: "wide", align: "left", order: 6 }
+    ];
+  </script>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var config = window.TANIBERGEN_CONFIG || {};
+      var rawWorks = Array.isArray(window.TANIBERGEN_WORKS) ? window.TANIBERGEN_WORKS : [];
+
+      var works = rawWorks
+        .map(function (item, idx) {
+          return Object.assign({}, item, {
+            _order: typeof item.order === "number" ? item.order : idx + 1,
+            _plate: padNumber(idx + 1)
+          });
+        })
+        .sort(function (a, b) {
+          return a._order - b._order;
+        })
+        .map(function (item, idx) {
+          item._plate = padNumber(idx + 1);
+          return item;
+        });
+
+      var state = {
+        view: "sequence",
+        series: "All",
+        filtered: works.slice(),
+        activeIndex: 0,
+        lightboxOpen: false,
+        lightboxIndex: 0,
+        infoOpen: false,
+        hudHidden: false,
+        lastFocused: null
+      };
+
+      var dom = {
+        brandReset: document.getElementById("brand-reset"),
+        modeButtons: document.querySelectorAll(".mode-btn[data-view]"),
+        infoToggle: document.getElementById("info-toggle"),
+        infoDrawer: document.getElementById("info-drawer"),
+        infoClose: document.getElementById("info-close"),
+        desktopSeries: document.getElementById("desktop-series-list"),
+        mobileSeries: document.getElementById("mobile-series-list"),
+        railCounter: document.getElementById("rail-counter"),
+        mobileCounter: document.getElementById("mobile-counter"),
+        railProgress: document.getElementById("rail-progress-fill"),
+        sequenceView: document.getElementById("sequence-view"),
+        contactView: document.getElementById("contact-view"),
+        lightbox: document.getElementById("lightbox"),
+        lbStage: document.getElementById("lb-stage"),
+        lbMediaWrap: document.getElementById("lb-media-wrap"),
+        lbCaption: document.getElementById("lb-caption"),
+        lbCounter: document.getElementById("lb-counter"),
+        lbClose: document.getElementById("lb-close"),
+        lbPrev: document.getElementById("lb-prev"),
+        lbNext: document.getElementById("lb-next"),
+        lbMobilePrev: document.getElementById("lb-m-prev"),
+        lbMobileNext: document.getElementById("lb-m-next")
+      };
+
+      var plateObserver = null;
+
+      function padNumber(n) {
+        return n < 10 ? "0" + n : String(n);
+      }
+
+      function safeUrl(path) {
+        return encodeURI(String(path || ""));
+      }
+
+      function getNumericRatio(work) {
+        if (work.width && work.height) return work.width / work.height;
+        if (work.ratio) {
+          var parts = String(work.ratio).split(/[:/]/);
+          if (parts.length === 2) {
+            var w = parseFloat(parts[0]);
+            var h = parseFloat(parts[1]);
+            if (w > 0 && h > 0) return w / h;
+          }
+        }
+        return 4 / 3;
+      }
+
+      function getAspectRatio(work) {
+        if (work.width && work.height) return work.width + " / " + work.height;
+        if (work.ratio) return String(work.ratio).replace(":", " / ");
+        return "4 / 3";
+      }
+
+      function getFormatLabel(work) {
+        if (work.width && work.height) {
+          var r = work.width / work.height;
+          if (r >= 2.0) return "PANORAMIC";
+          if (r > 1.05) return "HORIZONTAL";
+          if (r < 0.95) return "VERTICAL";
+          return "SQUARE";
+        }
+        return "ORIGINAL RATIO";
+      }
+
+      function populateMeta() {
+        var setText = function (id, value) {
+          var el = document.getElementById(id);
+          if (el && value) el.textContent = value;
+        };
+
+        setText("info-title", config.title || "TANIBERGEN");
+        setText("info-statement", config.statement || "");
+        setText("info-note", config.note || "");
+        setText("info-domain", config.domain || "tanibergen.online");
+        setText("rail-domain", config.domain || "tanibergen.online");
+
+        var igHandle = config.instagramHandle || "@isaac_4u";
+        var igUrl = config.instagramUrl || "https://instagram.com/isaac_4u";
+
+        ["rail-instagram", "info-instagram"].forEach(function (id) {
+          var link = document.getElementById(id);
+          if (link) {
+            link.textContent = igHandle;
+            link.href = igUrl;
+          }
+        });
+
+        var emailLink = document.getElementById("info-email");
+        if (emailLink && config.email) {
+          emailLink.textContent = config.email;
+          emailLink.href = "mailto:" + config.email;
+        }
+      }
+
+      function getSeriesSummary() {
+        var counts = { All: works.length };
+        var order = ["All"];
+        works.forEach(function (w) {
+          var name = (w.series || "Archive").trim();
+          if (!Object.prototype.hasOwnProperty.call(counts, name)) {
+            counts[name] = 0;
+            order.push(name);
+          }
+          counts[name] += 1;
+        });
+        return order.map(function (name) {
+          return { name: name, count: counts[name] };
+        });
+      }
+
+      function renderSeriesFilters() {
+        var items = getSeriesSummary();
+        dom.desktopSeries.innerHTML = "";
+        dom.mobileSeries.innerHTML = "";
+
+        items.forEach(function (item) {
+          var isActive = state.series === item.name;
+
+          var li = document.createElement("li");
+          var dBtn = document.createElement("button");
+          dBtn.type = "button";
+          dBtn.className = "series-btn" + (isActive ? " is-active" : "");
+          dBtn.setAttribute("aria-pressed", String(isActive));
+
+          var dName = document.createElement("span");
+          dName.textContent = item.name;
+          var dCount = document.createElement("span");
+          dCount.className = "series-count";
+          dCount.textContent = padNumber(item.count);
+          dBtn.appendChild(dName);
+          dBtn.appendChild(dCount);
+          dBtn.addEventListener("click", function () { selectSeries(item.name); });
+          li.appendChild(dBtn);
+          dom.desktopSeries.appendChild(li);
+
+          var mBtn = document.createElement("button");
+          mBtn.type = "button";
+          mBtn.className = "mobile-series-btn" + (isActive ? " is-active" : "");
+          mBtn.setAttribute("aria-pressed", String(isActive));
+          mBtn.textContent = item.name + " (" + item.count + ")";
+          mBtn.addEventListener("click", function () { selectSeries(item.name); });
+          dom.mobileSeries.appendChild(mBtn);
+        });
+      }
+
+      function selectSeries(seriesName) {
+        state.series = seriesName;
+        state.filtered = seriesName === "All"
+          ? works.slice()
+          : works.filter(function (w) { return (w.series || "Archive").trim() === seriesName; });
+        state.activeIndex = 0;
+        renderSeriesFilters();
+        renderActiveView();
+        updateCounter(0);
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      function createPlaceholderLayer(work, compact) {
+        var box = document.createElement("div");
+        box.className = "plate-placeholder" + (compact ? " is-compact" : "");
+
+        var top = document.createElement("div");
+        top.className = "ph-row";
+        var num = document.createElement("span");
+        num.textContent = "PL. " + work._plate;
+        var fmt = document.createElement("span");
+        fmt.textContent = getFormatLabel(work);
+        top.appendChild(num);
+        top.appendChild(fmt);
+
+        var mid = document.createElement("div");
+        mid.className = "ph-center";
+        var fileNote = document.createElement("span");
+        fileNote.className = "ph-file";
+        fileNote.textContent = work.file;
+        var hint = document.createElement("span");
+        hint.className = "ph-hint";
+        hint.textContent = "Awaiting image file";
+        mid.appendChild(fileNote);
+        if (!compact) mid.appendChild(hint);
+
+        box.appendChild(top);
+        box.appendChild(mid);
+        return box;
+      }
+
+      function buildMediaFrame(work, index, isPriority, compact) {
+        var frame = document.createElement("div");
+        frame.className = "plate-frame";
+        frame.style.aspectRatio = getAspectRatio(work);
+        frame.appendChild(createPlaceholderLayer(work, compact));
+
+        var img = document.createElement("img");
+        img.className = "plate-img";
+        img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
+        img.alt = work.title ? work.title : "Photograph " + work._plate;
+        img.decoding = "async";
+        img.loading = isPriority ? "eager" : "lazy";
+        if (isPriority) img.setAttribute("fetchpriority", "high");
+
+        img.addEventListener("load", function () {
+          if (img.naturalWidth && img.naturalHeight) {
+            frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+          }
+          frame.classList.add("is-loaded");
+        });
+
+        img.addEventListener("error", function () {
+          frame.classList.add("is-missing");
+        });
+
+        frame.appendChild(img);
+        return frame;
+      }
+
+      function formatCaptionMeta(work) {
+        var parts = [];
+        if (work.series) parts.push(work.series);
+        if (work.location) parts.push(work.location);
+        if (work.year) parts.push(work.year);
+        return parts.join(" · ");
+      }
+
+      function renderSequenceView() {
+        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        dom.sequenceView.innerHTML = "";
+
+        if (!state.filtered.length) {
+          var empty = document.createElement("p");
+          empty.className = "empty-state";
+          empty.textContent = "No photographs in this series yet.";
+          dom.sequenceView.appendChild(empty);
+          return;
+        }
+
+        state.filtered.forEach(function (work, idx) {
+          var article = document.createElement("article");
+          article.className = "plate-item scale-" + (work.scale || "medium") + " align-" + (work.align || "left");
+          article.dataset.index = String(idx);
+
+          var trigger = document.createElement("button");
+          trigger.type = "button";
+          trigger.className = "plate-trigger";
+          trigger.setAttribute("aria-label", "Open photograph " + work._plate + (work.title ? ": " + work.title : ""));
+          trigger.addEventListener("click", function () { openLightbox(idx); });
+          trigger.appendChild(buildMediaFrame(work, idx, idx < 2, false));
+
+          var meta = document.createElement("footer");
+          meta.className = "plate-meta";
+
+          var metaLeft = document.createElement("div");
+          metaLeft.className = "plate-meta-left";
+          var code = document.createElement("span");
+          code.className = "plate-code";
+          code.textContent = "PL. " + work._plate;
+          var title = document.createElement("span");
+          title.className = "plate-title";
+          title.textContent = work.title || "Untitled";
+          metaLeft.appendChild(code);
+          metaLeft.appendChild(title);
+
+          var metaRight = document.createElement("span");
+          metaRight.className = "plate-sub";
+          metaRight.textContent = formatCaptionMeta(work);
+
+          meta.appendChild(metaLeft);
+          meta.appendChild(metaRight);
+          article.appendChild(trigger);
+          article.appendChild(meta);
+          dom.sequenceView.appendChild(article);
+        });
+
+        setupPlateObserver();
+      }
+
+      function renderContactView() {
+        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        dom.contactView.innerHTML = "";
+
+        if (!state.filtered.length) {
+          var empty = document.createElement("p");
+          empty.className = "empty-state";
+          empty.textContent = "No photographs in this series yet.";
+          dom.contactView.appendChild(empty);
+          return;
+        }
+
+        var grid = document.createElement("div");
+        grid.className = "contact-grid";
+
+        state.filtered.forEach(function (work, idx) {
+          var cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "contact-cell";
+          cell.setAttribute("aria-label", "Inspect plate " + work._plate + (work.title ? ": " + work.title : ""));
+          cell.appendChild(buildMediaFrame(work, idx, idx < 4, true));
+
+          var label = document.createElement("div");
+          label.className = "contact-label";
+          var num = document.createElement("span");
+          num.className = "contact-num";
+          num.textContent = work._plate;
+          var name = document.createElement("span");
+          name.className = "contact-name";
+          name.textContent = work.title || work.series || "Untitled";
+          label.appendChild(num);
+          label.appendChild(name);
+          cell.appendChild(label);
+          cell.addEventListener("click", function () { openLightbox(idx); });
+          grid.appendChild(cell);
+        });
+
+        dom.contactView.appendChild(grid);
+      }
+
+      function setupPlateObserver() {
+        if (!("IntersectionObserver" in window)) return;
+        var items = dom.sequenceView.querySelectorAll(".plate-item");
+        if (!items.length) return;
+
+        plateObserver = new IntersectionObserver(function (entries) {
+          var visible = entries.filter(function (e) { return e.isIntersecting; })
+            .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; });
+          if (visible.length) updateCounter(Number(visible[0].target.dataset.index || 0));
+        }, { rootMargin: "-15% 0px -35% 0px", threshold: [0.1, 0.35, 0.6] });
+
+        items.forEach(function (item) { plateObserver.observe(item); });
+      }
+
+      function updateCounter(index) {
+        var total = state.filtered.length;
+        if (!total) {
+          dom.railCounter.textContent = "00 / 00";
+          dom.mobileCounter.textContent = "00 / 00";
+          dom.railProgress.style.width = "0%";
+          return;
+        }
+        var safeIndex = Math.max(0, Math.min(index, total - 1));
+        state.activeIndex = safeIndex;
+        var label = padNumber(safeIndex + 1) + " / " + padNumber(total);
+        dom.railCounter.textContent = label;
+        dom.mobileCounter.textContent = label;
+        dom.railProgress.style.width = ((safeIndex + 1) / total) * 100 + "%";
+      }
+
+      function switchView(viewName) {
+        if (state.view === viewName) return;
+        state.view = viewName;
+        dom.modeButtons.forEach(function (btn) {
+          var active = btn.dataset.view === viewName;
+          btn.classList.toggle("is-active", active);
+          btn.setAttribute("aria-pressed", String(active));
+        });
+        renderActiveView();
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      function renderActiveView() {
+        if (state.view === "sequence") {
+          dom.contactView.hidden = true;
+          dom.sequenceView.hidden = false;
+          renderSequenceView();
+        } else {
+          dom.sequenceView.hidden = true;
+          dom.contactView.hidden = false;
+          renderContactView();
+        }
+      }
+
+      function openInfo() {
+        state.lastFocused = document.activeElement;
+        state.infoOpen = true;
+        dom.infoDrawer.hidden = false;
+        dom.infoToggle.setAttribute("aria-expanded", "true");
+        document.body.classList.add("is-locked");
+        dom.infoClose.focus();
+      }
+
+      function closeInfo() {
+        if (!state.infoOpen) return;
+        state.infoOpen = false;
+        dom.infoDrawer.hidden = true;
+        dom.infoToggle.setAttribute("aria-expanded", "false");
+        document.body.classList.remove("is-locked");
+        if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
+      }
+
+      function openLightbox(index) {
+        if (!state.filtered.length) return;
+        state.lastFocused = document.activeElement;
+        state.lightboxOpen = true;
+        state.lightboxIndex = index;
+        state.hudHidden = false;
+        dom.lightbox.classList.remove("hud-hidden");
+        dom.lightbox.hidden = false;
+        document.body.classList.add("is-locked");
+        renderLightboxFrame();
+        dom.lbClose.focus();
+      }
+
+      function closeLightbox() {
+        if (!state.lightboxOpen) return;
+        state.lightboxOpen = false;
+        dom.lightbox.hidden = true;
+        dom.lbMediaWrap.innerHTML = "";
+        document.body.classList.remove("is-locked");
+        if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
+      }
+
+      function stepLightbox(delta) {
+        var total = state.filtered.length;
+        if (!total) return;
+        state.lightboxIndex = (state.lightboxIndex + delta + total) % total;
+        renderLightboxFrame();
+      }
+
+      function preloadNeighbor(index) {
+        var total = state.filtered.length;
+        if (total < 2) return;
+        var work = state.filtered[(index + total) % total];
+        if (!work || !work.file) return;
+        var img = new Image();
+        img.src = safeUrl(work.file);
+      }
+
+      function renderLightboxFrame() {
+        var total = state.filtered.length;
+        var work = state.filtered[state.lightboxIndex];
+        if (!work) return;
+
+        dom.lbCounter.textContent = padNumber(state.lightboxIndex + 1) + " / " + padNumber(total);
+        dom.lbMediaWrap.innerHTML = "";
+        dom.lbMediaWrap.style.setProperty("--lb-ar", String(getNumericRatio(work)));
+
+        var frame = document.createElement("div");
+        frame.className = "lb-frame";
+        frame.style.aspectRatio = getAspectRatio(work);
+        frame.appendChild(createPlaceholderLayer(work, false));
+
+        var img = document.createElement("img");
+        img.className = "lb-img";
+        img.src = safeUrl(work.file);
+        img.alt = work.title ? work.title : "Photograph " + work._plate;
+        img.decoding = "async";
+
+        img.addEventListener("load", function () {
+          if (img.naturalWidth && img.naturalHeight) {
+            frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+            dom.lbMediaWrap.style.setProperty("--lb-ar", String(img.naturalWidth / img.naturalHeight));
+          }
+          frame.classList.add("is-loaded");
+        });
+
+        img.addEventListener("error", function () {
+          frame.classList.add("is-missing");
+        });
+
+        frame.appendChild(img);
+        dom.lbMediaWrap.appendChild(frame);
+
+        var sub = formatCaptionMeta(work);
+        dom.lbCaption.textContent = "PL. " + work._plate + " — " + (work.title || "Untitled") + (sub ? " · " + sub : "");
+
+        preloadNeighbor(state.lightboxIndex + 1);
+        preloadNeighbor(state.lightboxIndex - 1);
+      }
+
+      function bindEvents() {
+        dom.brandReset.addEventListener("click", function () {
+          if (state.view !== "sequence") {
+            state.view = "sequence";
+            dom.modeButtons.forEach(function (btn) {
+              var active = btn.dataset.view === "sequence";
+              btn.classList.toggle("is-active", active);
+              btn.setAttribute("aria-pressed", String(active));
+            });
+          }
+          selectSeries("All");
+        });
+
+        dom.modeButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () { switchView(btn.dataset.view); });
+        });
+
+        dom.infoToggle.addEventListener("click", function () {
+          if (state.infoOpen) closeInfo(); else openInfo();
+        });
+
+        dom.infoClose.addEventListener("click", closeInfo);
+        dom.infoDrawer.querySelectorAll("[data-close-info]").forEach(function (el) {
+          el.addEventListener("click", closeInfo);
+        });
+
+        dom.lbClose.addEventListener("click", closeLightbox);
+        dom.lbPrev.addEventListener("click", function () { stepLightbox(-1); });
+        dom.lbNext.addEventListener("click", function () { stepLightbox(1); });
+        dom.lbMobilePrev.addEventListener("click", function () { stepLightbox(-1); });
+        dom.lbMobileNext.addEventListener("click", function () { stepLightbox(1); });
+
+        dom.lbMediaWrap.addEventListener("click", function () {
+          state.hudHidden = !state.hudHidden;
+          dom.lightbox.classList.toggle("hud-hidden", state.hudHidden);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (state.lightboxOpen) {
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowRight") stepLightbox(1);
+            if (e.key === "ArrowLeft") stepLightbox(-1);
+            return;
+          }
+          if (state.infoOpen && e.key === "Escape") closeInfo();
+        });
+
+        var touchStartX = 0;
+        var touchStartY = 0;
+
+        dom.lbStage.addEventListener("touchstart", function (e) {
+          if (!e.touches.length) return;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        dom.lbStage.addEventListener("touchend", function (e) {
+          if (!state.lightboxOpen || !e.changedTouches.length) return;
+          var dx = e.changedTouches[0].clientX - touchStartX;
+          var dy = e.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+            stepLightbox(dx < 0 ? 1 : -1);
+          }
+        }, { passive: true });
+      }
+
+      populateMeta();
+      renderSeriesFilters();
+      renderActiveView();
+      updateCounter(0);
+      bindEvents();
+    })();
+  </script>
+</body>
+</html>
+"""
+
+import re, subprocess
+scripts = re.findall(r'<script>([\s\S]*?)</script>', single_html)
+with open("check.js", "w") as f:
+    f.write("\n".join(scripts))
+res = subprocess.run(["node", "--check", "check.js"], capture_output=True, text=True)
+print("JS check:", res.returncode, res.stderr)
+print("HTML lines:", len(single_html.splitlines()))

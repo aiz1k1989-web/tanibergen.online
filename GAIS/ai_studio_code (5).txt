@@ -1,0 +1,33 @@
+with open("index.html") as f:
+    html = f.read()
+with open("style.css") as f:
+    css = f.read()
+with open("works.js") as f:
+    works = f.read()
+with open("app.js") as f:
+    app = f.read()
+
+# Build a clean single-file index.html that works standalone in Google AI Studio / Sandbox / Browser,
+# while STILL allowing optional external works.js override if present.
+single = html.replace(
+    '  <link rel="stylesheet" href="style.css">',
+    f'  <style>\n{css}\n  </style>'
+).replace(
+    '  <script src="works.js"></script>\n  <script src="app.js"></script>',
+    f'  <script>\n{works}\n  </script>\n  <script>\n{app}\n  </script>'
+)
+
+with open("single_index.html", "w") as f:
+    f.write(single)
+
+# Extract <script> contents and syntax-check with node
+import re, subprocess
+scripts = re.findall(r'<script>([\s\S]*?)</script>', single)
+assert len(scripts) == 2
+combined_js = "\n".join(scripts)
+with open("test_combined.js", "w") as f:
+    f.write(combined_js)
+
+res = subprocess.run(["node", "--check", "test_combined.js"], capture_output=True, text=True)
+print("Single index.html JS check:", res.returncode, res.stderr)
+print("Total single index.html lines:", len(single.splitlines()), "bytes:", len(single))
