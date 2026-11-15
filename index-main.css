@@ -927,6 +927,7 @@ to { width: 100%; } }
 /* Editorial contact sheet - repaired layout, 16 Nov 2026 */
 .sequence-view { display:block; min-height:0; }
 .all-card-grid {
+  display:block;
   column-count:3;
   column-gap:18px;
   width:100%;
