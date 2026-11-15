@@ -530,6 +530,7 @@
 
       function renderColorView() {
         stopRotation();
+        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
         state.colorGeneration++;
         state.colorBusy = true;
         dom.colorView.innerHTML = "";
@@ -620,6 +621,7 @@
           img.addEventListener("load", function() {
             if (img.naturalWidth && img.naturalHeight) frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
           }, { once: true });
+          img.addEventListener("error", function() { img.style.display = "none"; frame.classList.add("is-missing"); }, { once: true });
           frame.appendChild(img);
           tile.appendChild(frame);
           tile.addEventListener("click", function() {
