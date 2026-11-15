@@ -56,6 +56,7 @@ button { font: inherit; color: inherit; }
 .rail-work:hover, .rail-instagram:hover { color: var(--ink); }
 
 .main { margin-left: var(--rail); min-width: 0; }
+body.viewer-open { overflow: hidden; }
 .opening {
   min-height: 100svh;
   height: 100svh;
