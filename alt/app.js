@@ -36,7 +36,7 @@
       var rotationDuration = 8200;
       var imageCache = Object.create(null);
       var ownerBuffer = "";
-      var ownerPhrase = "tanibergen";
+      var ownerPhrase = "bluehourindex";
 
       var dom = {
         brandReset: document.getElementById("brand-reset"),
@@ -378,6 +378,7 @@
         img.addEventListener("load", function () {
           if (img.naturalWidth && img.naturalHeight) shell.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
           shell.classList.add("is-ready");
+          scheduleRotation();
         }, { once: true });
         media.appendChild(img);
         shell.appendChild(media);
@@ -410,7 +411,6 @@
         updateCounter(index);
         preloadFeatured(randomNextIndex(index));
         preloadFeatured(randomNextIndex(randomNextIndex(index)));
-        scheduleRotation();
       }
 
       function renderContactView() {
@@ -700,6 +700,8 @@
             return;
           }
           if (state.infoOpen && e.key === "Escape") closeInfo();
+          var reportPanel = document.getElementById("owner-report");
+          if (reportPanel && !reportPanel.hidden && e.key === "Escape") closeOwnerReport();
         });
 
         var touchStartX = 0;
