@@ -612,6 +612,7 @@
       }
 
       function openOwnerReport() {
+        stopRotation();
         var panel = document.getElementById("owner-report");
         if (panel) {
           panel.hidden = false;
@@ -625,6 +626,7 @@
         var panel = document.getElementById("owner-report");
         if (panel) panel.hidden = true;
         if (!state.lightboxOpen && !state.infoOpen) document.body.classList.remove("is-locked");
+        scheduleRotation();
       }
 
       function bindEvents() {
@@ -693,6 +695,8 @@
         });
 
         document.addEventListener("keydown", function (e) {
+          var reportPanel = document.getElementById("owner-report");
+          if (reportPanel && !reportPanel.hidden && e.key === "Escape") { closeOwnerReport(); return; }
           if (state.lightboxOpen) {
             if (e.key === "Escape") closeLightbox();
             if (e.key === "ArrowRight") stepLightbox(1);
@@ -700,8 +704,7 @@
             return;
           }
           if (state.infoOpen && e.key === "Escape") closeInfo();
-          var reportPanel = document.getElementById("owner-report");
-          if (reportPanel && !reportPanel.hidden && e.key === "Escape") closeOwnerReport();
+
         });
 
         var touchStartX = 0;
