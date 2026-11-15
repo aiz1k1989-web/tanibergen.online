@@ -763,6 +763,7 @@
 
       function switchView(viewName) {
         if (state.view === viewName) return;
+        if (viewName !== "color") { state.colorGeneration++; state.colorBusy = false; }
         state.view = viewName;
         dom.modeButtons.forEach(function (btn) {
           var active = btn.dataset.view === viewName;
