@@ -1,38 +1,26 @@
 # TANIBERGEN
 
-A lightweight static photography portfolio for GitHub Pages.
+A static photography portfolio for GitHub Pages.
 
-## Two art directions
-- **AFTER HOURS** (default): dark, cinematic, asymmetrical image composition.
-- **THE INDEX**: light, editorial archive layout. Open with `?view=index`.
+## Versions
 
-Both views use the same image list. No framework, build step, backend, or image CDN is required.
+- Main homepage: `/`
+- The Index archive: `/alt/`
 
-## Add photographs
-1. Create an `images` folder in the repository and upload your photographs there.
-2. Open `works.js` and edit the entries in `TANIBERGEN_WORKS`.
-3. Set each `file` to the image path, then edit its title, category and year.
+The Index is a separate presentation of the same photographs. It includes Sequence and Contact views, series filters, an Info panel and a fullscreen viewer with mobile swipe navigation.
 
-Use JPG or WebP for web delivery. The first two images load eagerly; the rest are lazy-loaded. The lightbox preserves the original image proportions.
+## Photograph storage
 
-## Publish
-In repository Settings → Pages, select Deploy from a branch, branch `main`, folder `/ (root)`.
-The custom domain is set in `CNAME` to `tanibergen.online`. Configure DNS records at your domain registrar to point to GitHub Pages, then enable HTTPS in Pages settings.
+The original photographs remain in the numbered folders `1` to `7` at the repository root. The archive loads these files directly. No duplicate image library is created.
 
+To add photographs to The Index:
+1. Upload the image to its numbered folder.
+2. Add an entry to `alt/works.js`.
+3. Use a path relative to `alt/`, for example `../4/21.webp`.
+4. Set its series, scale, alignment and order.
 
-## Saul Leiter-inspired alternative
+The viewer reads the image's natural dimensions after loading. Images retain their original proportions and are not cropped or filtered.
 
-An independent editorial version is available at `/saul-leiter-alt/`.
-It uses the photographs already stored in the numbered root folders. The main homepage is not replaced.
+## Publishing
 
-A separate branch named `saul-leiter-alt` contains this alternative for isolated development.
-
-## Website notes
-
-On the alternative version, use the `SITE NOTE` control and enter a command such as:
-
-`/upd#1 The text in the About section needs correcting.`
-
-The draft is retained in the current browser. The send action opens a prefilled GitHub Issue; press **Submit new issue** on GitHub to store the report in the repository. This is deliberate: the static site does not contain a GitHub access token.
-
-Reports can be collected from GitHub Issues by searching for `[SITE NOTE`.
+GitHub Pages deploys from the `main` branch, repository root. The custom domain is configured in `CNAME`.
