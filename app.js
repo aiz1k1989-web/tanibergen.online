@@ -1,27 +1,66 @@
 (() => {
- const body=document.body, root=document.getElementById('works'), switcher=document.getElementById('modeSwitch');
- const isIndex=new URLSearchParams(location.search).get('view')==='index';
- if(isIndex){body.classList.add('index-view');document.querySelector('meta[name="theme-color"]').content='#e9e7e1';switcher.innerHTML='VIEW: <b>THE INDEX</b> <span>↗</span>';}
- else switcher.innerHTML='VIEW: <b>AFTER HOURS</b> <span>↗</span>';
- switcher.addEventListener('click',()=>{location.href=isIndex?'./':'?view=index';});
- const works=window.TANIBERGEN_WORKS||[];
- document.getElementById('workCount').textContent=String(works.length).padStart(2,'0')+' FRAMES';
- works.forEach((work,i)=>{
-   const card=document.createElement('article');card.className='work-card';
-   const media=document.createElement('div');media.className='media is-empty';media.dataset.empty='FRAME '+String(i+1).padStart(2,'0');
-   const img=document.createElement('img');img.src=work.file;img.alt=work.title;img.loading=i<2?'eager':'lazy';img.decoding='async';
-   img.addEventListener('load',()=>media.classList.remove('is-empty'));
-   img.addEventListener('error',()=>img.remove());
-   media.appendChild(img);
-   const info=document.createElement('div');info.className='work-info';
-   const name=document.createElement('span');name.textContent=work.title;
-   const meta=document.createElement('span');meta.textContent=work.category+' / '+work.year;
-   info.append(name,meta);card.append(media,info);
-   card.addEventListener('click',()=>{if(!img.complete||!img.naturalWidth)return;const box=document.getElementById('lightbox');box.querySelector('img').src=img.src;box.querySelector('.lightbox-caption').textContent=work.title+' / '+work.category+' / '+work.year;box.classList.add('open');box.setAttribute('aria-hidden','false');});
-   root.appendChild(card);
- });
- const box=document.getElementById('lightbox');
- const close=()=>{box.classList.remove('open');box.setAttribute('aria-hidden','true');box.querySelector('img').src='';};
- box.querySelector('.lightbox-close').addEventListener('click',close);box.addEventListener('click',e=>{if(e.target===box)close();});
- document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+  const works = window.TANIBERGEN_WORKS || [];
+  const gallery = document.getElementById("gallery");
+  const viewer = document.getElementById("viewer");
+  const viewerImage = document.getElementById("viewerImage");
+  const viewerIndex = document.getElementById("viewerIndex");
+  const photoCount = String(works.length).padStart(3, "0");
+
+  document.getElementById("photoCount").textContent = photoCount;
+  document.getElementById("footerCount").textContent = photoCount + " PHOTOGRAPHS";
+
+  let current = 0;
+  const cards = [];
+
+  function showImage(index) {
+    if (!works.length) return;
+    current = (index + works.length) % works.length;
+    viewerImage.src = works[current].file;
+    viewerImage.alt = "Photograph " + String(current + 1);
+    viewerIndex.textContent = String(current + 1).padStart(3, "0") + " / " + photoCount;
+    viewer.classList.add("open");
+    viewer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeViewer() {
+    viewer.classList.remove("open");
+    viewer.setAttribute("aria-hidden", "true");
+    viewerImage.removeAttribute("src");
+    document.body.style.overflow = "";
+  }
+
+  works.forEach((work, index) => {
+    const card = document.createElement("button");
+    card.className = "photo";
+    card.type = "button";
+    card.setAttribute("aria-label", "Open photograph " + String(index + 1));
+
+    const img = document.createElement("img");
+    img.src = work.file;
+    img.alt = "";
+    img.loading = index < 2 ? "eager" : "lazy";
+    img.decoding = "async";
+    if (index === 0) img.fetchPriority = "high";
+
+    img.addEventListener("error", () => card.remove(), { once: true });
+    card.appendChild(img);
+    card.addEventListener("click", () => showImage(index));
+    gallery.appendChild(card);
+    cards.push(card);
+  });
+
+  document.getElementById("closeViewer").addEventListener("click", closeViewer);
+  document.getElementById("prevImage").addEventListener("click", () => showImage(current - 1));
+  document.getElementById("nextImage").addEventListener("click", () => showImage(current + 1));
+  viewer.addEventListener("click", event => {
+    if (event.target === viewer) closeViewer();
+  });
+
+  document.addEventListener("keydown", event => {
+    if (!viewer.classList.contains("open")) return;
+    if (event.key === "Escape") closeViewer();
+    if (event.key === "ArrowLeft") showImage(current - 1);
+    if (event.key === "ArrowRight") showImage(current + 1);
+  });
 })();
