@@ -164,6 +164,18 @@
     if (sendAll) sendAll.disabled = !notes.length;
   };
 
+  if (notesMode) {
+    document.querySelectorAll('a[href]').forEach(link => {
+      try {
+        const target = new URL(link.href, location.href);
+        if (target.origin === location.origin && target.pathname.includes("/saul-leiter-alt/")) {
+          target.searchParams.set("notes", "1");
+          link.href = target.toString();
+        }
+      } catch (_) {}
+    });
+  }
+
   if (notesMode && notesOpen && notesPanel) {
     notesOpen.hidden = false;
     notesOpen.addEventListener("click", () => {
