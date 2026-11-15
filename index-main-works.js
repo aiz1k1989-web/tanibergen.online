@@ -9,6 +9,7 @@ window.TANIBERGEN_CONFIG = {
 
 window.TANIBERGEN_WORKS = [];
 const TANIBERGEN_SERIES = [20, 20, 20, 20, 20, 20, 5];
+const TANIBERGEN_EXCLUDED = new Set(["2/3.webp","2/4.webp","2/5.webp","2/6.webp","2/7.webp","2/8.webp","2/9.webp","2/10.webp","2/11.webp","2/12.webp","2/13.webp","2/14.webp","2/15.webp","2/16.webp","2/17.webp","2/18.webp","2/19.webp","3/15.webp","3/16.webp","3/17.webp","3/18.webp","3/19.webp","3/20.webp","5/13.webp","6/20.webp"]);
 const TANIBERGEN_SCALES = ["medium", "wide", "compact", "full", "medium", "wide", "medium", "compact", "full", "wide"];
 const TANIBERGEN_ALIGNMENTS = ["left", "right", "center", "center", "right", "left", "center", "right", "left", "center"];
 
@@ -18,6 +19,7 @@ TANIBERGEN_SERIES.forEach((count, seriesIndex) => {
   for (let frame = 1; frame <= count; frame++) {
     const rhythm = tanibergenOrder % TANIBERGEN_SCALES.length;
     tanibergenOrder += 1;
+    if (TANIBERGEN_EXCLUDED.has((seriesIndex + 1) + "/" + frame + ".webp")) continue;
     window.TANIBERGEN_WORKS.push({
       id: String(tanibergenOrder).padStart(2, "0"),
       file: "" + (seriesIndex + 1) + "/" + frame + ".webp",
@@ -30,9 +32,4 @@ TANIBERGEN_SERIES.forEach((count, seriesIndex) => {
 });
 
 // Keep the selected opening photograph at the front of the sequence.
-window.TANIBERGEN_WORKS.sort(function(a, b) {
-  if (a.file === "4/1.webp") return -1;
-  if (b.file === "4/1.webp") return 1;
-  return a.order - b.order;
-});
-window.TANIBERGEN_WORKS.forEach(function(item, index) { item.order = index + 1; });
+// Keep source order in the data. The public All view is shuffled at runtime.
