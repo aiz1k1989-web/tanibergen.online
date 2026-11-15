@@ -47,6 +47,11 @@ main { min-height: 70vh; }
   display: block;
   width: 100%;
   margin: 0 0 3.2vw;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  appearance: none;
   break-inside: avoid;
   cursor: zoom-in;
 }
