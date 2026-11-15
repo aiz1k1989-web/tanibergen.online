@@ -784,7 +784,6 @@
           dom.sequenceView.hidden = true;
           dom.contactView.hidden = false;
           dom.colorView.hidden = true;
-          dom.colorView.hidden = true;
           renderContactView();
         } else {
           dom.sequenceView.hidden = true;
