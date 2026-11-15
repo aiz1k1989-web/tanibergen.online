@@ -386,7 +386,7 @@
           var frame = buildMediaFrame(work, index, index < 4, true);
           frame.classList.add("all-photo-frame");
           card.appendChild(frame);
-          card.addEventListener("click", function() { openLightbox(index); });
+          card.addEventListener("click", function() { openLightbox(state.filtered.indexOf(work)); });
           grid.appendChild(card);
         });
         dom.sequenceView.appendChild(grid);
