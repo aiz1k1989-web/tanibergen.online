@@ -1,0 +1,10 @@
+/* Small interaction and rendering refinements. No visual redesign. */
+img { -webkit-user-drag: none; }
+.photo, .featured-trigger, .viewer button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.viewer { overscroll-behavior: contain; }
+@media (hover: none) {
+  .photo:hover img { opacity: 1; }
+}
