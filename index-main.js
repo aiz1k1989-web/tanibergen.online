@@ -41,6 +41,7 @@
       var imageCache = Object.create(null);
       var ownerBuffer = "";
       var ownerPhrase = "bluehourindex";
+      var colorCacheMemory = null;
 
       var dom = {
         brandReset: document.getElementById("brand-reset"),
@@ -474,13 +475,17 @@
 
       function getCachedColor(work) {
         try {
-          var cache = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
-          return cache[work.file] || null;
-        } catch (e) { return null; }
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
+          return colorCacheMemory[work.file] || null;
+        } catch (e) { colorCacheMemory = {}; return null; }
       }
 
       function saveColorCache(cache) {
-        try { localStorage.setItem("tanibergen-color-v1", JSON.stringify(cache)); } catch (e) {}
+        try {
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
+          Object.keys(cache).forEach(function (key) { colorCacheMemory[key] = cache[key]; });
+          localStorage.setItem("tanibergen-color-v1", JSON.stringify(colorCacheMemory));
+        } catch (e) {}
       }
 
       function analyzeOne(work) {
@@ -489,6 +494,7 @@
           if (cached) { resolve(cached); return; }
           var img = new Image();
           img.decoding = "async";
+          img.fetchPriority = "low";
           img.onload = function () {
             try { resolve(extractDominantColor(img)); }
             catch (e) { resolve({ r: 128, g: 128, b: 128 }); }
