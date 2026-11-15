@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TANIBERGEN - The Index</title>
+  <meta name="description" content="TANIBERGEN - Independent photography portfolio and visual archive.">
+  <meta name="theme-color" content="#ECE9E2">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-stage">Skip to photographs</a>
+
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <button type="button" class="brand-btn" id="brand-reset" aria-label="TANIBERGEN - Reset to all works">
+        <span class="brand-name">TANIBERGEN</span>
+      </button>
+
+      <nav class="mode-nav" aria-label="View mode">
+        <button type="button" class="mode-btn is-active" data-view="sequence" aria-pressed="true">Sequence</button>
+        <button type="button" class="mode-btn" data-view="contact" aria-pressed="false">Contact</button>
+        <button type="button" class="mode-btn" id="info-toggle" aria-expanded="false" aria-controls="info-drawer">Info</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mobile-series-bar" aria-label="Series filter">
+    <div class="mobile-series-scroll" id="mobile-series-list"></div>
+    <div class="mobile-counter" id="mobile-counter" aria-live="polite">01 / 01</div>
+  </div>
+
+  <div class="workspace">
+    <aside class="rail" aria-label="Archive navigation">
+      <div class="rail-sticky">
+        <div class="rail-block">
+          <div class="rail-label">Plate</div>
+          <div class="rail-counter" id="rail-counter" aria-live="polite">01 / 01</div>
+          <div class="rail-progress" aria-hidden="true">
+            <div class="rail-progress-fill" id="rail-progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-label">Series</div>
+          <ul class="series-list" id="desktop-series-list"></ul>
+        </div>
+
+        <div class="rail-block rail-footer">
+          <a class="rail-link" id="rail-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a>
+          <span class="rail-domain" id="rail-domain">tanibergen.online</span>
+        </div>
+      </div>
+    </aside>
+
+    <main id="main-stage" class="stage" tabindex="-1">
+      <section id="sequence-view" class="sequence-view" aria-label="Photograph sequence"></section>
+      <section id="contact-view" class="contact-view" aria-label="Contact sheet" hidden></section>
+    </main>
+  </div>
+
+  <aside id="info-drawer" class="info-drawer" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+    <div class="info-backdrop" data-close-info></div>
+    <div class="info-panel">
+      <div class="info-top">
+        <span class="mono-label">Index / Colophon</span>
+        <button type="button" class="text-btn" id="info-close" aria-label="Close info panel">Close [Esc]</button>
+      </div>
+      <div class="info-body">
+        <h1 class="info-title" id="info-title">TANIBERGEN</h1>
+        <p class="info-statement" id="info-statement"></p>
+        <dl class="info-meta">
+          <div class="info-row">
+            <dt>Instagram</dt>
+            <dd><a id="info-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a></dd>
+          </div>
+<div class="info-row">
+            <dt>Domain</dt>
+            <dd id="info-domain">tanibergen.online</dd>
+          </div>
+          <div class="info-row">
+            <dt>Format</dt>
+            <dd id="info-note"></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </aside>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Fullscreen photograph viewer" hidden>
+    <div class="lb-topbar">
+      <div class="lb-counter" id="lb-counter">01 / 01</div>
+      <button type="button" class="lb-close" id="lb-close" aria-label="Close fullscreen viewer">Close [Esc]</button>
+    </div>
+
+    <div class="lb-stage" id="lb-stage">
+      <button type="button" class="lb-nav lb-prev" id="lb-prev" aria-label="Previous photograph">
+        <span aria-hidden="true">&larr;</span>
+      </button>
+
+      <figure class="lb-figure" id="lb-figure">
+        <div class="lb-media-wrap" id="lb-media-wrap"></div>
+        <figcaption class="lb-caption" id="lb-caption"></figcaption>
+      </figure>
+
+      <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="Next photograph">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+
+    <div class="lb-mobile-controls">
+      <button type="button" class="lb-m-btn" id="lb-m-prev" aria-label="Previous photograph">&larr; Prev</button>
+      <button type="button" class="lb-m-btn" id="lb-m-next" aria-label="Next photograph">Next &rarr;</button>
+    </div>
+  </div>
+
+    <script src="works.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
