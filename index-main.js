@@ -20,6 +20,8 @@
           return item;
         });
 
+      works = shuffleCopy(works);
+
       var state = {
         view: "sequence",
         series: "All",
@@ -365,69 +367,32 @@
 
       function renderSequenceView() {
         stopRotation();
+        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
         dom.sequenceView.innerHTML = "";
-
         if (!state.filtered.length) {
           var empty = document.createElement("p");
           empty.className = "empty-state";
-          empty.textContent = "No photographs in this series yet.";
+          empty.textContent = "No photographs in this archive.";
           dom.sequenceView.appendChild(empty);
           return;
         }
-
-        var index = Math.min(state.activeIndex, state.filtered.length - 1);
-        var work = state.filtered[index];
-        var figure = document.createElement("article");
-        figure.className = "featured-plate";
-
-        var trigger = document.createElement("button");
-        trigger.type = "button";
-        trigger.className = "featured-trigger";
-        trigger.setAttribute("aria-label", "Open photograph " + work._plate);
-        trigger.addEventListener("click", function () { openLightbox(state.activeIndex); });
-
-        var shell = document.createElement("div");
-        shell.className = "featured-shell";
-        shell.style.aspectRatio = getAspectRatio(work);
-        var media = document.createElement("div");
-        media.className = "featured-media";
-        var img = new Image();
-        img.className = "featured-image is-current";
-        img.alt = work.title || "Photograph " + work._plate;
-        img.decoding = "async";
-        img.fetchPriority = "high";
-        img.src = safeUrl(work.file);
-        img.addEventListener("load", function () {
-          if (img.naturalWidth && img.naturalHeight) shell.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
-          shell.classList.add("is-ready");
-          scheduleRotation();
-        }, { once: true });
-        media.appendChild(img);
-        shell.appendChild(media);
-        trigger.appendChild(shell);
-
-        var meta = document.createElement("div");
-        meta.className = "featured-meta";
-        var caption = document.createElement("span");
-        caption.className = "featured-caption";
-        caption.textContent = "PL. " + work._plate + " / " + (work.series || "Archive");
-        var count = document.createElement("span");
-        count.className = "featured-total";
-        count.textContent = padNumber(index + 1) + " / " + padNumber(state.filtered.length);
-        meta.appendChild(caption);
-        meta.appendChild(count);
-
-
-        figure.appendChild(trigger);
-        figure.appendChild(meta);
-        dom.sequenceView.appendChild(figure);
-
-        state.activeIndex = index;
-        updateCounter(index);
-        preloadFeatured(randomNextIndex(index));
-        preloadFeatured(randomNextIndex(randomNextIndex(index)));
+        var grid = document.createElement("div");
+        grid.className = "all-card-grid";
+        state.filtered.forEach(function(work, index) {
+          var card = document.createElement("button");
+          card.type = "button";
+          card.className = "all-photo-card card-shape-" + (index % 8);
+          card.setAttribute("aria-label", "Open photograph " + work._plate);
+          var frame = buildMediaFrame(work, index, index < 4, true);
+          frame.classList.add("all-photo-frame");
+          card.appendChild(frame);
+          card.addEventListener("click", function() { openLightbox(index); });
+          grid.appendChild(card);
+        });
+        dom.sequenceView.appendChild(grid);
+        state.activeIndex = 0;
+        updateCounter(0);
       }
-
 
       function extractDominantColor(image) {
         var canvas = document.createElement("canvas");
@@ -574,15 +539,15 @@
         eyebrow.textContent = "ARCHIVE / CHROMATIC INDEX";
         var title = document.createElement("h2");
         title.className = "color-title";
-        title.textContent = "Colour studies";
+        title.textContent = "Colour";
         var description = document.createElement("p");
         description.className = "color-description";
-        description.textContent = "Photographs arranged by their dominant tones.";
+        description.textContent = "A continuous passage through colour.";
         copy.appendChild(eyebrow); copy.appendChild(title); copy.appendChild(description);
         var recompose = document.createElement("button");
         recompose.type = "button";
         recompose.className = "recompose-btn";
-        recompose.textContent = "RECOMPOSE ↗";
+        recompose.textContent = "SHUFFLE ↗";
         recompose.addEventListener("click", function () {
           state.colorComposition++;
           renderColorCollage();
@@ -609,65 +574,60 @@
         var container = dom.colorView.querySelector(".color-collage");
         if (!container) return;
         container.innerHTML = "";
-        var groups = state.colorGroups.slice();
-        if (!groups.length) {
+        var entries = [];
+        state.colorGroups.forEach(function(group) {
+          group.items.forEach(function(entry) {
+            var rgb = entry.color.color;
+            var max = Math.max(rgb.r, rgb.g, rgb.b), min = Math.min(rgb.r, rgb.g, rgb.b);
+            var delta = max - min, hue = 0;
+            if (delta > 0) {
+              if (max === rgb.r) hue = 60 * (((rgb.g - rgb.b) / delta) % 6);
+              else if (max === rgb.g) hue = 60 * ((rgb.b - rgb.r) / delta + 2);
+              else hue = 60 * ((rgb.r - rgb.g) / delta + 4);
+            }
+            if (hue < 0) hue += 360;
+            var saturation = max === 0 ? 0 : delta / max;
+            entries.push({ work: entry.work, hue: saturation < 0.12 ? 361 : hue });
+          });
+        });
+        if (!entries.length) {
           container.textContent = "No photographs to arrange.";
           return;
         }
-        var offset = state.colorComposition;
-        groups.forEach(function (group, groupIndex) {
-          var items = group.items.slice();
-          if (items.length > 1) {
-            var shift = (offset * (groupIndex + 2)) % items.length;
-            items = items.slice(shift).concat(items.slice(0, shift));
-            if ((offset + groupIndex) % 2) items.reverse();
-          }
-          var section = document.createElement("section");
-          section.className = "color-cluster";
-          var heading = document.createElement("div");
-          heading.className = "color-cluster-heading";
-          var left = document.createElement("div");
-          left.className = "color-cluster-name";
-          var swatch = document.createElement("span");
-          swatch.className = "color-swatch";
-          swatch.style.backgroundColor = "rgb(" + Math.round(group.color.r) + "," + Math.round(group.color.g) + "," + Math.round(group.color.b) + ")";
-          var name = document.createElement("h3");
-          name.textContent = group.label;
-          left.appendChild(swatch); left.appendChild(name);
-          var count = document.createElement("span");
-          count.className = "color-cluster-count";
-          count.textContent = String(items.length).padStart(2, "0") + " PHOTOGRAPHS";
-          heading.appendChild(left); heading.appendChild(count);
-          var grid = document.createElement("div");
-          grid.className = "color-mosaic";
-          items.forEach(function (entry, index) {
-            var work = entry.work;
-            var tile = document.createElement("button");
-            tile.type = "button";
-            tile.className = "color-tile tile-shape-" + ((index + offset + groupIndex) % 5);
-            tile.setAttribute("aria-label", "Open photograph " + work._plate);
-            var frame = document.createElement("div");
-            frame.className = "color-tile-frame";
-            frame.style.aspectRatio = getAspectRatio(work);
-            var img = document.createElement("img");
-            img.src = safeUrl(work.file);
-            img.alt = work.title || "Photograph " + work._plate;
-            img.loading = "lazy";
-            img.decoding = "async";
-            img.addEventListener("load", function () {
-              if (img.naturalWidth && img.naturalHeight) frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
-            }, { once: true });
-            frame.appendChild(img);
-            tile.appendChild(frame);
-            tile.addEventListener("click", function () {
-              var indexInFilter = state.filtered.indexOf(work);
-              openLightbox(Math.max(0, indexInFilter));
-            });
-            grid.appendChild(tile);
+        entries.sort(function(a,b) { return a.hue - b.hue; });
+        if (state.colorComposition % 2) entries.reverse();
+        var gradient = document.createElement("div");
+        gradient.className = "chromatic-gradient";
+        gradient.setAttribute("aria-hidden", "true");
+        var grid = document.createElement("div");
+        grid.className = "color-mosaic gradient-mosaic";
+        entries.forEach(function(entry, index) {
+          var work = entry.work;
+          var tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = "color-tile tile-shape-" + (index % 8);
+          tile.setAttribute("aria-label", "Open photograph " + work._plate);
+          var frame = document.createElement("div");
+          frame.className = "color-tile-frame";
+          frame.style.aspectRatio = getAspectRatio(work);
+          var img = document.createElement("img");
+          img.src = safeUrl(work.file);
+          img.alt = work.title || "Photograph " + work._plate;
+          img.loading = index < 6 ? "eager" : "lazy";
+          img.decoding = "async";
+          img.addEventListener("load", function() {
+            if (img.naturalWidth && img.naturalHeight) frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+          }, { once: true });
+          frame.appendChild(img);
+          tile.appendChild(frame);
+          tile.addEventListener("click", function() {
+            var indexInFilter = state.filtered.indexOf(work);
+            openLightbox(Math.max(0, indexInFilter));
           });
-          section.appendChild(heading); section.appendChild(grid);
-          container.appendChild(section);
+          grid.appendChild(tile);
         });
+        container.appendChild(gradient);
+        container.appendChild(grid);
       }
 
       function renderContactView() {
