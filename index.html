@@ -1,90 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f6f2">
-  <meta name="description" content="Photographs by Tanibergen.">
-  <title>Tanibergen - Photography</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="performance.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TANIBERGEN - The Index</title>
+  <meta name="description" content="TANIBERGEN - Independent photography portfolio and visual archive.">
+  <meta name="theme-color" content="#ECE9E2">
+    <link rel="stylesheet" href="index-main.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="site-name" href="./">TANIBERGEN</a>
-    <nav class="site-nav" aria-label="Main navigation">
-      <a href="#work">Work</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
+  <a class="skip-link" href="#main-stage">Skip to photographs</a>
+
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <button type="button" class="brand-btn" id="brand-reset" aria-label="TANIBERGEN - Reset to all works">
+        <span class="brand-name">TANIBERGEN</span>
+      </button>
+
+      <nav class="mode-nav" aria-label="View mode">
+        <button type="button" class="mode-btn is-active" data-view="sequence" aria-pressed="true">Sequence</button>
+        <button type="button" class="mode-btn" data-view="contact" aria-pressed="false">Contact</button>
+        <button type="button" class="mode-btn" id="info-toggle" aria-expanded="false" aria-controls="info-drawer">Info</button>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section class="introduction" id="home" data-section="Home">
-      <div class="intro-image">
-        <button class="image-button hero-trigger" type="button" aria-label="Open photograph">
-          <img src="4/1.webp" alt="" fetchpriority="high" decoding="async">
-        </button>
-      </div>
-      <div class="intro-copy">
-        <span class="eyebrow">PHOTOGRAPHER</span>
-        <p class="intro-statement">I'm a photographer, occasionally working with video. Still figuring out my direction after leaving office life.</p>
-        <p class="intro-location">Based in Bangkok, Thailand.<br>Open to collaborations.</p>
-        <a class="text-link" href="#work">Selected work <span>↘</span></a>
-      </div>
-    </section>
+  <div class="mobile-series-bar" aria-label="Series filter">
+    <div class="mobile-series-scroll" id="mobile-series-list"></div>
+    <div class="mobile-counter" id="mobile-counter" aria-live="polite">01 / 01</div>
+  </div>
 
-    <section class="work-section" id="work" data-section="Work">
-      <div class="section-heading">
-        <h2>Work</h2>
-      </div>
-      <div class="work-grid" id="workGrid" aria-label="Photographs"></div>
-    </section>
+  <div class="workspace">
+    <aside class="rail" aria-label="Archive navigation">
+      <div class="rail-sticky">
+        <div class="rail-block">
+          <div class="rail-label">Plate</div>
+          <div class="rail-counter" id="rail-counter" aria-live="polite">01 / 01</div>
+          <div class="rail-progress" aria-hidden="true">
+            <div class="rail-progress-fill" id="rail-progress-fill"></div>
+          </div>
+        </div>
 
-    <section class="about-section" id="about" data-section="About">
-      <div class="about-image">
-        <button class="image-button about-trigger" type="button" aria-label="Open portrait">
-          <img src="1/1.webp" alt="" loading="lazy" decoding="async">
-        </button>
-      </div>
-      <div class="about-copy">
-        <span class="eyebrow">ABOUT</span>
-        <h2>Tanibergen</h2>
-        <p>I'm a photographer, occasionally working with video. I'm still finding my way after leaving office life.</p>
-        <p>Based in Bangkok, Thailand. Available for collaborations.</p>
-      </div>
-    </section>
-  </main>
+        <div class="rail-block">
+          <div class="rail-label">Series</div>
+          <ul class="series-list" id="desktop-series-list"></ul>
+        </div>
 
-  <footer class="site-footer" id="contact" data-section="Contact">
-    <a class="site-name" href="./">TANIBERGEN</a>
-    <span>Bangkok, Thailand</span>
-    <a href="https://instagram.com/isaac_4u" target="_blank" rel="noreferrer">Instagram ↗</a>
-  </footer>
+        <div class="rail-block rail-footer">
+          <a class="rail-link" id="rail-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a>
+          <span class="rail-domain" id="rail-domain">tanibergen.online</span>
+        </div>
+      </div>
+    </aside>
 
-  <button class="note-launcher" id="noteLauncher" type="button">SITE NOTE <span>+</span></button>
-  <section class="note-panel" id="notePanel" aria-label="Leave a site note" hidden>
-    <div class="note-panel-head">
-      <span>LEAVE A NOTE</span>
-      <button id="noteClose" type="button" aria-label="Close note panel">×</button>
+    <main id="main-stage" class="stage" tabindex="-1">
+      <section id="sequence-view" class="sequence-view" aria-label="Photograph sequence"></section>
+      <section id="contact-view" class="contact-view" aria-label="Contact sheet" hidden></section>
+    </main>
+  </div>
+
+  <aside id="info-drawer" class="info-drawer" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+    <div class="info-backdrop" data-close-info></div>
+    <div class="info-panel">
+      <div class="info-top">
+        <span class="mono-label">Index / Colophon</span>
+        <button type="button" class="text-btn" id="info-close" aria-label="Close info panel">Close [Esc]</button>
+      </div>
+      <div class="info-body">
+        <h1 class="info-title" id="info-title">TANIBERGEN</h1>
+        <p class="info-statement" id="info-statement"></p>
+        <dl class="info-meta">
+          <div class="info-row">
+            <dt>Instagram</dt>
+            <dd><a id="info-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@isaac_4u</a></dd>
+          </div>
+<div class="info-row">
+            <dt>Domain</dt>
+            <dd id="info-domain">tanibergen.online</dd>
+          </div>
+          <div class="info-row">
+            <dt>Format</dt>
+            <dd id="info-note"></dd>
+          </div>
+        </dl>
+      </div>
     </div>
-    <p class="note-instructions">Start with <code>/upd#1</code>, then describe what needs fixing.</p>
-    <textarea id="noteInput" rows="5" spellcheck="true" placeholder="/upd#1 Fix the text in the About section."></textarea>
-    <div class="note-panel-foot">
-      <span id="noteStatus" role="status">Draft saved on this device.</span>
-      <button id="noteSend" type="button">SEND TO GITHUB ↗</button>
+  </aside>
+
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Fullscreen photograph viewer" hidden>
+    <div class="lb-topbar">
+      <div class="lb-counter" id="lb-counter">01 / 01</div>
+      <button type="button" class="lb-close" id="lb-close" aria-label="Close fullscreen viewer">Close [Esc]</button>
+    </div>
+
+    <div class="lb-stage" id="lb-stage">
+      <button type="button" class="lb-nav lb-prev" id="lb-prev" aria-label="Previous photograph">
+        <span aria-hidden="true">&larr;</span>
+      </button>
+
+      <figure class="lb-figure" id="lb-figure">
+        <div class="lb-media-wrap" id="lb-media-wrap"></div>
+        <figcaption class="lb-caption" id="lb-caption"></figcaption>
+      </figure>
+
+      <button type="button" class="lb-nav lb-next" id="lb-next" aria-label="Next photograph">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+
+    <div class="lb-mobile-controls">
+      <button type="button" class="lb-m-btn" id="lb-m-prev" aria-label="Previous photograph">&larr; Prev</button>
+      <button type="button" class="lb-m-btn" id="lb-m-next" aria-label="Next photograph">Next &rarr;</button>
+    </div>
+  </div>
+
+    <section id="owner-report" class="owner-report" role="dialog" aria-modal="true" aria-labelledby="owner-report-title" hidden>
+    <div class="owner-report-backdrop"></div>
+    <div class="owner-report-panel">
+      <div class="owner-report-head">
+        <span class="mono-label" id="owner-report-title">Private / Site report</span>
+        <button type="button" class="text-btn" id="owner-report-close">Close [Esc]</button>
+      </div>
+      <p>Write a note for the next site update.</p>
+      <textarea id="owner-report-text" rows="6" placeholder="Describe the change or issue..."></textarea>
+      <button type="button" class="owner-report-send" id="owner-report-send">OPEN PRIVATE REPORT ↗</button>
     </div>
   </section>
 
-  <div class="viewer" id="viewer" aria-hidden="true">
-    <button class="viewer-close" id="viewerClose" type="button" aria-label="Close">CLOSE</button>
-    <button class="viewer-prev" id="viewerPrev" type="button" aria-label="Previous photograph">←</button>
-    <img id="viewerImage" alt="">
-    <button class="viewer-next" id="viewerNext" type="button" aria-label="Next photograph">→</button>
-    <span class="viewer-count" id="viewerCount"></span>
-  </div>
-
-  <script src="works.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="index-main-works.js" defer></script>
+  <script src="index-main.js" defer></script>
 </body>
 </html>
