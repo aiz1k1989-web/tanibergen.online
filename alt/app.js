@@ -32,6 +32,12 @@
         lastFocused: null
       };
 
+      var rotationTimer = null;
+      var rotationDuration = 8200;
+      var imageCache = Object.create(null);
+      var ownerBuffer = "";
+      var ownerPhrase = "tanibergen";
+
       var dom = {
         brandReset: document.getElementById("brand-reset"),
         modeButtons: document.querySelectorAll(".mode-btn[data-view]"),
@@ -256,8 +262,87 @@
         return parts.join(" · ");
       }
 
+      function stopRotation() {
+        if (rotationTimer) {
+          window.clearTimeout(rotationTimer);
+          rotationTimer = null;
+        }
+      }
+
+      function preloadFeatured(index) {
+        var work = state.filtered[index];
+        if (!work || imageCache[index]) return;
+        var img = new Image();
+        img.decoding = "async";
+        img.fetchPriority = "low";
+        img.src = safeUrl(work.file);
+        imageCache[index] = img;
+      }
+
+      function randomNextIndex(current) {
+        var total = state.filtered.length;
+        if (total < 2) return current;
+        var next = current;
+        while (next === current) next = Math.floor(Math.random() * total);
+        return next;
+      }
+
+      function scheduleRotation() {
+        stopRotation();
+        if (document.hidden || state.view !== "sequence" || state.lightboxOpen || state.infoOpen || state.filtered.length < 2) return;
+        var progress = dom.sequenceView.querySelector(".featured-progress-fill");
+        if (progress) {
+          progress.style.animation = "none";
+          void progress.offsetWidth;
+          progress.style.animation = "featured-progress " + rotationDuration + "ms linear forwards";
+        }
+        rotationTimer = window.setTimeout(advanceFeatured, rotationDuration);
+      }
+
+      function advanceFeatured() {
+        if (state.view !== "sequence" || state.lightboxOpen || state.infoOpen || document.hidden) return;
+        var nextIndex = randomNextIndex(state.activeIndex);
+        var work = state.filtered[nextIndex];
+        var shell = dom.sequenceView.querySelector(".featured-shell");
+        var media = dom.sequenceView.querySelector(".featured-media");
+        var oldImage = media && media.querySelector(".featured-image.is-current");
+        if (!work || !media || !oldImage) return;
+
+        var nextImage = new Image();
+        nextImage.className = "featured-image is-entering";
+        nextImage.alt = work.title || "Photograph " + work._plate;
+        nextImage.decoding = "async";
+        nextImage.src = safeUrl(work.file);
+        nextImage.addEventListener("load", function () {
+          if (state.view !== "sequence" || !media.isConnected) return;
+          if (nextImage.naturalWidth && nextImage.naturalHeight) {
+            shell.style.aspectRatio = nextImage.naturalWidth + " / " + nextImage.naturalHeight;
+          }
+          media.appendChild(nextImage);
+          requestAnimationFrame(function () {
+            nextImage.classList.add("is-current");
+            nextImage.classList.remove("is-entering");
+            oldImage.classList.add("is-leaving");
+          });
+          window.setTimeout(function () {
+            if (oldImage.parentNode) oldImage.parentNode.removeChild(oldImage);
+            nextImage.classList.remove("is-current");
+            nextImage.classList.add("is-current");
+          }, 1150);
+          state.activeIndex = nextIndex;
+          updateCounter(nextIndex);
+          var caption = dom.sequenceView.querySelector(".featured-caption");
+          if (caption) caption.textContent = "PL. " + work._plate + " / " + (work.series || "Archive");
+          preloadFeatured(randomNextIndex(nextIndex));
+          scheduleRotation();
+        }, { once: true });
+        nextImage.addEventListener("error", function () {
+          scheduleRotation();
+        }, { once: true });
+      }
+
       function renderSequenceView() {
-        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        stopRotation();
         dom.sequenceView.innerHTML = "";
 
         if (!state.filtered.length) {
@@ -268,47 +353,68 @@
           return;
         }
 
-        state.filtered.forEach(function (work, idx) {
-          var article = document.createElement("article");
-          article.className = "plate-item scale-" + (work.scale || "medium") + " align-" + (work.align || "left");
-          article.dataset.index = String(idx);
+        var index = Math.min(state.activeIndex, state.filtered.length - 1);
+        var work = state.filtered[index];
+        var figure = document.createElement("article");
+        figure.className = "featured-plate";
 
-          var trigger = document.createElement("button");
-          trigger.type = "button";
-          trigger.className = "plate-trigger";
-          trigger.setAttribute("aria-label", "Open photograph " + work._plate + (work.title ? ": " + work.title : ""));
-          trigger.addEventListener("click", function () { openLightbox(idx); });
-          trigger.appendChild(buildMediaFrame(work, idx, idx < 2, false));
+        var trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "featured-trigger";
+        trigger.setAttribute("aria-label", "Open photograph " + work._plate);
+        trigger.addEventListener("click", function () { openLightbox(state.activeIndex); });
 
-          var meta = document.createElement("footer");
-          meta.className = "plate-meta";
+        var shell = document.createElement("div");
+        shell.className = "featured-shell";
+        shell.style.aspectRatio = getAspectRatio(work);
+        var media = document.createElement("div");
+        media.className = "featured-media";
+        var img = new Image();
+        img.className = "featured-image is-current";
+        img.alt = work.title || "Photograph " + work._plate;
+        img.decoding = "async";
+        img.fetchPriority = "high";
+        img.src = safeUrl(work.file);
+        img.addEventListener("load", function () {
+          if (img.naturalWidth && img.naturalHeight) shell.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+          shell.classList.add("is-ready");
+        }, { once: true });
+        media.appendChild(img);
+        shell.appendChild(media);
+        trigger.appendChild(shell);
 
-          var metaLeft = document.createElement("div");
-          metaLeft.className = "plate-meta-left";
-          var code = document.createElement("span");
-          code.className = "plate-code";
-          code.textContent = "PL. " + work._plate;
-          var title = document.createElement("span");
-          title.className = "plate-title";
-          title.textContent = work.title || "";
-          metaLeft.appendChild(code);
-          metaLeft.appendChild(title);
+        var meta = document.createElement("div");
+        meta.className = "featured-meta";
+        var caption = document.createElement("span");
+        caption.className = "featured-caption";
+        caption.textContent = "PL. " + work._plate + " / " + (work.series || "Archive");
+        var count = document.createElement("span");
+        count.className = "featured-total";
+        count.textContent = padNumber(index + 1) + " / " + padNumber(state.filtered.length);
+        meta.appendChild(caption);
+        meta.appendChild(count);
 
-          var metaRight = document.createElement("span");
-          metaRight.className = "plate-sub";
-          metaRight.textContent = formatCaptionMeta(work);
+        var progress = document.createElement("div");
+        progress.className = "featured-progress";
+        progress.setAttribute("aria-hidden", "true");
+        var fill = document.createElement("span");
+        fill.className = "featured-progress-fill";
+        progress.appendChild(fill);
 
-          meta.appendChild(metaLeft);
-          meta.appendChild(metaRight);
-          article.appendChild(trigger);
-          article.appendChild(meta);
-          dom.sequenceView.appendChild(article);
-        });
+        figure.appendChild(trigger);
+        figure.appendChild(meta);
+        figure.appendChild(progress);
+        dom.sequenceView.appendChild(figure);
 
-        setupPlateObserver();
+        state.activeIndex = index;
+        updateCounter(index);
+        preloadFeatured(randomNextIndex(index));
+        preloadFeatured(randomNextIndex(randomNextIndex(index)));
+        scheduleRotation();
       }
 
       function renderContactView() {
+        stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
         dom.contactView.innerHTML = "";
 
@@ -386,6 +492,7 @@
           btn.classList.toggle("is-active", active);
           btn.setAttribute("aria-pressed", String(active));
         });
+        stopRotation();
         renderActiveView();
         window.scrollTo({ top: 0, behavior: "auto" });
       }
@@ -418,6 +525,7 @@
         dom.infoToggle.setAttribute("aria-expanded", "false");
         document.body.classList.remove("is-locked");
         if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
+        scheduleRotation();
       }
 
       function openLightbox(index) {
@@ -440,6 +548,7 @@
         dom.lbMediaWrap.innerHTML = "";
         document.body.classList.remove("is-locked");
         if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
+        scheduleRotation();
       }
 
       function stepLightbox(delta) {
@@ -502,6 +611,22 @@
         preloadNeighbor(state.lightboxIndex - 1);
       }
 
+      function openOwnerReport() {
+        var panel = document.getElementById("owner-report");
+        if (panel) {
+          panel.hidden = false;
+          document.body.classList.add("is-locked");
+          var field = document.getElementById("owner-report-text");
+          if (field) field.focus();
+        }
+      }
+
+      function closeOwnerReport() {
+        var panel = document.getElementById("owner-report");
+        if (panel) panel.hidden = true;
+        if (!state.lightboxOpen && !state.infoOpen) document.body.classList.remove("is-locked");
+      }
+
       function bindEvents() {
         dom.brandReset.addEventListener("click", function () {
           if (state.view !== "sequence") {
@@ -526,6 +651,34 @@
         dom.infoClose.addEventListener("click", closeInfo);
         dom.infoDrawer.querySelectorAll("[data-close-info]").forEach(function (el) {
           el.addEventListener("click", closeInfo);
+        });
+
+        var reportClose = document.getElementById("owner-report-close");
+        var reportSend = document.getElementById("owner-report-send");
+        if (reportClose) reportClose.addEventListener("click", closeOwnerReport);
+        if (reportSend) reportSend.addEventListener("click", function () {
+          var field = document.getElementById("owner-report-text");
+          var note = field ? field.value.trim() : "";
+          if (!note) return;
+          var title = "Website report - " + new Date().toISOString().slice(0, 10);
+          var url = "https://github.com/aiz1k1989-web/tanibergen.online/issues/new?title=" +
+            encodeURIComponent(title) + "&body=" + encodeURIComponent(note);
+          window.open(url, "_blank", "noopener");
+          closeOwnerReport();
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+          ownerBuffer = (ownerBuffer + String(e.key || "").toLowerCase()).slice(-ownerPhrase.length);
+          if (ownerBuffer === ownerPhrase) {
+            ownerBuffer = "";
+            openOwnerReport();
+          }
+        });
+
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) stopRotation();
+          else scheduleRotation();
         });
 
         dom.lbClose.addEventListener("click", closeLightbox);
