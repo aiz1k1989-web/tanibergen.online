@@ -18,3 +18,21 @@ Use JPG or WebP for web delivery. The first two images load eagerly; the rest ar
 ## Publish
 In repository Settings → Pages, select Deploy from a branch, branch `main`, folder `/ (root)`.
 The custom domain is set in `CNAME` to `tanibergen.online`. Configure DNS records at your domain registrar to point to GitHub Pages, then enable HTTPS in Pages settings.
+
+
+## Saul Leiter-inspired alternative
+
+An independent editorial version is available at `/saul-leiter-alt/`.
+It uses the photographs already stored in the numbered root folders. The main homepage is not replaced.
+
+A separate branch named `saul-leiter-alt` contains this alternative for isolated development.
+
+## Website notes
+
+On the alternative version, use the `SITE NOTE` control and enter a command such as:
+
+`/upd#1 The text in the About section needs correcting.`
+
+The draft is retained in the current browser. The send action opens a prefilled GitHub Issue; press **Submit new issue** on GitHub to store the report in the repository. This is deliberate: the static site does not contain a GitHub access token.
+
+Reports can be collected from GitHub Issues by searching for `[SITE NOTE`.
