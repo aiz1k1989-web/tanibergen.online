@@ -383,7 +383,8 @@
           card.type = "button";
           card.className = "all-photo-card card-shape-" + (index % 8);
           card.setAttribute("aria-label", "Open photograph " + work._plate);
-          var frame = buildMediaFrame(work, index, index < 4, true);
+          card.dataset.index = String(index);
+          var frame = buildMediaFrame(work, index, index < 2, true);
           frame.classList.add("all-photo-frame");
           card.appendChild(frame);
           card.addEventListener("click", function() { openLightbox(state.filtered.indexOf(work)); });
@@ -391,6 +392,7 @@
         });
         dom.sequenceView.appendChild(grid);
         state.activeIndex = 0;
+        setupPlateObserver();
         updateCounter(0);
       }
 
@@ -683,7 +685,7 @@
 
       function setupPlateObserver() {
         if (!("IntersectionObserver" in window)) return;
-        var items = dom.sequenceView.querySelectorAll(".plate-item");
+        var items = dom.sequenceView.querySelectorAll(".all-photo-card");
         if (!items.length) return;
 
         plateObserver = new IntersectionObserver(function (entries) {
@@ -767,7 +769,7 @@
         if (!state.filtered.length) return;
         state.lastFocused = document.activeElement;
         state.lightboxOpen = true;
-        state.lightboxIndex = index;
+        state.lightboxIndex = Math.max(0, Math.min(Number(index) || 0, state.filtered.length - 1));
         state.hudHidden = false;
         dom.lightbox.classList.remove("hud-hidden");
         dom.lightbox.hidden = false;
