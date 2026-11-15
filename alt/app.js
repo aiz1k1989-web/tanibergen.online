@@ -290,7 +290,7 @@
           code.textContent = "PL. " + work._plate;
           var title = document.createElement("span");
           title.className = "plate-title";
-          title.textContent = work.title || "Untitled";
+          title.textContent = work.title || "";
           metaLeft.appendChild(code);
           metaLeft.appendChild(title);
 
@@ -496,7 +496,7 @@
         dom.lbMediaWrap.appendChild(frame);
 
         var sub = formatCaptionMeta(work);
-        dom.lbCaption.textContent = "PL. " + work._plate + " - " + (work.title || "Untitled") + (sub ? " · " + sub : "");
+        dom.lbCaption.textContent = "PL. " + work._plate + " - " + (work.title || "Photograph") + (sub ? " · " + sub : "");
 
         preloadNeighbor(state.lightboxIndex + 1);
         preloadNeighbor(state.lightboxIndex - 1);
