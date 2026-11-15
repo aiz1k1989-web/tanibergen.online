@@ -29,6 +29,10 @@
         lightboxIndex: 0,
         infoOpen: false,
         hudHidden: false,
+        colorGroups: [],
+        colorBusy: false,
+        colorGeneration: 0,
+        colorComposition: 0,
         lastFocused: null
       };
 
@@ -51,6 +55,7 @@
         railProgress: document.getElementById("rail-progress-fill"),
         sequenceView: document.getElementById("sequence-view"),
         contactView: document.getElementById("contact-view"),
+        colorView: document.getElementById("color-view"),
         lightbox: document.getElementById("lightbox"),
         lbStage: document.getElementById("lb-stage"),
         lbMediaWrap: document.getElementById("lb-media-wrap"),
@@ -185,6 +190,8 @@
       }
 
       function selectSeries(seriesName) {
+        state.colorGeneration++;
+        state.colorGroups = [];
         state.series = seriesName;
         state.filtered = seriesName === "All"
           ? works.slice()
@@ -413,6 +420,270 @@
         preloadFeatured(randomNextIndex(randomNextIndex(index)));
       }
 
+
+      function colorDistance(a, b) {
+        var rMean = (a.r + b.r) / 2;
+        var dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
+        return Math.sqrt((2 + rMean / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rMean) / 256) * db * db);
+      }
+
+      function extractDominantColor(image) {
+        var canvas = document.createElement("canvas");
+        canvas.width = 28;
+        canvas.height = 28;
+        var ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx) throw new Error("Canvas unavailable");
+        ctx.drawImage(image, 0, 0, 28, 28);
+        var pixels = ctx.getImageData(0, 0, 28, 28).data;
+        var bins = Object.create(null);
+        for (var i = 0; i < pixels.length; i += 16) {
+          var alpha = pixels[i + 3];
+          if (alpha < 160) continue;
+          var r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
+          var key = (r >> 5) + "-" + (g >> 5) + "-" + (b >> 5);
+          if (!bins[key]) bins[key] = { count: 0, r: 0, g: 0, b: 0 };
+          bins[key].count++;
+          bins[key].r += r; bins[key].g += g; bins[key].b += b;
+        }
+        var best = Object.keys(bins).reduce(function (a, key) {
+          return !a || bins[key].count > bins[a].count ? key : a;
+        }, null);
+        if (!best) return { r: 128, g: 128, b: 128 };
+        var bucket = bins[best], n = bucket.count;
+        return { r: Math.round(bucket.r / n), g: Math.round(bucket.g / n), b: Math.round(bucket.b / n) };
+      }
+
+      function colorLabel(color) {
+        var max = Math.max(color.r, color.g, color.b), min = Math.min(color.r, color.g, color.b);
+        var delta = max - min, hue = 0;
+        if (delta) {
+          if (max === color.r) hue = 60 * (((color.g - color.b) / delta) % 6);
+          else if (max === color.g) hue = 60 * ((color.b - color.r) / delta + 2);
+          else hue = 60 * ((color.r - color.g) / delta + 4);
+        }
+        if (delta < 24) return max < 75 ? "Deep neutrals" : max > 190 ? "Soft neutrals" : "Neutral tones";
+        if (hue < 18 || hue >= 345) return "Reds & rust";
+        if (hue < 45) return "Warm earth";
+        if (hue < 70) return "Yellow tones";
+        if (hue < 165) return "Greens";
+        if (hue < 205) return "Teal tones";
+        if (hue < 255) return "Blues";
+        if (hue < 290) return "Violet tones";
+        return "Pink tones";
+      }
+
+      function getCachedColor(work) {
+        try {
+          var cache = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
+          return cache[work.file] || null;
+        } catch (e) { return null; }
+      }
+
+      function saveColorCache(cache) {
+        try { localStorage.setItem("tanibergen-color-v1", JSON.stringify(cache)); } catch (e) {}
+      }
+
+      function analyzeOne(work) {
+        return new Promise(function (resolve) {
+          var cached = getCachedColor(work);
+          if (cached) { resolve(cached); return; }
+          var img = new Image();
+          img.decoding = "async";
+          img.onload = function () {
+            try { resolve(extractDominantColor(img)); }
+            catch (e) { resolve({ r: 128, g: 128, b: 128 }); }
+          };
+          img.onerror = function () { resolve({ r: 128, g: 128, b: 128 }); };
+          img.src = safeUrl(work.file);
+        });
+      }
+
+      async function analyzeColorArchive(generation) {
+        state.colorBusy = true;
+        var cache = {};
+        var results = [];
+        var total = state.filtered.length;
+        var completed = 0;
+        var progress = dom.colorView.querySelector(".color-progress-label");
+        var fill = dom.colorView.querySelector(".color-progress-fill");
+        var cursor = 0;
+        var workers = Array.from({ length: Math.min(3, total) }, async function () {
+          while (cursor < total) {
+            var index = cursor++;
+            var work = state.filtered[index];
+            var color = await analyzeOne(work);
+            if (generation !== state.colorGeneration) return;
+            results[index] = { work: work, color: color };
+            cache[work.file] = color;
+            completed++;
+            if (progress) progress.textContent = "READING COLOUR / " + completed + " OF " + total;
+            if (fill) fill.style.width = (completed / Math.max(1, total) * 100) + "%";
+          }
+        });
+        await Promise.all(workers);
+        if (generation !== state.colorGeneration) return;
+        saveColorCache(cache);
+        state.colorBusy = false;
+        state.colorGroups = clusterByColor(results.filter(Boolean));
+        renderColorCollage();
+      }
+
+      function clusterByColor(items) {
+        if (!items.length) return [];
+        var k = Math.min(6, Math.max(1, Math.round(Math.sqrt(items.length / 2))));
+        var centers = [items[0].color];
+        while (centers.length < k) {
+          var candidate = items.reduce(function (best, item) {
+            var nearest = Math.min.apply(null, centers.map(function (center) { return colorDistance(item.color, center); }));
+            return !best || nearest > best.distance ? { item: item, distance: nearest } : best;
+          }, null);
+          centers.push(candidate.item.color);
+        }
+        for (var round = 0; round < 7; round++) {
+          var buckets = centers.map(function () { return []; });
+          items.forEach(function (item) {
+            var nearest = 0, distance = Infinity;
+            centers.forEach(function (center, index) {
+              var d = colorDistance(item.color, center);
+              if (d < distance) { distance = d; nearest = index; }
+            });
+            buckets[nearest].push(item);
+          });
+          centers = buckets.map(function (bucket, index) {
+            if (!bucket.length) return centers[index];
+            var sum = bucket.reduce(function (s, item) {
+              s.r += item.color.r; s.g += item.color.g; s.b += item.color.b; return s;
+            }, { r: 0, g: 0, b: 0 });
+            return { r: sum.r / bucket.length, g: sum.g / bucket.length, b: sum.b / bucket.length };
+          });
+        }
+        var groups = centers.map(function (center, index) {
+          return {
+            color: center,
+            label: colorLabel(center),
+            items: items.filter(function (item) {
+              var nearest = centers.reduce(function (best, c, i) {
+                var d = colorDistance(item.color, c);
+                return d < best.distance ? { index: i, distance: d } : best;
+              }, { index: 0, distance: Infinity });
+              return nearest.index === index;
+            })
+          };
+        }).filter(function (group) { return group.items.length; });
+        return groups.sort(function (a, b) {
+          return b.items.length - a.items.length;
+        });
+      }
+
+      function renderColorView() {
+        stopRotation();
+        state.colorGeneration++;
+        state.colorBusy = true;
+        dom.colorView.innerHTML = "";
+        var head = document.createElement("div");
+        head.className = "color-heading";
+        var copy = document.createElement("div");
+        var eyebrow = document.createElement("div");
+        eyebrow.className = "color-eyebrow";
+        eyebrow.textContent = "ARCHIVE / CHROMATIC INDEX";
+        var title = document.createElement("h2");
+        title.className = "color-title";
+        title.textContent = "Colour studies";
+        var description = document.createElement("p");
+        description.className = "color-description";
+        description.textContent = "Photographs arranged by their dominant tones.";
+        copy.appendChild(eyebrow); copy.appendChild(title); copy.appendChild(description);
+        var recompose = document.createElement("button");
+        recompose.type = "button";
+        recompose.className = "recompose-btn";
+        recompose.textContent = "RECOMPOSE ↗";
+        recompose.addEventListener("click", function () {
+          state.colorComposition++;
+          renderColorCollage();
+        });
+        head.appendChild(copy); head.appendChild(recompose);
+        var progress = document.createElement("div");
+        progress.className = "color-progress";
+        var fill = document.createElement("span");
+        fill.className = "color-progress-fill";
+        progress.appendChild(fill);
+        var label = document.createElement("div");
+        label.className = "color-progress-label";
+        label.textContent = "READING COLOUR / 0 OF " + state.filtered.length;
+        var content = document.createElement("div");
+        content.className = "color-collage";
+        dom.colorView.appendChild(head);
+        dom.colorView.appendChild(progress);
+        dom.colorView.appendChild(label);
+        dom.colorView.appendChild(content);
+        analyzeColorArchive(state.colorGeneration);
+      }
+
+      function renderColorCollage() {
+        var container = dom.colorView.querySelector(".color-collage");
+        if (!container) return;
+        container.innerHTML = "";
+        var groups = state.colorGroups.slice();
+        if (!groups.length) {
+          container.textContent = "No photographs to arrange.";
+          return;
+        }
+        var offset = state.colorComposition;
+        groups.forEach(function (group, groupIndex) {
+          var items = group.items.slice();
+          if (items.length > 1) {
+            var shift = (offset * (groupIndex + 2)) % items.length;
+            items = items.slice(shift).concat(items.slice(0, shift));
+            if ((offset + groupIndex) % 2) items.reverse();
+          }
+          var section = document.createElement("section");
+          section.className = "color-cluster";
+          var heading = document.createElement("div");
+          heading.className = "color-cluster-heading";
+          var left = document.createElement("div");
+          left.className = "color-cluster-name";
+          var swatch = document.createElement("span");
+          swatch.className = "color-swatch";
+          swatch.style.backgroundColor = "rgb(" + Math.round(group.color.r) + "," + Math.round(group.color.g) + "," + Math.round(group.color.b) + ")";
+          var name = document.createElement("h3");
+          name.textContent = group.label;
+          left.appendChild(swatch); left.appendChild(name);
+          var count = document.createElement("span");
+          count.className = "color-cluster-count";
+          count.textContent = String(items.length).padStart(2, "0") + " PHOTOGRAPHS";
+          heading.appendChild(left); heading.appendChild(count);
+          var grid = document.createElement("div");
+          grid.className = "color-mosaic";
+          items.forEach(function (entry, index) {
+            var work = entry.work;
+            var tile = document.createElement("button");
+            tile.type = "button";
+            tile.className = "color-tile tile-shape-" + ((index + offset + groupIndex) % 5);
+            tile.setAttribute("aria-label", "Open photograph " + work._plate);
+            var frame = document.createElement("div");
+            frame.className = "color-tile-frame";
+            frame.style.aspectRatio = getAspectRatio(work);
+            var img = document.createElement("img");
+            img.src = safeUrl(work.file);
+            img.alt = work.title || "Photograph " + work._plate;
+            img.loading = "lazy";
+            img.decoding = "async";
+            img.addEventListener("load", function () {
+              if (img.naturalWidth && img.naturalHeight) frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+            }, { once: true });
+            frame.appendChild(img);
+            tile.appendChild(frame);
+            tile.addEventListener("click", function () {
+              var indexInFilter = state.filtered.indexOf(work);
+              openLightbox(Math.max(0, indexInFilter));
+            });
+            grid.appendChild(tile);
+          });
+          section.appendChild(heading); section.appendChild(grid);
+          container.appendChild(section);
+        });
+      }
+
       function renderContactView() {
         stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
@@ -500,12 +771,20 @@
       function renderActiveView() {
         if (state.view === "sequence") {
           dom.contactView.hidden = true;
+          dom.colorView.hidden = true;
           dom.sequenceView.hidden = false;
           renderSequenceView();
-        } else {
+        } else if (state.view === "contact") {
           dom.sequenceView.hidden = true;
           dom.contactView.hidden = false;
+          dom.colorView.hidden = true;
+          dom.colorView.hidden = true;
           renderContactView();
+        } else {
+          dom.sequenceView.hidden = true;
+          dom.contactView.hidden = true;
+          dom.colorView.hidden = false;
+          renderColorView();
         }
       }
 
