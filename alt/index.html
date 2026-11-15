@@ -114,7 +114,20 @@
     </div>
   </div>
 
-    <script src="works.js" defer></script>
+    <section id="owner-report" class="owner-report" role="dialog" aria-modal="true" aria-labelledby="owner-report-title" hidden>
+    <div class="owner-report-backdrop"></div>
+    <div class="owner-report-panel">
+      <div class="owner-report-head">
+        <span class="mono-label" id="owner-report-title">Private / Site report</span>
+        <button type="button" class="text-btn" id="owner-report-close">Close [Esc]</button>
+      </div>
+      <p>Write a note for the next site update.</p>
+      <textarea id="owner-report-text" rows="6" placeholder="Describe the change or issue..."></textarea>
+      <button type="button" class="owner-report-send" id="owner-report-send">OPEN PRIVATE REPORT ↗</button>
+    </div>
+  </section>
+
+  <script src="works.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
