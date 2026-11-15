@@ -2,36 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f7f7f5">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#efeee9">
   <meta name="description" content="Photographs by Tanibergen.">
   <title>TANIBERGEN</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <a class="name" href="./">TANIBERGEN</a>
-    <span class="header-meta">PHOTOGRAPHS <span class="count" id="photoCount"></span></span>
-  </header>
+  <aside class="rail">
+    <a class="wordmark" href="./">TANIBERGEN</a>
+    <a class="rail-work" href="#work">WORK</a>
+    <a class="rail-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noreferrer">INSTAGRAM ↗</a>
+  </aside>
 
-  <main>
-    <section class="gallery" id="gallery" aria-label="Photographs"></section>
+  <main class="main">
+    <section class="opening" aria-label="Featured photograph">
+      <div class="opening-image">
+        <button class="featured-trigger" id="featuredTrigger" type="button" aria-label="Open featured photograph">
+          <img src="4/1.webp" alt="" fetchpriority="high">
+        </button>
+      </div>
+      <div class="opening-index">
+        <span>01</span>
+        <span id="totalTop">125</span>
+      </div>
+    </section>
+
+    <section class="gallery" id="work" aria-label="Photographic work"></section>
+
+    <footer class="footer">
+      <a class="footer-name" href="./">TANIBERGEN</a>
+      <span id="totalBottom">125 PHOTOGRAPHS</span>
+    </footer>
   </main>
 
-  <footer class="footer">
-    <span>TANIBERGEN</span>
-    <span id="footerCount"></span>
-  </footer>
-
   <div class="viewer" id="viewer" aria-hidden="true">
-    <button class="viewer-close" id="closeViewer" type="button" aria-label="Close image">CLOSE</button>
-    <button class="viewer-prev" id="prevImage" type="button" aria-label="Previous image">←</button>
+    <button class="viewer-close" id="viewerClose" type="button" aria-label="Close">CLOSE</button>
+    <button class="viewer-prev" id="viewerPrev" type="button" aria-label="Previous photograph">PREV</button>
     <img id="viewerImage" alt="">
-    <button class="viewer-next" id="nextImage" type="button" aria-label="Next image">→</button>
-    <span class="viewer-index" id="viewerIndex"></span>
+    <button class="viewer-next" id="viewerNext" type="button" aria-label="Next photograph">NEXT</button>
+    <span class="viewer-count" id="viewerCount"></span>
   </div>
 
-  <script src="works.js"></script>
-  <script src="app.js"></script>
+  <script src="works.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
