@@ -758,9 +758,7 @@
 .featured-image.is-entering { opacity: 0; }
 .featured-shell.is-ready { background: transparent; }
 .featured-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 13px 0 10px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .045em; color: var(--muted); }
-.featured-progress { height: 2px; width: 100%; background: var(--rule); overflow: hidden; }
-.featured-progress-fill { display: block; width: 0; height: 100%; background: var(--accent); }
-@keyframes featured-progress { from { width: 0; } to { width: 100%; } }
+to { width: 100%; } }
 
 /* Contact sheet scales cleanly from small series to the full archive */
 .contact-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 34px 18px; }
