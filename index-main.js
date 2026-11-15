@@ -33,6 +33,7 @@
         colorBusy: false,
         colorGeneration: 0,
         colorComposition: 0,
+        records: [],
         lastFocused: null
       };
 
@@ -139,64 +140,77 @@
         }
       }
 
-      function getSeriesSummary() {
-        var counts = { All: works.length };
-        var order = ["All"];
-        works.forEach(function (w) {
-          var name = (w.series || "Archive").trim();
-          if (!Object.prototype.hasOwnProperty.call(counts, name)) {
-            counts[name] = 0;
-            order.push(name);
-          }
-          counts[name] += 1;
-        });
-        return order.map(function (name) {
-          return { name: name, count: counts[name] };
+      function shuffleCopy(items) {
+        var copy = items.slice();
+        for (var i = copy.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = copy[i]; copy[i] = copy[j]; copy[j] = temp;
+        }
+        return copy;
+      }
+
+      function createArchiveRecords() {
+        var terms = [
+          "chromatic residue", "blind exposure", "unverified memory",
+          "light leak report", "negative space", "afterimage trace",
+          "weather in the frame", "misfiled evidence", "quiet interference",
+          "signal from nowhere", "nocturnal index", "false recollection"
+        ];
+        var shuffledTerms = shuffleCopy(terms);
+        return shuffledTerms.slice(0, 6).map(function (term) {
+          var pool = shuffleCopy(works);
+          var amount = Math.min(pool.length, 13 + Math.floor(Math.random() * 18));
+          return {
+            id: String(1000 + Math.floor(Math.random() * 9000)),
+            term: term,
+            items: pool.slice(0, amount)
+          };
         });
       }
 
       function renderSeriesFilters() {
-        var items = getSeriesSummary();
+        if (!state.records.length) state.records = createArchiveRecords();
         dom.desktopSeries.innerHTML = "";
         dom.mobileSeries.innerHTML = "";
-
-        items.forEach(function (item) {
-          var isActive = state.series === item.name;
-
+        state.records.forEach(function (record) {
+          var active = state.series === record.id;
           var li = document.createElement("li");
-          var dBtn = document.createElement("button");
-          dBtn.type = "button";
-          dBtn.className = "series-btn" + (isActive ? " is-active" : "");
-          dBtn.setAttribute("aria-pressed", String(isActive));
-
-          var dName = document.createElement("span");
-          dName.textContent = item.name;
-          var dCount = document.createElement("span");
-          dCount.className = "series-count";
-          dCount.textContent = padNumber(item.count);
-          dBtn.appendChild(dName);
-          dBtn.appendChild(dCount);
-          dBtn.addEventListener("click", function () { selectSeries(item.name); });
-          li.appendChild(dBtn);
+          var button = document.createElement("button");
+          button.type = "button";
+          button.className = "series-btn record-btn" + (active ? " is-active" : "");
+          button.setAttribute("aria-pressed", String(active));
+          var code = document.createElement("span");
+          code.className = "record-code";
+          code.textContent = "REC. " + record.id;
+          var term = document.createElement("span");
+          term.className = "record-term";
+          term.textContent = record.term;
+          button.appendChild(code);
+          button.appendChild(term);
+          button.addEventListener("click", function () { selectSeries(record.id); });
+          li.appendChild(button);
           dom.desktopSeries.appendChild(li);
 
-          var mBtn = document.createElement("button");
-          mBtn.type = "button";
-          mBtn.className = "mobile-series-btn" + (isActive ? " is-active" : "");
-          mBtn.setAttribute("aria-pressed", String(isActive));
-          mBtn.textContent = item.name + " (" + item.count + ")";
-          mBtn.addEventListener("click", function () { selectSeries(item.name); });
-          dom.mobileSeries.appendChild(mBtn);
+          var mobile = document.createElement("button");
+          mobile.type = "button";
+          mobile.className = "mobile-series-btn" + (active ? " is-active" : "");
+          mobile.setAttribute("aria-pressed", String(active));
+          mobile.textContent = record.id + " / " + record.term;
+          mobile.addEventListener("click", function () { selectSeries(record.id); });
+          dom.mobileSeries.appendChild(mobile);
         });
       }
 
-      function selectSeries(seriesName) {
+      function selectSeries(recordId) {
         state.colorGeneration++;
         state.colorGroups = [];
-        state.series = seriesName;
-        state.filtered = seriesName === "All"
-          ? works.slice()
-          : works.filter(function (w) { return (w.series || "Archive").trim() === seriesName; });
+        state.series = recordId;
+        if (recordId === "All") {
+          state.filtered = works.slice();
+        } else {
+          var record = state.records.find(function (item) { return item.id === recordId; });
+          state.filtered = record ? record.items.slice() : works.slice();
+        }
         state.activeIndex = 0;
         renderSeriesFilters();
         renderActiveView();
@@ -422,69 +436,88 @@
       }
 
 
-      function colorDistance(a, b) {
-        var rMean = (a.r + b.r) / 2;
-        var dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
-        return Math.sqrt((2 + rMean / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rMean) / 256) * db * db);
-      }
-
       function extractDominantColor(image) {
         var canvas = document.createElement("canvas");
-        canvas.width = 28;
-        canvas.height = 28;
+        canvas.width = 40;
+        canvas.height = 40;
         var ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) throw new Error("Canvas unavailable");
-        ctx.drawImage(image, 0, 0, 28, 28);
-        var pixels = ctx.getImageData(0, 0, 28, 28).data;
-        var bins = Object.create(null);
-        for (var i = 0; i < pixels.length; i += 16) {
-          var alpha = pixels[i + 3];
-          if (alpha < 160) continue;
+        ctx.drawImage(image, 0, 0, 40, 40);
+        var pixels = ctx.getImageData(0, 0, 40, 40).data;
+        var bins = [
+          { label: "Red", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Orange", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Yellow", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Green", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Cyan", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Blue", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Violet", weight: 0, r: 0, g: 0, b: 0 },
+          { label: "Pink", weight: 0, r: 0, g: 0, b: 0 }
+        ];
+        var total = 0, chromatic = 0, saturationSum = 0;
+        var gray = { r: 0, g: 0, b: 0, n: 0 };
+        for (var i = 0; i < pixels.length; i += 4) {
+          if (pixels[i + 3] < 180) continue;
           var r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
-          var key = (r >> 5) + "-" + (g >> 5) + "-" + (b >> 5);
-          if (!bins[key]) bins[key] = { count: 0, r: 0, g: 0, b: 0 };
-          bins[key].count++;
-          bins[key].r += r; bins[key].g += g; bins[key].b += b;
+          var max = Math.max(r, g, b), min = Math.min(r, g, b);
+          var delta = max - min;
+          var saturation = max === 0 ? 0 : delta / max;
+          total++;
+          saturationSum += saturation;
+          gray.r += r; gray.g += g; gray.b += b; gray.n++;
+          if (saturation < 0.16 || max < 22) continue;
+          chromatic++;
+          var hue = 0;
+          if (delta) {
+            if (max === r) hue = 60 * (((g - b) / delta) % 6);
+            else if (max === g) hue = 60 * ((b - r) / delta + 2);
+            else hue = 60 * ((r - g) / delta + 4);
+          }
+          if (hue < 0) hue += 360;
+          var index = hue < 15 || hue >= 345 ? 0 :
+            hue < 45 ? 1 : hue < 70 ? 2 : hue < 165 ? 3 :
+            hue < 195 ? 4 : hue < 255 ? 5 : hue < 290 ? 6 : 7;
+          var weight = saturation * (0.35 + max / 255);
+          var bin = bins[index];
+          bin.weight += weight;
+          bin.r += r * weight; bin.g += g * weight; bin.b += b * weight;
         }
-        var best = Object.keys(bins).reduce(function (a, key) {
-          return !a || bins[key].count > bins[a].count ? key : a;
-        }, null);
-        if (!best) return { r: 128, g: 128, b: 128 };
-        var bucket = bins[best], n = bucket.count;
-        return { r: Math.round(bucket.r / n), g: Math.round(bucket.g / n), b: Math.round(bucket.b / n) };
-      }
-
-      function colorLabel(color) {
-        var max = Math.max(color.r, color.g, color.b), min = Math.min(color.r, color.g, color.b);
-        var delta = max - min, hue = 0;
-        if (delta) {
-          if (max === color.r) hue = 60 * (((color.g - color.b) / delta) % 6);
-          else if (max === color.g) hue = 60 * ((color.b - color.r) / delta + 2);
-          else hue = 60 * ((color.r - color.g) / delta + 4);
+        var chromaRatio = chromatic / Math.max(1, total);
+        var meanSaturation = saturationSum / Math.max(1, total);
+        if (chromaRatio < 0.13 || meanSaturation < 0.105) {
+          return {
+            category: "Black & white",
+            color: {
+              r: gray.r / Math.max(1, gray.n),
+              g: gray.g / Math.max(1, gray.n),
+              b: gray.b / Math.max(1, gray.n)
+            }
+          };
         }
-        if (delta < 24) return max < 75 ? "Deep neutrals" : max > 190 ? "Soft neutrals" : "Neutral tones";
-        if (hue < 18 || hue >= 345) return "Reds & rust";
-        if (hue < 45) return "Warm earth";
-        if (hue < 70) return "Yellow tones";
-        if (hue < 165) return "Greens";
-        if (hue < 205) return "Teal tones";
-        if (hue < 255) return "Blues";
-        if (hue < 290) return "Violet tones";
-        return "Pink tones";
+        bins.sort(function (a, b) { return b.weight - a.weight; });
+        var dominant = bins[0];
+        var totalWeight = bins.reduce(function (sum, bin) { return sum + bin.weight; }, 0);
+        var share = dominant.weight / Math.max(0.001, totalWeight);
+        var category = share < 0.205 ? "Mixed colour" : dominant.label;
+        var n = Math.max(0.001, dominant.weight);
+        return {
+          category: category,
+          color: { r: dominant.r / n, g: dominant.g / n, b: dominant.b / n }
+        };
       }
 
       function getCachedColor(work) {
         try {
-          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v2") || "{}");
           return colorCacheMemory[work.file] || null;
         } catch (e) { colorCacheMemory = {}; return null; }
       }
 
       function saveColorCache(cache) {
         try {
-          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v1") || "{}");
+          if (!colorCacheMemory) colorCacheMemory = JSON.parse(localStorage.getItem("tanibergen-color-v2") || "{}");
           Object.keys(cache).forEach(function (key) { colorCacheMemory[key] = cache[key]; });
-          localStorage.setItem("tanibergen-color-v1", JSON.stringify(colorCacheMemory));
+          localStorage.setItem("tanibergen-color-v2", JSON.stringify(colorCacheMemory));
         } catch (e) {}
       }
 
@@ -535,49 +568,22 @@
       }
 
       function clusterByColor(items) {
-        if (!items.length) return [];
-        var k = Math.min(6, Math.max(1, Math.round(Math.sqrt(items.length / 2))));
-        var centers = [items[0].color];
-        while (centers.length < k) {
-          var candidate = items.reduce(function (best, item) {
-            var nearest = Math.min.apply(null, centers.map(function (center) { return colorDistance(item.color, center); }));
-            return !best || nearest > best.distance ? { item: item, distance: nearest } : best;
-          }, null);
-          centers.push(candidate.item.color);
-        }
-        for (var round = 0; round < 7; round++) {
-          var buckets = centers.map(function () { return []; });
-          items.forEach(function (item) {
-            var nearest = 0, distance = Infinity;
-            centers.forEach(function (center, index) {
-              var d = colorDistance(item.color, center);
-              if (d < distance) { distance = d; nearest = index; }
-            });
-            buckets[nearest].push(item);
-          });
-          centers = buckets.map(function (bucket, index) {
-            if (!bucket.length) return centers[index];
-            var sum = bucket.reduce(function (s, item) {
-              s.r += item.color.r; s.g += item.color.g; s.b += item.color.b; return s;
-            }, { r: 0, g: 0, b: 0 });
-            return { r: sum.r / bucket.length, g: sum.g / bucket.length, b: sum.b / bucket.length };
-          });
-        }
-        var groups = centers.map(function (center, index) {
-          return {
-            color: center,
-            label: colorLabel(center),
-            items: items.filter(function (item) {
-              var nearest = centers.reduce(function (best, c, i) {
-                var d = colorDistance(item.color, c);
-                return d < best.distance ? { index: i, distance: d } : best;
-              }, { index: 0, distance: Infinity });
-              return nearest.index === index;
-            })
-          };
-        }).filter(function (group) { return group.items.length; });
-        return groups.sort(function (a, b) {
-          return b.items.length - a.items.length;
+        var order = ["Black & white", "Red", "Orange", "Yellow", "Green", "Cyan", "Blue", "Violet", "Pink", "Mixed colour"];
+        var groups = Object.create(null);
+        items.forEach(function (item) {
+          var category = item.color.category || "Mixed colour";
+          if (!groups[category]) groups[category] = { label: category, color: { r: 0, g: 0, b: 0 }, items: [], n: 0 };
+          var group = groups[category];
+          group.items.push(item);
+          group.color.r += item.color.color.r;
+          group.color.g += item.color.color.g;
+          group.color.b += item.color.color.b;
+          group.n++;
+        });
+        return order.filter(function (label) { return groups[label]; }).map(function (label) {
+          var group = groups[label], n = Math.max(1, group.n);
+          group.color.r /= n; group.color.g /= n; group.color.b /= n;
+          return group;
         });
       }
 
@@ -695,40 +701,50 @@
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
         dom.contactView.innerHTML = "";
 
-        if (!state.filtered.length) {
-          var empty = document.createElement("p");
-          empty.className = "empty-state";
-          empty.textContent = "No photographs in this series yet.";
-          dom.contactView.appendChild(empty);
-          return;
-        }
+        var intro = document.createElement("div");
+        intro.className = "contact-intro";
+        var eyebrow = document.createElement("div");
+        eyebrow.className = "contact-eyebrow";
+        eyebrow.textContent = "DIRECT LINES / OPEN CORRESPONDENCE";
+        var title = document.createElement("h2");
+        title.className = "contact-title";
+        title.textContent = "Contact";
+        var note = document.createElement("p");
+        note.className = "contact-note";
+        note.textContent = "For projects, conversations and other transmissions.";
+        intro.appendChild(eyebrow);
+        intro.appendChild(title);
+        intro.appendChild(note);
 
-        var grid = document.createElement("div");
-        grid.className = "contact-grid";
-
-        state.filtered.forEach(function (work, idx) {
-          var cell = document.createElement("button");
-          cell.type = "button";
-          cell.className = "contact-cell";
-          cell.setAttribute("aria-label", "Inspect plate " + work._plate + (work.title ? ": " + work.title : ""));
-          cell.appendChild(buildMediaFrame(work, idx, idx < 4, true));
-
-          var label = document.createElement("div");
-          label.className = "contact-label";
-          var num = document.createElement("span");
-          num.className = "contact-num";
-          num.textContent = work._plate;
-          var name = document.createElement("span");
-          name.className = "contact-name";
-          name.textContent = work.title || work.series || "Untitled";
-          label.appendChild(num);
-          label.appendChild(name);
-          cell.appendChild(label);
-          cell.addEventListener("click", function () { openLightbox(idx); });
-          grid.appendChild(cell);
+        var list = document.createElement("div");
+        list.className = "contact-details";
+        var contacts = [
+          { label: "EMAIL", value: "aiz1k1989@gmail.com", href: "mailto:aiz1k1989@gmail.com" },
+          { label: "INSTAGRAM", value: "Isaac_4u", href: "https://instagram.com/Isaac_4u" },
+          { label: "WHATSAPP", value: "87004453544", href: "https://wa.me/87004453544" }
+        ];
+        contacts.forEach(function (item, index) {
+          var row = document.createElement("a");
+          row.className = "contact-detail";
+          row.href = item.href;
+          if (item.label !== "EMAIL") { row.target = "_blank"; row.rel = "noopener noreferrer"; }
+          var number = document.createElement("span");
+          number.className = "contact-detail-index";
+          number.textContent = "0" + (index + 1);
+          var label = document.createElement("span");
+          label.className = "contact-detail-label";
+          label.textContent = item.label;
+          var value = document.createElement("span");
+          value.className = "contact-detail-value";
+          value.textContent = item.value;
+          var arrow = document.createElement("span");
+          arrow.className = "contact-detail-arrow";
+          arrow.textContent = "↗";
+          row.appendChild(number); row.appendChild(label); row.appendChild(value); row.appendChild(arrow);
+          list.appendChild(row);
         });
-
-        dom.contactView.appendChild(grid);
+        dom.contactView.appendChild(intro);
+        dom.contactView.appendChild(list);
       }
 
       function setupPlateObserver() {
