@@ -3,41 +3,88 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#efeee9">
+  <meta name="theme-color" content="#f7f6f2">
   <meta name="description" content="Photographs by Tanibergen.">
-  <title>TANIBERGEN</title>
+  <title>Tanibergen - Photography</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="performance.css">
 </head>
 <body>
-  <aside class="rail">
-    <a class="wordmark" href="./">TANIBERGEN</a>
-    <a class="rail-work" href="#work">WORK</a>
-    <a class="rail-instagram" href="https://instagram.com/isaac_4u" target="_blank" rel="noreferrer">INSTAGRAM ↗</a>
-  </aside>
-  <main class="main">
-    <section class="opening" aria-label="Featured photograph">
-      <div class="opening-image">
-        <button class="featured-trigger" id="featuredTrigger" type="button" aria-label="Open featured photograph">
+  <header class="site-header">
+    <a class="site-name" href="./">TANIBERGEN</a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="introduction" id="home" data-section="Home">
+      <div class="intro-image">
+        <button class="image-button hero-trigger" type="button" aria-label="Open photograph">
           <img src="4/1.webp" alt="" fetchpriority="high" decoding="async">
         </button>
       </div>
-      <div class="opening-index"><span>01</span><span id="totalTop">125</span></div>
+      <div class="intro-copy">
+        <span class="eyebrow">PHOTOGRAPHER</span>
+        <p class="intro-statement">I'm a photographer, occasionally working with video. Still figuring out my direction after leaving office life.</p>
+        <p class="intro-location">Based in Bangkok, Thailand.<br>Open to collaborations.</p>
+        <a class="text-link" href="#work">Selected work <span>↘</span></a>
+      </div>
     </section>
-    <section class="gallery" id="work" aria-label="Photographic work"></section>
-    <footer class="footer">
-      <a class="footer-name" href="./">TANIBERGEN</a>
-      <span id="totalBottom">125 PHOTOGRAPHS</span>
-    </footer>
+
+    <section class="work-section" id="work" data-section="Work">
+      <div class="section-heading">
+        <h2>Work</h2>
+      </div>
+      <div class="work-grid" id="workGrid" aria-label="Photographs"></div>
+    </section>
+
+    <section class="about-section" id="about" data-section="About">
+      <div class="about-image">
+        <button class="image-button about-trigger" type="button" aria-label="Open portrait">
+          <img src="1/1.webp" alt="" loading="lazy" decoding="async">
+        </button>
+      </div>
+      <div class="about-copy">
+        <span class="eyebrow">ABOUT</span>
+        <h2>Tanibergen</h2>
+        <p>I'm a photographer, occasionally working with video. I'm still finding my way after leaving office life.</p>
+        <p>Based in Bangkok, Thailand. Available for collaborations.</p>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer" id="contact" data-section="Contact">
+    <a class="site-name" href="./">TANIBERGEN</a>
+    <span>Bangkok, Thailand</span>
+    <a href="https://instagram.com/isaac_4u" target="_blank" rel="noreferrer">Instagram ↗</a>
+  </footer>
+
+  <button class="note-launcher" id="noteLauncher" type="button">SITE NOTE <span>+</span></button>
+  <section class="note-panel" id="notePanel" aria-label="Leave a site note" hidden>
+    <div class="note-panel-head">
+      <span>LEAVE A NOTE</span>
+      <button id="noteClose" type="button" aria-label="Close note panel">×</button>
+    </div>
+    <p class="note-instructions">Start with <code>/upd#1</code>, then describe what needs fixing.</p>
+    <textarea id="noteInput" rows="5" spellcheck="true" placeholder="/upd#1 Fix the text in the About section."></textarea>
+    <div class="note-panel-foot">
+      <span id="noteStatus" role="status">Draft saved on this device.</span>
+      <button id="noteSend" type="button">SEND TO GITHUB ↗</button>
+    </div>
+  </section>
+
   <div class="viewer" id="viewer" aria-hidden="true">
     <button class="viewer-close" id="viewerClose" type="button" aria-label="Close">CLOSE</button>
-    <button class="viewer-prev" id="viewerPrev" type="button" aria-label="Previous photograph">PREV</button>
+    <button class="viewer-prev" id="viewerPrev" type="button" aria-label="Previous photograph">←</button>
     <img id="viewerImage" alt="">
-    <button class="viewer-next" id="viewerNext" type="button" aria-label="Next photograph">NEXT</button>
+    <button class="viewer-next" id="viewerNext" type="button" aria-label="Next photograph">→</button>
     <span class="viewer-count" id="viewerCount"></span>
   </div>
-  <script src="works.js" defer></script>
+
+  <script src="../works.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>
