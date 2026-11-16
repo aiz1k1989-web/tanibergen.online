@@ -798,7 +798,7 @@
         document.body.classList.toggle("is-color-mode", viewName === "color");
         document.documentElement.classList.toggle("is-color-mode", viewName === "color");
         var themeMeta = document.querySelector('meta[name="theme-color"]');
-        if (themeMeta) themeMeta.setAttribute("content", viewName === "color" ? "#080808" : "#ECE9E2");
+        if (themeMeta) themeMeta.setAttribute("content", "#ffffff");
         dom.modeButtons.forEach(function (btn) {
           var active = btn.dataset.view === viewName;
           btn.classList.toggle("is-active", active);
@@ -960,7 +960,7 @@
             document.body.classList.remove("is-color-mode");
             document.documentElement.classList.remove("is-color-mode");
             var themeMeta = document.querySelector('meta[name="theme-color"]');
-            if (themeMeta) themeMeta.setAttribute("content", "#ECE9E2");
+            if (themeMeta) themeMeta.setAttribute("content", "#ffffff");
             dom.modeButtons.forEach(function (btn) {
               var active = btn.dataset.view === "sequence";
               btn.classList.toggle("is-active", active);
