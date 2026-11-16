@@ -354,3 +354,25 @@ html.is-color-mode { background:#080808; color:#f3f1ec; }
 @media(max-width:900px) {
   .gradient-mosaic .color-tile:nth-child(n) { grid-column:auto; grid-row:auto; }
 }
+
+/* Neutral image loading surface: no titles, plate codes or descriptive copy. */
+.plate-placeholder {
+  padding:0!important;
+  border:0!important;
+  background:linear-gradient(105deg,var(--surface) 0%,color-mix(in srgb,var(--surface) 82%,white 18%) 45%,var(--surface) 70%);
+  background-size:220% 100%;
+  animation:placeholder-sheen 1.6s ease-in-out infinite;
+}
+.plate-placeholder > * { display:none!important; }
+body.is-color-mode .plate-placeholder {
+  background:linear-gradient(105deg,#151515 0%,#242424 45%,#151515 70%);
+  background-size:220% 100%;
+}
+@keyframes placeholder-sheen {
+  0% { background-position:100% 0; }
+  100% { background-position:-120% 0; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .plate-placeholder { animation:none!important;background:var(--surface); }
+  body.is-color-mode .plate-placeholder { background:#151515; }
+}
