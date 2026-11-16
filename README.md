@@ -24,3 +24,16 @@ The viewer reads the image's natural dimensions after loading. Images retain the
 ## Publishing
 
 GitHub Pages deploys from the `main` branch, repository root. The custom domain is configured in `CNAME`.
+
+
+## Journal publishing
+
+The Journal reads public posts from GitHub Issues. To publish a post:
+
+1. Open the Journal section on the website.
+2. Select **Write a post**. GitHub opens the Blog post form.
+3. Enter a title and write the post in the text field.
+4. Drag photographs into the text field. GitHub uploads them and inserts the image links automatically. The first image becomes the cover image.
+5. Publish the issue. It appears in the Journal automatically. No website code changes or redeployment are needed.
+
+Only issues with the `[BLOG]` title prefix appear as posts. Close an issue to remove it from the public Journal. The repository and posts must remain public for the website to display them.
