@@ -401,6 +401,7 @@
         function makePage(pageIndex, startIndex, endIndex) {
           var page = document.createElement("section");
           page.className = "book-page " + layoutNames[pageIndex % layoutNames.length];
+          page.style.setProperty("--book-spectrum", CHROMA_PALETTES[pageIndex % CHROMA_PALETTES.length].gradient);
           page.setAttribute("aria-label", "Contact sheet page " + (pageIndex + 1));
           var top = document.createElement("div");
           top.className = "book-page-top";
