@@ -456,6 +456,9 @@
           if (cursor >= state.filtered.length) {
             sentinel.remove();
             if (galleryLoadObserver) { galleryLoadObserver.disconnect(); galleryLoadObserver = null; }
+          } else if (galleryLoadObserver && sentinel.isConnected) {
+            galleryLoadObserver.unobserve(sentinel);
+            galleryLoadObserver.observe(sentinel);
           }
         }
 
