@@ -874,6 +874,127 @@
         }
       }
 
+
+      var BLOG_API = "https://api.github.com/repos/aiz1k1989-web/tanibergen.online/issues?state=open&per_page=100&sort=created&direction=desc";
+      var BLOG_NEW_POST = "https://github.com/aiz1k1989-web/tanibergen.online/issues/new?template=blog-post.yml";
+      function blogImage(body) {
+        var match = String(body || "").match(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)(?:\s+[^)]*)?\)/i);
+        return match ? match[1] : "";
+      }
+      function blogExcerpt(body) {
+        var text = String(body || "").replace(/!\[[^\]]*\]\([^)]*\)/g, " ").replace(/^#+\s*/gm, "").replace(/[*_>#]/g, "").replace(/\s+/g, " ").trim();
+        return text.length > 210 ? text.slice(0, 207).trim() + "..." : text;
+      }
+      function appendBlogMarkdown(container, source) {
+        var lines = String(source || "").split(/\r?\n/), list = null;
+        function closeList() { if (list) { container.appendChild(list); list = null; } }
+        lines.forEach(function(line) {
+          var value = line.trim();
+          if (!value) { closeList(); return; }
+          var imageMatch = value.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+[^)]*)?\)$/i);
+          if (imageMatch) {
+            closeList();
+            var image = document.createElement("img");
+            image.src = imageMatch[2]; image.alt = imageMatch[1] || "Journal photograph";
+            image.loading = "lazy"; image.decoding = "async"; container.appendChild(image); return;
+          }
+          var heading = value.match(/^(#{1,3})\s+(.+)$/);
+          if (heading) {
+            closeList();
+            var h = document.createElement("h" + Math.min(4, heading[1].length + 1));
+            h.textContent = heading[2]; container.appendChild(h); return;
+          }
+          if (/^[-*]\s+/.test(value)) {
+            if (!list) list = document.createElement("ul");
+            var li = document.createElement("li"); li.textContent = value.replace(/^[-*]\s+/, "");
+            list.appendChild(li); return;
+          }
+          closeList();
+          var p = document.createElement("p");
+          p.textContent = value.replace(/\*\*(.*?)\*\*/g, "$1").replace(/\*(.*?)\*/g, "$1");
+          container.appendChild(p);
+        });
+        closeList();
+      }
+      function renderBlogView() {
+        stopRotation(); dom.blogView.innerHTML = "";
+        var heading = document.createElement("div"); heading.className = "blog-heading";
+        var eyebrow = document.createElement("div"); eyebrow.className = "blog-eyebrow";
+        eyebrow.textContent = "NOTES / EXPERIMENTS / OCCASIONAL UPDATES";
+        var title = document.createElement("h2"); title.className = "blog-title";
+        title.textContent = state.blogArticle ? "Journal entry" : "Journal";
+        heading.appendChild(eyebrow); heading.appendChild(title);
+        var actions = document.createElement("div"); actions.className = "blog-actions";
+        if (state.blogArticle) {
+          var back = document.createElement("button"); back.type = "button"; back.className = "blog-action";
+          back.textContent = "← All entries";
+          back.addEventListener("click", function(){ state.blogArticle = null; renderBlogView(); });
+          actions.appendChild(back);
+        } else {
+          var write = document.createElement("a"); write.className = "blog-action"; write.href = BLOG_NEW_POST;
+          write.target = "_blank"; write.rel = "noopener noreferrer"; write.textContent = "Write a post ↗";
+          actions.appendChild(write);
+          var reload = document.createElement("button"); reload.type = "button"; reload.className = "blog-action";
+          reload.textContent = "Refresh";
+          reload.addEventListener("click", function(){ state.blogLoaded = false; loadBlogPosts(); });
+          actions.appendChild(reload);
+        }
+        heading.appendChild(actions); dom.blogView.appendChild(heading);
+        if (state.blogArticle) {
+          var article = state.blogIssues.find(function(item){ return item.number === state.blogArticle; });
+          if (!article) { state.blogArticle = null; renderBlogView(); return; }
+          var detail = document.createElement("article"); detail.className = "blog-article";
+          var date = document.createElement("time"); date.className = "blog-date"; date.dateTime = article.created_at;
+          date.textContent = new Date(article.created_at).toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+          var articleTitle = document.createElement("h3"); articleTitle.textContent = article.title.replace(/^\[BLOG\]\s*/i, "");
+          var body = document.createElement("div"); body.className = "blog-body";
+          appendBlogMarkdown(body, article.body || "");
+          detail.appendChild(date); detail.appendChild(articleTitle); detail.appendChild(body); dom.blogView.appendChild(detail); return;
+        }
+        if (!state.blogLoaded) {
+          var loading = document.createElement("p"); loading.className = "blog-status";
+          loading.textContent = state.blogLoading ? "Loading entries..." : "The journal is waiting for its first entry.";
+          dom.blogView.appendChild(loading); loadBlogPosts(); return;
+        }
+        if (!state.blogIssues.length) {
+          var empty = document.createElement("p"); empty.className = "blog-status"; empty.textContent = "No entries yet.";
+          dom.blogView.appendChild(empty); return;
+        }
+        var grid = document.createElement("div"); grid.className = "blog-grid";
+        state.blogIssues.forEach(function(post) {
+          var card = document.createElement("button"); card.type = "button"; card.className = "blog-card";
+          var cover = blogImage(post.body);
+          if (cover) { var image = document.createElement("img"); image.src = cover; image.alt = ""; image.loading = "lazy"; image.decoding = "async"; card.appendChild(image); }
+          var meta = document.createElement("time"); meta.className = "blog-date"; meta.dateTime = post.created_at;
+          meta.textContent = new Date(post.created_at).toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+          var cardTitle = document.createElement("h3"); cardTitle.textContent = post.title.replace(/^\[BLOG\]\s*/i, "");
+          var excerpt = document.createElement("p"); excerpt.textContent = blogExcerpt(post.body || "");
+          card.appendChild(meta); card.appendChild(cardTitle); card.appendChild(excerpt);
+          card.addEventListener("click", function(){ state.blogArticle = post.number; renderBlogView(); window.scrollTo({top:0,behavior:"auto"}); });
+          grid.appendChild(card);
+        });
+        dom.blogView.appendChild(grid);
+      }
+      function loadBlogPosts() {
+        if (state.blogLoading) return;
+        state.blogLoading = true;
+        fetch(BLOG_API, { headers: { "Accept": "application/vnd.github+json" } })
+          .then(function(response){ if (!response.ok) throw new Error("GitHub API " + response.status); return response.json(); })
+          .then(function(items){
+            state.blogIssues = items.filter(function(item){ return !item.pull_request && /^\[BLOG\]/i.test(item.title || ""); });
+            state.blogLoaded = true;
+          })
+          .catch(function(){
+            state.blogLoaded = true; state.blogIssues = [];
+            var note = document.createElement("p"); note.className = "blog-status";
+            note.textContent = "Entries could not be loaded right now. Open the journal on GitHub to check the latest posts.";
+            var link = document.createElement("a"); link.href = "https://github.com/aiz1k1989-web/tanibergen.online/issues";
+            link.textContent = "Open GitHub issues ↗"; link.target = "_blank"; link.rel = "noopener noreferrer";
+            note.appendChild(document.createTextNode(" ")); note.appendChild(link); dom.blogView.appendChild(note);
+          })
+          .finally(function(){ state.blogLoading = false; if (state.view === "blog" && !state.blogArticle) renderBlogView(); });
+      }
+
       function openInfo() {
         state.lastFocused = document.activeElement;
         state.infoOpen = true;
