@@ -1,0 +1,19 @@
+name: Blog post
+description: Publish a new entry on tanibergen.online
+title: "[BLOG] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write your post below. The title becomes the post title.
+        You can add paragraphs, headings and lists. To add photographs, drag them into the text field and GitHub will upload them automatically.
+  - type: textarea
+    id: post
+    attributes:
+      label: Post
+      description: Your text and photographs. The first uploaded image will be used as the cover.
+      placeholder: Write something...
+      render: markdown
+    validations:
+      required: true
