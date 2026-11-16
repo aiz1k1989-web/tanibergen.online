@@ -376,3 +376,44 @@ body.is-color-mode .plate-placeholder {
   .plate-placeholder { animation:none!important;background:var(--surface); }
   body.is-color-mode .plate-placeholder { background:#151515; }
 }
+
+/* Chroma Diary - fixed colour studies and natural-ratio masonry */
+.workspace { display:block; }
+.rail,.mobile-series-bar { display:none!important; }
+.stage { width:100%; max-width:1440px; margin:0 auto; padding:clamp(24px,4vw,58px) 0 90px; }
+.diary-intro { margin:0 0 clamp(24px,4vw,46px); }
+.diary-kicker { color:var(--muted); font:9px var(--mono); letter-spacing:.16em; text-transform:uppercase; }
+.diary-title { margin:12px 0 0; font-size:clamp(42px,7vw,92px); line-height:.9; letter-spacing:-.075em; font-weight:450; }
+.palette-study { margin:0 0 clamp(30px,5vw,62px); }
+.palette-study-top { display:flex; justify-content:space-between; gap:14px; margin-bottom:10px; color:var(--muted); font:9px var(--mono); letter-spacing:.12em; }
+.palette-swatches { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; height:clamp(64px,11vw,148px); }
+.palette-swatch { min-width:0; }
+.palette-gradients { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; height:clamp(16px,2.4vw,28px); margin-top:4px; }
+.palette-gradient { min-width:0; }
+.all-card-grid { columns:3; column-gap:14px; width:100%; }
+.all-photo-card { display:inline-block; width:100%; margin:0 0 14px; break-inside:avoid; vertical-align:top; }
+.all-photo-frame { width:100%; height:auto; overflow:hidden; background:transparent; }
+.all-photo-frame .plate-img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.all-photo-frame .plate-placeholder { background:linear-gradient(105deg,var(--surface),color-mix(in srgb,var(--surface) 82%,white 18%),var(--surface)); }
+.mode-btn:focus,.mode-btn:focus-visible,.brand-btn:focus { outline:none; box-shadow:none; }
+button { -webkit-tap-highlight-color:transparent; }
+@media(max-width:900px) {
+  .workspace { padding:0 18px; }
+  .stage { padding-top:24px; }
+  .all-card-grid { columns:2; column-gap:10px; }
+  .all-photo-card { margin-bottom:10px; }
+}
+@media(max-width:600px) {
+  .workspace { padding:0 10px; }
+  .stage { padding-top:20px; }
+  .diary-intro { margin-bottom:22px; }
+  .diary-title { font-size:clamp(42px,13vw,66px); }
+  .palette-study { margin-bottom:26px; }
+  .palette-swatches { height:68px; gap:3px; }
+  .palette-gradients { height:14px; gap:3px; margin-top:3px; }
+  .all-card-grid { columns:2; column-gap:6px; }
+  .all-photo-card { margin-bottom:6px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .palette-swatch,.palette-gradient,.all-photo-card { transition:none!important; animation:none!important; }
+}
