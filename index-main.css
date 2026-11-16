@@ -387,3 +387,23 @@ body.is-color-mode .plate-placeholder {
 .all-photo-frame { height:auto; }
 @media(max-width:1100px) { .all-card-grid { columns:2; column-gap:12px; } .all-photo-card { margin-bottom:12px; } }
 @media(max-width:600px) { .diary-intro { padding-bottom:18px; margin-bottom:14px; } .diary-title { font-size:34px; } .diary-meta { font-size:8px; letter-spacing:.065em; } .diary-swatches { height:11px; margin-top:15px; } .diary-palette { height:4px; margin-top:3px; } .all-card-grid { columns:2; column-gap:7px; } .all-photo-card { margin-bottom:7px; } }
+
+/* TANIBERGEN - black photographic archive */
+:root { --bg:#000; --surface:#101010; --ink:#f2f2f0; --muted:#858585; --rule:rgba(255,255,255,.15); --accent:#b8b8b8; --lb-bg:#000; --lb-ink:#f2f2f0; --lb-muted:#929292; color-scheme:dark; }
+html,body { background:#000!important; color:#f2f2f0; }
+.site-header,.mobile-series-bar { background:rgba(0,0,0,.94)!important; border-color:rgba(255,255,255,.14)!important; }
+.rail { border-color:rgba(255,255,255,.14); }
+.rail-progress,.rail-footer,.info-meta,.info-row,.contact-details,.contact-detail { border-color:rgba(255,255,255,.14); }
+.mode-btn.is-active:after { background:#f2f2f0; }
+.brand-btn .brand-name { color:#f4f4f2; text-shadow:.55px 0 rgba(255,55,55,.48),-.55px 0 rgba(75,190,255,.48); transition:text-shadow .25s ease; }
+.brand-btn:hover .brand-name { text-shadow:.8px 0 rgba(255,55,55,.58),-.8px 0 rgba(75,190,255,.58); }
+.all-photo-frame { background:#080808!important; }
+.plate-placeholder { background:#0d0d0d!important; animation:none!important; }
+.plate-img { object-fit:contain; transition:opacity .16s ease; }
+.all-photo-card:hover .plate-img { transform:none; }
+.all-card-grid { display:block; columns:3; column-gap:18px; }
+.all-photo-card { display:block; width:100%; margin:0 0 18px; break-inside:avoid; -webkit-column-break-inside:avoid; }
+.all-photo-frame { aspect-ratio:4/3; height:auto; }
+@media(max-width:1100px) { .all-card-grid { columns:2; column-gap:12px; } .all-photo-card { margin-bottom:12px; } }
+@media(max-width:600px) { .all-card-grid { columns:2; column-gap:7px; } .all-photo-card { margin-bottom:7px; } .all-photo-frame { aspect-ratio:4/3; } }
+@media(prefers-reduced-motion:reduce) { .brand-btn .brand-name { text-shadow:.55px 0 rgba(255,55,55,.48),-.55px 0 rgba(75,190,255,.48); } }
