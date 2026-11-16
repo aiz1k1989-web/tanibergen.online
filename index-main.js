@@ -112,7 +112,7 @@
               target.loading = "eager";
               target.src = source;
             });
-          }, { rootMargin: "1000px 0px", threshold: 0 });
+          }, { rootMargin: "500px 0px", threshold: 0 });
         }
         mediaObserver.observe(img);
       }
@@ -142,7 +142,7 @@
           if (el && value) el.textContent = value;
         };
 
-        setText("info-title", config.title || "TANIBERGEN");
+        setText("info-title", config.title || "Chroma Diary");
         setText("info-statement", config.statement || "");
         setText("info-note", config.note || "");
         setText("info-domain", config.domain || "tanibergen.online");
@@ -263,7 +263,6 @@
         img.decoding = "async";
         img.draggable = false;
         img.loading = isPriority ? "eager" : "lazy";
-        img.fetchPriority = isPriority ? "high" : "low";
         if (isPriority) {
           img.setAttribute("fetchpriority", "high");
           img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
@@ -273,6 +272,9 @@
         }
 
         img.addEventListener("load", function () {
+          if (img.naturalWidth && img.naturalHeight) {
+            frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+          }
           frame.classList.add("is-loaded");
         });
 
@@ -385,87 +387,72 @@
           return;
         }
 
-        var archive = document.createElement("div");
-        archive.className = "book-archive";
+        var diary = document.createElement("section");
+        diary.className = "diary-intro";
+        diary.setAttribute("aria-label", "Chroma Diary colour study");
+        var diaryTitle = document.createElement("h1");
+        diaryTitle.className = "diary-title";
+        diaryTitle.textContent = "Chroma Diary";
+        var diaryMeta = document.createElement("div");
+        diaryMeta.className = "diary-meta";
+        diaryMeta.textContent = "CHROMATIC INDEX / NO. 001";
+        var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
+        var paletteSwatches = document.createElement("div");
+        paletteSwatches.className = "diary-swatches";
+        paletteSwatches.setAttribute("aria-label", "Selected colours");
+        palette.colors.forEach(function(colour) {
+          var swatch = document.createElement("span");
+          swatch.className = "diary-swatch";
+          swatch.style.backgroundColor = colour;
+          paletteSwatches.appendChild(swatch);
+        });
+        var paletteStrip = document.createElement("div");
+        paletteStrip.className = "diary-palette";
+        paletteStrip.setAttribute("aria-label", "Selected colour gradient");
+        paletteStrip.style.background = palette.gradient;
+        paletteStrip.title = palette.name;
+        diary.appendChild(diaryTitle);
+        diary.appendChild(diaryMeta);
+        diary.appendChild(paletteSwatches);
+        diary.appendChild(paletteStrip);
+        dom.sequenceView.appendChild(diary);
+
+        var grid = document.createElement("div");
+        grid.className = "all-card-grid";
+        var grid = document.createElement("div");
+        grid.className = "all-card-grid";
         var sentinel = document.createElement("div");
         sentinel.className = "gallery-sentinel";
         sentinel.setAttribute("aria-hidden", "true");
-        archive.appendChild(sentinel);
-        dom.sequenceView.appendChild(archive);
+        grid.appendChild(sentinel);
+        dom.sequenceView.appendChild(grid);
 
         var cursor = 0;
-        var spreadsPerBatch = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 1 : 2;
+        var batchSize = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 8 : 16;
         var appending = false;
-        var layoutNames = ["book-layout-a", "book-layout-b", "book-layout-c"];
-
-        function makePage(pageIndex, startIndex, endIndex) {
-          var page = document.createElement("section");
-          page.className = "book-page " + layoutNames[pageIndex % layoutNames.length];
-          page.style.setProperty("--book-spectrum", CHROMA_PALETTES[pageIndex % CHROMA_PALETTES.length].gradient);
-          page.setAttribute("aria-label", "Contact sheet page " + (pageIndex + 1));
-          var top = document.createElement("div");
-          top.className = "book-page-top";
-          var mark = document.createElement("span");
-          mark.textContent = "TANIBERGEN / FIELD NOTES";
-          var pageNo = document.createElement("span");
-          pageNo.textContent = "P. " + padNumber(pageIndex + 1);
-          top.appendChild(mark);
-          top.appendChild(pageNo);
-          var grid = document.createElement("div");
-          grid.className = "book-page-grid";
-
-          for (var index = startIndex; index < endIndex; index++) {
-            var work = state.filtered[index];
-            var card = document.createElement("button");
-            card.type = "button";
-            card.className = "all-photo-card book-photo-card book-slot-" + (index - startIndex);
-            card.setAttribute("aria-label", "Open photograph " + work._plate);
-            card.dataset.index = String(index);
-            card.dataset.frame = "NEG. " + work._plate;
-            var frame = buildMediaFrame(work, index, index < 6, true);
-            frame.classList.add("all-photo-frame");
-            card.appendChild(frame);
-            card.addEventListener("click", function(selectedWork) {
-              return function() { openLightbox(state.filtered.indexOf(selectedWork)); };
-            }(work));
-            grid.appendChild(card);
-          }
-
-          var bottom = document.createElement("div");
-          bottom.className = "book-page-bottom";
-          var range = document.createElement("span");
-          range.textContent = "PLATES " + padNumber(startIndex + 1) + " - " + padNumber(endIndex);
-          var edition = document.createElement("span");
-          edition.textContent = "ARCHIVE / " + padNumber(state.filtered.length);
-          bottom.appendChild(range);
-          bottom.appendChild(edition);
-          page.appendChild(top);
-          page.appendChild(grid);
-          page.appendChild(bottom);
-          return page;
-        }
 
         function appendBatch() {
           if (appending || cursor >= state.filtered.length) return;
           appending = true;
           var fragment = document.createDocumentFragment();
-          var spreadCount = spreadsPerBatch;
-          for (var spreadNo = 0; spreadNo < spreadCount && cursor < state.filtered.length; spreadNo++) {
-            var spread = document.createElement("div");
-            spread.className = "book-spread";
-            var leftStart = cursor;
-            var leftEnd = Math.min(leftStart + 6, state.filtered.length);
-            cursor = leftEnd;
-            spread.appendChild(makePage(Math.floor(leftStart / 6), leftStart, leftEnd));
-            if (cursor < state.filtered.length) {
-              var rightStart = cursor;
-              var rightEnd = Math.min(rightStart + 6, state.filtered.length);
-              cursor = rightEnd;
-              spread.appendChild(makePage(Math.floor(rightStart / 6), rightStart, rightEnd));
-            }
-            fragment.appendChild(spread);
+          var endIndex = Math.min(cursor + batchSize, state.filtered.length);
+          for (var index = cursor; index < endIndex; index++) {
+            var work = state.filtered[index];
+            var card = document.createElement("button");
+            card.type = "button";
+            card.className = "all-photo-card";
+            card.setAttribute("aria-label", "Open photograph " + work._plate);
+            card.dataset.index = String(index);
+            var frame = buildMediaFrame(work, index, index < 2, true);
+            frame.classList.add("all-photo-frame");
+            card.appendChild(frame);
+            card.addEventListener("click", function(selectedWork) {
+              return function() { openLightbox(state.filtered.indexOf(selectedWork)); };
+            }(work));
+            fragment.appendChild(card);
           }
-          archive.insertBefore(fragment, sentinel);
+          grid.insertBefore(fragment, sentinel);
+          cursor = endIndex;
           appending = false;
           setupPlateObserver();
 
@@ -485,7 +472,7 @@
         if ("IntersectionObserver" in window && cursor < state.filtered.length) {
           galleryLoadObserver = new IntersectionObserver(function(entries) {
             if (entries.some(function(entry) { return entry.isIntersecting; })) appendBatch();
-          }, { rootMargin: "1200px 0px", threshold: 0 });
+          }, { rootMargin: "720px 0px", threshold: 0 });
           galleryLoadObserver.observe(sentinel);
         } else {
           while (cursor < state.filtered.length) appendBatch();
