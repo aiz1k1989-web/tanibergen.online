@@ -421,6 +421,7 @@
             card.className = "all-photo-card book-photo-card book-slot-" + (index - startIndex);
             card.setAttribute("aria-label", "Open photograph " + work._plate);
             card.dataset.index = String(index);
+            card.dataset.frame = "NEG. " + work._plate;
             var frame = buildMediaFrame(work, index, index < 6, true);
             frame.classList.add("all-photo-frame");
             card.appendChild(frame);
