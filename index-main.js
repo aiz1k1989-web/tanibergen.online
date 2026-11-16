@@ -142,7 +142,7 @@
           if (el && value) el.textContent = value;
         };
 
-        setText("info-title", config.title || "Chroma Diary");
+        setText("info-title", "tanibergen.online");
         setText("info-statement", config.statement || "");
         setText("info-note", config.note || "");
         setText("info-domain", config.domain || "tanibergen.online");
@@ -374,6 +374,16 @@
         }, { once: true });
       }
 
+
+      function randomArchiveWord() {
+        var words = ["AFTERIMAGE","STATIC","NIGHT SHIFT","BLUE ROOM","OUTTAKE","NO SIGNAL","SOFT ERROR","DUST INDEX","UNKNOWN","SIDE B","FALSE MEMORY","DARK MATTER","FRAME LOSS","SILENT FILE","ODD HOURS","COLD STORAGE"];
+        return words[Math.floor(Math.random() * words.length)];
+      }
+
+      function randomArchiveNumber() {
+        return String(Math.floor(1000 + Math.random() * 8999));
+      }
+
       function renderSequenceView() {
         stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
@@ -389,13 +399,13 @@
 
         var diary = document.createElement("section");
         diary.className = "diary-intro";
-        diary.setAttribute("aria-label", "Chroma Diary colour study");
+        diary.setAttribute("aria-label", "Unsorted archive records");
         var diaryTitle = document.createElement("h1");
         diaryTitle.className = "diary-title";
-        diaryTitle.textContent = "Chroma Diary";
+        diaryTitle.textContent = randomArchiveWord() + " / " + randomArchiveNumber();
         var diaryMeta = document.createElement("div");
         diaryMeta.className = "diary-meta";
-        diaryMeta.textContent = "CHROMATIC INDEX / NO. 001";
+        diaryMeta.textContent = randomArchiveWord() + " " + randomArchiveWord() + " / " + randomArchiveNumber() + " : " + randomArchiveNumber();
         var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
         var paletteSwatches = document.createElement("div");
         paletteSwatches.className = "diary-swatches";
