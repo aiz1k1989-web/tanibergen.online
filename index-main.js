@@ -401,25 +401,8 @@
         var diaryMeta = document.createElement("div");
         diaryMeta.className = "diary-meta";
         diaryMeta.textContent = randomArchiveNumber() + " / " + randomArchiveNumber() + " / " + randomArchiveNumber();
-        var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
-        var paletteSwatches = document.createElement("div");
-        paletteSwatches.className = "diary-swatches";
-        paletteSwatches.setAttribute("aria-label", "Selected colours");
-        palette.colors.forEach(function(colour) {
-          var swatch = document.createElement("span");
-          swatch.className = "diary-swatch";
-          swatch.style.backgroundColor = colour;
-          paletteSwatches.appendChild(swatch);
-        });
-        var paletteStrip = document.createElement("div");
-        paletteStrip.className = "diary-palette";
-        paletteStrip.setAttribute("aria-label", "Selected colour gradient");
-        paletteStrip.style.background = palette.gradient;
-        paletteStrip.title = palette.name;
         diary.appendChild(diaryTitle);
         diary.appendChild(diaryMeta);
-        diary.appendChild(paletteSwatches);
-        diary.appendChild(paletteStrip);
         dom.sequenceView.appendChild(diary);
 
         var grid = document.createElement("div");
