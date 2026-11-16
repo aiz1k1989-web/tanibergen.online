@@ -46,6 +46,10 @@
         colorGeneration: 0,
         colorComposition: 0,
         records: [],
+        blogLoaded: false,
+        blogLoading: false,
+        blogIssues: [],
+        blogArticle: null,
         lastFocused: null
       };
 
@@ -70,6 +74,7 @@
         sequenceView: document.getElementById("sequence-view"),
         contactView: document.getElementById("contact-view"),
         colorView: document.getElementById("color-view"),
+        blogView: document.getElementById("blog-view"),
         lightbox: document.getElementById("lightbox"),
         lbStage: document.getElementById("lb-stage"),
         lbMediaWrap: document.getElementById("lb-media-wrap"),
@@ -144,7 +149,9 @@
 
         setText("info-title", "tanibergen.online");
         setText("info-statement", config.statement || "");
-        setText("info-note", config.note || "");
+        setText("info-note", "");
+        var footerYear = document.getElementById("footer-year");
+        if (footerYear) footerYear.textContent = String(new Date().getFullYear());
         setText("info-domain", config.domain || "tanibergen.online");
         setText("rail-domain", config.domain || "tanibergen.online");
 
@@ -852,9 +859,16 @@
           dom.contactView.hidden = false;
           dom.colorView.hidden = true;
           renderContactView();
+        } else if (state.view === "blog") {
+          dom.sequenceView.hidden = true;
+          dom.contactView.hidden = true;
+          dom.colorView.hidden = true;
+          dom.blogView.hidden = false;
+          renderBlogView();
         } else {
           dom.sequenceView.hidden = true;
           dom.contactView.hidden = true;
+          dom.blogView.hidden = true;
           dom.colorView.hidden = false;
           renderColorView();
         }
