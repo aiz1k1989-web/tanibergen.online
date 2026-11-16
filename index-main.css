@@ -623,3 +623,14 @@ html,body { background:#000!important; color:#f2f2f0; }
   .book-photo-card:before { left:6px;right:6px;top:10px;bottom:12px; }
   .book-page-top,.book-page-bottom { font-size:7px;letter-spacing:.07em; }
 }
+
+
+/* Override the former four-frame page templates for six-frame contact sheets. */
+.book-page .book-page-grid {
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(2,minmax(0,1fr))!important;
+}
+.book-page .book-photo-card[class*="book-slot-"] {
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
