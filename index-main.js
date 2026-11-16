@@ -385,40 +385,86 @@
           return;
         }
 
-        var grid = document.createElement("div");
-        grid.className = "all-card-grid";
+        var archive = document.createElement("div");
+        archive.className = "book-archive";
         var sentinel = document.createElement("div");
         sentinel.className = "gallery-sentinel";
         sentinel.setAttribute("aria-hidden", "true");
-        grid.appendChild(sentinel);
-        dom.sequenceView.appendChild(grid);
+        archive.appendChild(sentinel);
+        dom.sequenceView.appendChild(archive);
 
         var cursor = 0;
-        var batchSize = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 8 : 16;
+        var spreadsPerBatch = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 1 : 2;
         var appending = false;
+        var layoutNames = ["book-layout-a", "book-layout-b", "book-layout-c"];
 
-        function appendBatch() {
-          if (appending || cursor >= state.filtered.length) return;
-          appending = true;
-          var fragment = document.createDocumentFragment();
-          var endIndex = Math.min(cursor + batchSize, state.filtered.length);
-          for (var index = cursor; index < endIndex; index++) {
+        function makePage(pageIndex, startIndex, endIndex) {
+          var page = document.createElement("section");
+          page.className = "book-page " + layoutNames[pageIndex % layoutNames.length];
+          page.style.setProperty("--book-spectrum", CHROMA_PALETTES[pageIndex % CHROMA_PALETTES.length].gradient);
+          page.setAttribute("aria-label", "Contact sheet page " + (pageIndex + 1));
+          var top = document.createElement("div");
+          top.className = "book-page-top";
+          var mark = document.createElement("span");
+          mark.textContent = "TANIBERGEN / FIELD NOTES";
+          var pageNo = document.createElement("span");
+          pageNo.textContent = "P. " + padNumber(pageIndex + 1);
+          top.appendChild(mark);
+          top.appendChild(pageNo);
+          var grid = document.createElement("div");
+          grid.className = "book-page-grid";
+
+          for (var index = startIndex; index < endIndex; index++) {
             var work = state.filtered[index];
             var card = document.createElement("button");
             card.type = "button";
-            card.className = "all-photo-card";
+            card.className = "all-photo-card book-photo-card book-slot-" + (index - startIndex);
             card.setAttribute("aria-label", "Open photograph " + work._plate);
             card.dataset.index = String(index);
-            var frame = buildMediaFrame(work, index, index < 2, true);
+            var frame = buildMediaFrame(work, index, index < 4, true);
             frame.classList.add("all-photo-frame");
             card.appendChild(frame);
             card.addEventListener("click", function(selectedWork) {
               return function() { openLightbox(state.filtered.indexOf(selectedWork)); };
             }(work));
-            fragment.appendChild(card);
+            grid.appendChild(card);
           }
-          grid.insertBefore(fragment, sentinel);
-          cursor = endIndex;
+
+          var bottom = document.createElement("div");
+          bottom.className = "book-page-bottom";
+          var range = document.createElement("span");
+          range.textContent = "PLATES " + padNumber(startIndex + 1) + " - " + padNumber(endIndex);
+          var edition = document.createElement("span");
+          edition.textContent = "ARCHIVE / " + padNumber(state.filtered.length);
+          bottom.appendChild(range);
+          bottom.appendChild(edition);
+          page.appendChild(top);
+          page.appendChild(grid);
+          page.appendChild(bottom);
+          return page;
+        }
+
+        function appendBatch() {
+          if (appending || cursor >= state.filtered.length) return;
+          appending = true;
+          var fragment = document.createDocumentFragment();
+          var spreadCount = spreadsPerBatch;
+          for (var spreadNo = 0; spreadNo < spreadCount && cursor < state.filtered.length; spreadNo++) {
+            var spread = document.createElement("div");
+            spread.className = "book-spread";
+            var leftStart = cursor;
+            var leftEnd = Math.min(leftStart + 4, state.filtered.length);
+            cursor = leftEnd;
+            spread.appendChild(makePage(Math.floor(leftStart / 4), leftStart, leftEnd));
+            if (cursor < state.filtered.length) {
+              var rightStart = cursor;
+              var rightEnd = Math.min(rightStart + 4, state.filtered.length);
+              cursor = rightEnd;
+              spread.appendChild(makePage(Math.floor(rightStart / 4), rightStart, rightEnd));
+            }
+            fragment.appendChild(spread);
+          }
+          archive.insertBefore(fragment, sentinel);
           appending = false;
           setupPlateObserver();
 
@@ -438,7 +484,7 @@
         if ("IntersectionObserver" in window && cursor < state.filtered.length) {
           galleryLoadObserver = new IntersectionObserver(function(entries) {
             if (entries.some(function(entry) { return entry.isIntersecting; })) appendBatch();
-          }, { rootMargin: "1100px 0px", threshold: 0 });
+          }, { rootMargin: "1200px 0px", threshold: 0 });
           galleryLoadObserver.observe(sentinel);
         } else {
           while (cursor < state.filtered.length) appendBatch();
