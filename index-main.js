@@ -112,7 +112,7 @@
               target.loading = "eager";
               target.src = source;
             });
-          }, { rootMargin: "500px 0px", threshold: 0 });
+          }, { rootMargin: "1000px 0px", threshold: 0 });
         }
         mediaObserver.observe(img);
       }
@@ -142,7 +142,7 @@
           if (el && value) el.textContent = value;
         };
 
-        setText("info-title", config.title || "Chroma Diary");
+        setText("info-title", config.title || "TANIBERGEN");
         setText("info-statement", config.statement || "");
         setText("info-note", config.note || "");
         setText("info-domain", config.domain || "tanibergen.online");
@@ -263,6 +263,7 @@
         img.decoding = "async";
         img.draggable = false;
         img.loading = isPriority ? "eager" : "lazy";
+        img.fetchPriority = isPriority ? "high" : "low";
         if (isPriority) {
           img.setAttribute("fetchpriority", "high");
           img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
@@ -272,9 +273,6 @@
         }
 
         img.addEventListener("load", function () {
-          if (img.naturalWidth && img.naturalHeight) {
-            frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
-          }
           frame.classList.add("is-loaded");
         });
 
@@ -387,38 +385,6 @@
           return;
         }
 
-        var diary = document.createElement("section");
-        diary.className = "diary-intro";
-        diary.setAttribute("aria-label", "Chroma Diary colour study");
-        var diaryTitle = document.createElement("h1");
-        diaryTitle.className = "diary-title";
-        diaryTitle.textContent = "Chroma Diary";
-        var diaryMeta = document.createElement("div");
-        diaryMeta.className = "diary-meta";
-        diaryMeta.textContent = "CHROMATIC INDEX / NO. 001";
-        var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
-        var paletteSwatches = document.createElement("div");
-        paletteSwatches.className = "diary-swatches";
-        paletteSwatches.setAttribute("aria-label", "Selected colours");
-        palette.colors.forEach(function(colour) {
-          var swatch = document.createElement("span");
-          swatch.className = "diary-swatch";
-          swatch.style.backgroundColor = colour;
-          paletteSwatches.appendChild(swatch);
-        });
-        var paletteStrip = document.createElement("div");
-        paletteStrip.className = "diary-palette";
-        paletteStrip.setAttribute("aria-label", "Selected colour gradient");
-        paletteStrip.style.background = palette.gradient;
-        paletteStrip.title = palette.name;
-        diary.appendChild(diaryTitle);
-        diary.appendChild(diaryMeta);
-        diary.appendChild(paletteSwatches);
-        diary.appendChild(paletteStrip);
-        dom.sequenceView.appendChild(diary);
-
-        var grid = document.createElement("div");
-        grid.className = "all-card-grid";
         var grid = document.createElement("div");
         grid.className = "all-card-grid";
         var sentinel = document.createElement("div");
@@ -472,7 +438,7 @@
         if ("IntersectionObserver" in window && cursor < state.filtered.length) {
           galleryLoadObserver = new IntersectionObserver(function(entries) {
             if (entries.some(function(entry) { return entry.isIntersecting; })) appendBatch();
-          }, { rootMargin: "720px 0px", threshold: 0 });
+          }, { rootMargin: "1100px 0px", threshold: 0 });
           galleryLoadObserver.observe(sentinel);
         } else {
           while (cursor < state.filtered.length) appendBatch();
