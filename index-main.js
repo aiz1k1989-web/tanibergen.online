@@ -102,7 +102,7 @@
               target.loading = "eager";
               target.src = source;
             });
-          }, { rootMargin: "900px 0px", threshold: 0 });
+          }, { rootMargin: "500px 0px", threshold: 0 });
         }
         mediaObserver.observe(img);
       }
@@ -425,7 +425,7 @@
         dom.sequenceView.appendChild(grid);
 
         var cursor = 0;
-        var batchSize = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 12 : 18;
+        var batchSize = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 8 : 16;
         var appending = false;
 
         function appendBatch() {
@@ -469,7 +469,7 @@
         if ("IntersectionObserver" in window && cursor < state.filtered.length) {
           galleryLoadObserver = new IntersectionObserver(function(entries) {
             if (entries.some(function(entry) { return entry.isIntersecting; })) appendBatch();
-          }, { rootMargin: "950px 0px", threshold: 0 });
+          }, { rootMargin: "720px 0px", threshold: 0 });
           galleryLoadObserver.observe(sentinel);
         } else {
           while (cursor < state.filtered.length) appendBatch();
@@ -567,7 +567,8 @@
         var progress = dom.colorView.querySelector(".color-progress-label");
         var fill = dom.colorView.querySelector(".color-progress-fill");
         var cursor = 0;
-        var workers = Array.from({ length: Math.min(3, total) }, async function () {
+        var concurrency = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 2 : 3;
+        var workers = Array.from({ length: Math.min(concurrency, total) }, async function () {
           while (cursor < total) {
             var index = cursor++;
             var work = state.filtered[index];
@@ -933,7 +934,6 @@
         var sub = formatCaptionMeta(work);
         dom.lbCaption.textContent = "PL. " + work._plate + " - " + (work.title || "Photograph") + (sub ? " · " + sub : "");
 
-        preloadNeighbor(state.lightboxIndex + 1);
       }
 
       function openOwnerReport() {
