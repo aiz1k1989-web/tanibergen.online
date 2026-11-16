@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Studio">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>Tanibergen Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#080808;--fg:#f4f4f1;--muted:#858585;--line:#303030}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 18px calc(28px + env(safe-area-inset-bottom));max-width:760px;margin-inline:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0 28px;border-bottom:1px solid var(--line)}.wordmark{font-size:13px;letter-spacing:.02em}.tiny{color:var(--muted);font:11px/1.4 ui-monospace,monospace}
+main{padding:28px 0 60px}h1{font-size:clamp(34px,9vw,54px);font-weight:500;letter-spacing:-.06em;line-height:.98;margin:0 0 12px}.intro{color:var(--muted);font-size:14px;margin:0 0 34px}
+.section{border-top:1px solid var(--line);padding:22px 0}.section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:17px}.section-head h2{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;margin:0}.field{display:block;margin:0 0 18px}.field span{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}input,textarea{width:100%;background:#111;color:var(--fg);border:1px solid var(--line);border-radius:0;padding:14px;font:inherit;outline:none}input:focus,textarea:focus{border-color:#aaa}textarea{min-height:145px;resize:vertical}input[type=file]{padding:12px;font-size:13px}.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}
+button,.button{border:1px solid var(--fg);background:var(--fg);color:#080808;padding:14px 16px;font:500 13px inherit;min-height:48px;cursor:pointer;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}button.secondary,.button.secondary{background:transparent;color:var(--fg);border-color:var(--line)}button:disabled{opacity:.4;cursor:wait}.wide{width:100%}.danger{color:#ffb6b6!important;border-color:#553333!important}
+#token-panel{display:none}#token-panel.open{display:block}.token-note{color:var(--muted);font-size:12px;margin:0 0 14px}.status{min-height:22px;color:var(--muted);font-size:12px;margin:14px 0 0;white-space:pre-wrap}.status.error{color:#ff9c9c}.status.ok{color:#b9d6b9}
+.preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px}.preview img{width:100%;aspect-ratio:1;object-fit:cover;background:#181818}.preview-item{position:relative}.preview-item small{position:absolute;bottom:4px;left:5px;background:#000b;padding:2px 4px;font-size:10px}
+.footer{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font:11px ui-monospace,monospace;display:flex;justify-content:space-between}.footer a{color:inherit}
+@media(min-width:600px){body{padding-inline:28px}.preview{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header><span class="wordmark">tanibergen.online / studio</span><span class="tiny" id="connection">LOCAL MODE</span></header>
+<main>
+<h1>Tanibergen<br>Studio</h1>
+<p class="intro">A small private tool for publishing to the Journal.</p>
+
+<section class="section" id="token-section">
+<div class="section-head"><h2>01 / Access</h2><button class="secondary" id="token-toggle" type="button">Token settings</button></div>
+<div id="token-panel">
+<p class="token-note">A GitHub fine-grained token is stored only in this browser on this device. Limit it to this repository and grant Contents: Read and write, Issues: Read and write. Do not share this device or token.</p>
+<label class="field"><span>GitHub personal access token</span><input id="token" type="password" autocomplete="off" placeholder="github_pat_..."></label>
+<div class="row"><button id="save-token" type="button">Save on this device</button><button class="secondary danger" id="clear-token" type="button">Forget token</button></div>
+<p class="status" id="token-status"></p>
+</div>
+<div id="token-state" class="tiny">TOKEN NOT CONNECTED</div>
+</section>
+
+<section class="section">
+<div class="section-head"><h2>02 / New entry</h2><span class="tiny">JOURNAL</span></div>
+<label class="field"><span>Title</span><input id="post-title" maxlength="120" placeholder="A quiet afternoon..." required></label>
+<label class="field"><span>Text</span><textarea id="post-body" placeholder="Write a few lines..."></textarea></label>
+<label class="field"><span>Photographs</span><input id="photos" type="file" accept="image/*" multiple></label>
+<p class="tiny">Images are resized to max. 1600 px and compressed before upload. They will be published in the Journal in the order selected.</p>
+<div id="preview" class="preview"></div>
+<p id="upload-status" class="status" aria-live="polite"></p>
+<button id="publish" class="wide" type="button">Publish entry</button>
+</section>
+<section class="section">
+<div class="section-head"><h2>03 / Website</h2><span class="tiny">LIVE</span></div>
+<a class="button secondary wide" href="https://tanibergen.online/" target="_blank" rel="noopener">Open tanibergen.online ↗</a>
+</section>
+</main>
+<footer class="footer"><span>PRIVATE / DEVICE STORAGE</span><a href="https://github.com/aiz1k1989-web/tanibergen.online" target="_blank" rel="noopener">SOURCE ↗</a></footer>
+<script>
+(function(){
+"use strict";
+const OWNER="aiz1k1989-web",REPO="tanibergen.online",BRANCH="main",KEY="tanibergen_studio_token_v1";
+const $=id=>document.getElementById(id);
+const tokenInput=$("token"),tokenPanel=$("token-panel"),tokenState=$("token-state"),status=$("upload-status"),publish=$("publish"),photoInput=$("photos");
+let selectedFiles=[];
+function token(){return localStorage.getItem(KEY)||""}
+function setTokenState(){const ok=!!token();tokenState.textContent=ok?"TOKEN SAVED ON THIS DEVICE":"TOKEN NOT CONNECTED";$("connection").textContent=ok?"READY":"LOCAL MODE";tokenInput.value=token()}
+$("token-toggle").addEventListener("click",()=>tokenPanel.classList.toggle("open"));
+$("save-token").addEventListener("click",async()=>{const value=tokenInput.value.trim();if(!value){$("token-status").textContent="Paste a token first.";return}localStorage.setItem(KEY,value);try{await api("/user");$("token-status").textContent="Token connected.";setTokenState()}catch(e){localStorage.removeItem(KEY);$("token-status").textContent="Could not verify token: "+e.message;setTokenState()}});
+$("clear-token").addEventListener("click",()=>{localStorage.removeItem(KEY);tokenInput.value="";$("token-status").textContent="Token removed from this browser.";setTokenState()});
+async function api(path,options={}){const t=token();if(!t)throw new Error("Add your GitHub token in Token settings.");const res=await fetch("https://api.github.com"+path,{...options,headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+t,"X-GitHub-Api-Version":"2022-11-28",...(options.headers||{})}});let data={};try{data=await res.json()}catch(e){}if(!res.ok)throw new Error((data.message||"GitHub API error")+" ("+res.status+")");return data}
+function safeName(name){return name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(-70)||"photo"}
+function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(",")[1]);reader.onerror=reject;reader.readAsDataURL(blob)})}
+async function compress(file){const bitmap=await createImageBitmap(file);const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));const ctx=canvas.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",.84));if(!blob)throw new Error("Could not compress "+file.name);return blob}
+async function uploadImage(file,index){const blob=await compress(file);const base64=await blobToDataUrl(blob);const path="images/studio/"+Date.now()+"-"+String(index+1).padStart(2,"0")+"-"+safeName(file.name).replace(/\.[^.]+$/,"")+".jpg";await api("/repos/"+OWNER+"/"+REPO+"/contents/"+path,{method:"PUT",body:JSON.stringify({message:"Upload Journal image",content:base64,branch:BRANCH})});return "https://raw.githubusercontent.com/"+OWNER+"/"+REPO+"/"+BRANCH+"/"+path}
+photoInput.addEventListener("change",()=>{selectedFiles=Array.from(photoInput.files||[]);$("preview").innerHTML="";selectedFiles.forEach(file=>{const wrap=document.createElement("div");wrap.className="preview-item";const img=document.createElement("img");img.alt="";img.src=URL.createObjectURL(file);const label=document.createElement("small");label.textContent=file.name;wrap.append(img,label);$("preview").append(wrap)})});
+publish.addEventListener("click",async()=>{const title=$("post-title").value.trim(),body=$("post-body").value.trim();if(!title){status.textContent="Add a title first.";status.className="status error";return}if(!body&&!selectedFiles.length){status.textContent="Add text or at least one photograph.";status.className="status error";return}publish.disabled=true;status.className="status";try{const markdown=[];if(body)markdown.push(body);for(let i=0;i<selectedFiles.length;i++){status.textContent="Compressing and uploading photograph "+(i+1)+" of "+selectedFiles.length+"...";const url=await uploadImage(selectedFiles[i],i);markdown.push("![Photograph "+(i+1)+"]("+url+")")}status.textContent="Creating Journal entry...";const issue=await api("/repos/"+OWNER+"/"+REPO+"/issues",{method:"POST",body:JSON.stringify({title:"[BLOG] "+title,body:markdown.join("\n\n")})});status.className="status ok";status.textContent="Published. Journal entry #"+issue.number+" is live.\n"+issue.html_url;$("post-title").value="";$("post-body").value="";photoInput.value="";selectedFiles=[];$("preview").innerHTML=""}catch(e){status.className="status error";status.textContent="Could not publish: "+e.message+"\nIf images were already uploaded, they remain in the repository."}finally{publish.disabled=false}});
+setTokenState();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+})();
+</script>
+</body></html>
