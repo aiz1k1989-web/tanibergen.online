@@ -390,3 +390,150 @@ body.is-color-mode .plate-placeholder {
 
 /* Preserve the exact lowercase domain identity in the masthead. */
 .brand-btn { text-transform:none; letter-spacing:.025em; }
+
+
+/* Monochrome archive: white canvas, black interface, no decorative gradients. */
+:root {
+  --bg:#fff;
+  --surface:#f5f5f5;
+  --ink:#000;
+  --muted:#666;
+  --rule:#e5e5e5;
+  --accent:#000;
+  --lb-bg:#000;
+  --lb-ink:#fff;
+  --lb-muted:#aaa;
+}
+html,body { background:#fff; color:#000; }
+.site-header {
+  background:#fff;
+  border:0;
+  box-shadow:none;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+.brand-btn,.mode-btn,.rail-label,.mono-label,.rail-counter,
+.record-code,.record-term,.rail-link,.rail-domain { color:#000; }
+.mode-btn.is-active { color:#000; }
+.mode-btn.is-active:after { display:none; }
+.mobile-series-bar { background:#fff; border:0; }
+.rail { border:0; }
+.rail-progress,.rail-progress-fill { background:#000; }
+.rail-progress { opacity:.14; }
+.rail-progress-fill { opacity:1; }
+.diary-intro { border:0; }
+.diary-title { color:#000; }
+.diary-meta { color:#666; }
+.diary-swatches,.diary-palette,.chromatic-gradient { display:none!important; }
+.plate-placeholder,
+body.is-color-mode .plate-placeholder {
+  background:#f3f3f3;
+  animation:none;
+  border:0!important;
+}
+.plate-placeholder > * { display:none!important; }
+body.is-color-mode {
+  --bg:#fff;--surface:#f5f5f5;--ink:#000;--muted:#666;--rule:#e5e5e5;
+  --accent:#000;--lb-bg:#000;--lb-ink:#fff;--lb-muted:#aaa;
+  background:#fff;color:#000;
+}
+body.is-color-mode .site-header,
+body.is-color-mode .mobile-series-bar {
+  background:#fff;
+  border:0;
+  box-shadow:none;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+body.is-color-mode .mode-btn.is-active {
+  min-height:44px;
+  margin:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+  color:#000;
+}
+body.is-color-mode .color-heading {
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+body.is-color-mode .recompose-btn {
+  border:1px solid #000;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+  color:#000;
+}
+body.is-color-mode .recompose-btn:hover { background:#000;color:#fff; }
+body.is-color-mode .chromatic-gradient { display:none!important; }
+body.is-color-mode .color-progress { background:#e5e5e5; }
+body.is-color-mode .color-progress-fill { background:#000; }
+body.is-color-mode .color-tile,
+body.is-color-mode .color-tile-frame,
+body.is-color-mode .color-tile img { background:#f5f5f5; }
+.color-heading,.color-mosaic,.color-tile { animation:none!important; }
+.contact-detail:hover { color:#000; }
+.contact-detail-index,.contact-detail-label { color:#666; }
+:focus-visible { outline:2px solid #000;outline-offset:3px; }
+@media(max-width:900px) {
+  .mobile-series-bar {
+    display:block;
+    height:auto;
+    padding:10px 12px 8px;
+    background:#fff;
+  }
+  .mobile-series-scroll {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:5px;
+    overflow:visible;
+  }
+  .mobile-series-btn {
+    min-width:0;
+    min-height:42px;
+    padding:7px 9px;
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr);
+    align-items:center;
+    gap:8px;
+    border:1px solid #e5e5e5;
+    border-radius:0;
+    background:#fff;
+    color:#000;
+    text-align:left;
+    white-space:normal;
+  }
+  .mobile-series-btn.is-active {
+    background:#000;
+    border-color:#000;
+    color:#fff;
+  }
+  .mobile-series-code,.mobile-series-term { color:inherit; }
+  .mobile-series-code { font:9px var(--mono);letter-spacing:.04em;opacity:.72; }
+  .mobile-series-term { font:10px/1.2 var(--mono);overflow-wrap:anywhere; }
+  .mobile-counter { padding:7px 1px 0;text-align:right;color:#666; }
+  body.is-color-mode .mobile-series-btn,
+  body.is-color-mode .mobile-series-btn.is-active {
+    background:#fff;
+    border:1px solid #e5e5e5;
+    border-radius:0;
+    box-shadow:none;
+    color:#000;
+  }
+  body.is-color-mode .mobile-series-btn.is-active { background:#000;border-color:#000;color:#fff; }
+}
+@media(max-width:600px) {
+  .mobile-series-bar { padding:8px 12px 6px; }
+  .mobile-series-scroll { gap:4px; }
+  .mobile-series-btn { min-height:40px;padding:6px 7px;grid-template-columns:36px minmax(0,1fr); }
+  .mobile-series-code { font-size:8px; }
+  .mobile-series-term { font-size:9px; }
+  .all-card-grid { column-gap:7px; }
+}
