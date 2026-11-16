@@ -176,15 +176,47 @@
       }
 
       function createArchiveRecords() {
-        return shuffleCopy(works).slice(0, 6).map(function (_, index) {
-          var pool = shuffleCopy(works);
-          var amount = Math.min(pool.length, 13 + Math.floor(Math.random() * 18));
-          return {
-            id: String(1000 + Math.floor(Math.random() * 9000)),
-            term: String(10 + Math.floor(Math.random() * 90)),
-            items: pool.slice(0, amount)
-          };
+        return [{
+          id: "All",
+          term: "ALL PHOTOGRAPHS",
+          items: works.slice()
+        }];
+      }
+
+      async function buildPaletteRecords() {
+        var results = new Array(works.length);
+        var cursor = 0;
+        var concurrency = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 2 : 3;
+        var workers = Array.from({ length: Math.min(concurrency, works.length) }, async function () {
+          while (cursor < works.length) {
+            var index = cursor++;
+            var work = works[index];
+            var color = await analyzeOne(work);
+            results[index] = { work: work, color: color };
+          }
         });
+        await Promise.all(workers);
+        var groups = clusterByColor(results.filter(Boolean));
+        var minGroupSize = 2;
+        state.records = [{
+          id: "All",
+          term: "ALL PHOTOGRAPHS",
+          items: works.slice()
+        }].concat(groups.filter(function (group) {
+          return group.items.length >= minGroupSize;
+        }).map(function (group) {
+          return {
+            id: "palette-" + group.label.toLowerCase().replace(/[^a-z]+/g, "-"),
+            term: group.label.toUpperCase() + " / " + String(group.items.length).padStart(2, "0"),
+            items: group.items.map(function (entry) { return entry.work; })
+          };
+        }));
+        renderSeriesFilters();
+        if (state.series !== "All") {
+          var active = state.records.find(function (record) { return record.id === state.series; });
+          if (active) state.filtered = active.items.slice();
+          else selectSeries("All");
+        }
       }
 
       function renderSeriesFilters() {
@@ -1059,5 +1091,10 @@
       renderActiveView();
       updateCounter(0);
       bindEvents();
+      if (works.length) {
+        var startPaletteIndexing = function () { buildPaletteRecords().catch(function () {}); };
+        if ("requestIdleCallback" in window) window.requestIdleCallback(startPaletteIndexing, { timeout: 3500 });
+        else window.setTimeout(startPaletteIndexing, 1800);
+      }
     })();
   
