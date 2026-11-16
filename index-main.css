@@ -345,3 +345,12 @@ img { -webkit-user-drag:none;-webkit-touch-callout:none;user-select:none;-webkit
   .all-photo-frame,.contact-detail,.color-view,.color-heading,.recompose-btn { transition:none!important; }
   .color-heading,.color-mosaic,.color-tile { animation:none!important; }
 }
+
+/* Keep the chromatic contact sheet orderly after the mobile layout reset. */
+html.is-color-mode { background:#080808; color:#f3f1ec; }
+.gradient-mosaic { grid-auto-flow:row; grid-auto-rows:auto; }
+.gradient-mosaic .color-tile:nth-child(n) { grid-column:auto; grid-row:auto; }
+.gradient-mosaic .color-tile-frame { height:auto; min-height:0; }
+@media(max-width:900px) {
+  .gradient-mosaic .color-tile:nth-child(n) { grid-column:auto; grid-row:auto; }
+}
