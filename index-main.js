@@ -931,6 +931,8 @@
           back.textContent = "← All entries";
           back.addEventListener("click", function(){ state.blogArticle = null; renderBlogView(); });
           actions.appendChild(back);
+          var edit = document.createElement("a"); edit.className = "blog-action"; edit.href = state.blogIssues.find(function(item){ return item.number === state.blogArticle; }).html_url;
+          edit.target = "_blank"; edit.rel = "noopener noreferrer"; edit.textContent = "Edit on GitHub ↗"; actions.appendChild(edit);
         } else {
           var write = document.createElement("a"); write.className = "blog-action"; write.href = BLOG_NEW_POST;
           write.target = "_blank"; write.rel = "noopener noreferrer"; write.textContent = "Write a post ↗";
