@@ -421,7 +421,7 @@
             card.className = "all-photo-card book-photo-card book-slot-" + (index - startIndex);
             card.setAttribute("aria-label", "Open photograph " + work._plate);
             card.dataset.index = String(index);
-            var frame = buildMediaFrame(work, index, index < 4, true);
+            var frame = buildMediaFrame(work, index, index < 6, true);
             frame.classList.add("all-photo-frame");
             card.appendChild(frame);
             card.addEventListener("click", function(selectedWork) {
@@ -453,14 +453,14 @@
             var spread = document.createElement("div");
             spread.className = "book-spread";
             var leftStart = cursor;
-            var leftEnd = Math.min(leftStart + 4, state.filtered.length);
+            var leftEnd = Math.min(leftStart + 6, state.filtered.length);
             cursor = leftEnd;
-            spread.appendChild(makePage(Math.floor(leftStart / 4), leftStart, leftEnd));
+            spread.appendChild(makePage(Math.floor(leftStart / 6), leftStart, leftEnd));
             if (cursor < state.filtered.length) {
               var rightStart = cursor;
-              var rightEnd = Math.min(rightStart + 4, state.filtered.length);
+              var rightEnd = Math.min(rightStart + 6, state.filtered.length);
               cursor = rightEnd;
-              spread.appendChild(makePage(Math.floor(rightStart / 4), rightStart, rightEnd));
+              spread.appendChild(makePage(Math.floor(rightStart / 6), rightStart, rightEnd));
             }
             fragment.appendChild(spread);
           }
