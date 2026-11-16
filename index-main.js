@@ -612,6 +612,7 @@
       function renderColorView() {
         stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        if (galleryLoadObserver) { galleryLoadObserver.disconnect(); galleryLoadObserver = null; }
         state.colorGeneration++;
         state.colorBusy = true;
         dom.colorView.innerHTML = "";
@@ -719,6 +720,7 @@
       function renderContactView() {
         stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        if (galleryLoadObserver) { galleryLoadObserver.disconnect(); galleryLoadObserver = null; }
         dom.contactView.innerHTML = "";
 
         var intro = document.createElement("div");
