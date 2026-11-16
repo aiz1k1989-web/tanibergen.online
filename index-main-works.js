@@ -1,5 +1,5 @@
 window.TANIBERGEN_CONFIG = {
-  title: "TANIBERGEN",
+  title: "Chroma Diary",
   domain: "tanibergen.online",
   instagramHandle: "@isaac_4u",
   instagramUrl: "https://instagram.com/isaac_4u",
