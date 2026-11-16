@@ -3,14 +3,14 @@
       "use strict";
 
       var CHROMA_PALETTES = [
-        { name: "oxide", gradient: "linear-gradient(90deg,#241b1b 0%,#642f2d 24%,#b54c3d 49%,#dc8a65 74%,#ead2b6 100%)" },
-        { name: "monochrome", gradient: "linear-gradient(90deg,#080808 0%,#303030 25%,#777 50%,#c4c4c4 75%,#f0eee9 100%)" },
-        { name: "afterimage", gradient: "linear-gradient(90deg,#202b32 0%,#536c70 25%,#b1a48b 50%,#c77c55 75%,#652f31 100%)" },
-        { name: "electric", gradient: "linear-gradient(90deg,#171b4a 0%,#3c55a6 25%,#6c9aab 50%,#e3b64e 75%,#db563d 100%)" },
-        { name: "soft focus", gradient: "linear-gradient(90deg,#d9c9b7 0%,#c89d89 25%,#a5a58e 50%,#718b88 75%,#596b78 100%)" },
-        { name: "night flowers", gradient: "linear-gradient(90deg,#17151d 0%,#4b334d 25%,#9b5369 50%,#d58b78 75%,#e8c6a5 100%)" },
-        { name: "acid green", gradient: "linear-gradient(90deg,#171b16 0%,#455b35 25%,#9cae49 50%,#d4c85b 75%,#e5e0c2 100%)" },
-        { name: "blue hour", gradient: "linear-gradient(90deg,#101a2b 0%,#263e62 25%,#527a91 50%,#a6a9a0 75%,#e3c9a9 100%)" }
+        { name: "oxide", colors: ["#241b1b","#642f2d","#b54c3d","#dc8a65","#ead2b6"], gradient: "linear-gradient(90deg,#241b1b 0%,#642f2d 24%,#b54c3d 49%,#dc8a65 74%,#ead2b6 100%)" },
+        { name: "monochrome", colors: ["#080808","#303030","#777777","#c4c4c4","#f0eee9"], gradient: "linear-gradient(90deg,#080808 0%,#303030 25%,#777 50%,#c4c4c4 75%,#f0eee9 100%)" },
+        { name: "afterimage", colors: ["#202b32","#536c70","#b1a48b","#c77c55","#652f31"], gradient: "linear-gradient(90deg,#202b32 0%,#536c70 25%,#b1a48b 50%,#c77c55 75%,#652f31 100%)" },
+        { name: "electric", colors: ["#171b4a","#3c55a6","#6c9aab","#e3b64e","#db563d"], gradient: "linear-gradient(90deg,#171b4a 0%,#3c55a6 25%,#6c9aab 50%,#e3b64e 75%,#db563d 100%)" },
+        { name: "soft focus", colors: ["#d9c9b7","#c89d89","#a5a58e","#718b88","#596b78"], gradient: "linear-gradient(90deg,#d9c9b7 0%,#c89d89 25%,#a5a58e 50%,#718b88 75%,#596b78 100%)" },
+        { name: "night flowers", colors: ["#17151d","#4b334d","#9b5369","#d58b78","#e8c6a5"], gradient: "linear-gradient(90deg,#17151d 0%,#4b334d 25%,#9b5369 50%,#d58b78 75%,#e8c6a5 100%)" },
+        { name: "acid green", colors: ["#171b16","#455b35","#9cae49","#d4c85b","#e5e0c2"], gradient: "linear-gradient(90deg,#171b16 0%,#455b35 25%,#9cae49 50%,#d4c85b 75%,#e5e0c2 100%)" },
+        { name: "blue hour", colors: ["#101a2b","#263e62","#527a91","#a6a9a0","#e3c9a9"], gradient: "linear-gradient(90deg,#101a2b 0%,#263e62 25%,#527a91 50%,#a6a9a0 75%,#e3c9a9 100%)" }
       ];
       var config = window.TANIBERGEN_CONFIG || {};
       var rawWorks = Array.isArray(window.TANIBERGEN_WORKS) ? window.TANIBERGEN_WORKS : [];
@@ -395,15 +395,25 @@
         diaryTitle.textContent = "Chroma Diary";
         var diaryMeta = document.createElement("div");
         diaryMeta.className = "diary-meta";
-        diaryMeta.textContent = "A VISUAL ARCHIVE / COLOUR, LIGHT, PHOTOGRAPHS";
+        diaryMeta.textContent = "CHROMATIC INDEX / NO. 001";
         var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
+        var paletteSwatches = document.createElement("div");
+        paletteSwatches.className = "diary-swatches";
+        paletteSwatches.setAttribute("aria-label", "Selected colours");
+        palette.colors.forEach(function(colour) {
+          var swatch = document.createElement("span");
+          swatch.className = "diary-swatch";
+          swatch.style.backgroundColor = colour;
+          paletteSwatches.appendChild(swatch);
+        });
         var paletteStrip = document.createElement("div");
         paletteStrip.className = "diary-palette";
-        paletteStrip.setAttribute("aria-label", "Selected colour sequence");
+        paletteStrip.setAttribute("aria-label", "Selected colour gradient");
         paletteStrip.style.background = palette.gradient;
         paletteStrip.title = palette.name;
         diary.appendChild(diaryTitle);
         diary.appendChild(diaryMeta);
+        diary.appendChild(paletteSwatches);
         diary.appendChild(paletteStrip);
         dom.sequenceView.appendChild(diary);
 
