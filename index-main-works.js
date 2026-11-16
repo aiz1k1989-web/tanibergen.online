@@ -3,8 +3,8 @@ window.TANIBERGEN_CONFIG = {
   domain: "tanibergen.online",
   instagramHandle: "@isaac_4u",
   instagramUrl: "https://instagram.com/isaac_4u",
-  statement: "A photographic archive.",
-  note: "Photographs are displayed in their original proportions, without cropping or applied filters."
+  statement: "I’m Aizat Tanibergen, a photographer and videographer from Almaty, currently based in Bangkok. I enjoy experimenting with acid colours in my personal photography, so I wanted to give this archive a way to organise images by colour. This website is also a playground for ideas - a place to experiment with interactive projects, creative tools and things that make everyday life a little more interesting. Mostly, I make things here simply because I enjoy making them.",
+  note: ""
 };
 
 window.TANIBERGEN_WORKS = [];
