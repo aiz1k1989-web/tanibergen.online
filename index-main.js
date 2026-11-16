@@ -181,7 +181,7 @@
           var amount = Math.min(pool.length, 13 + Math.floor(Math.random() * 18));
           return {
             id: String(1000 + Math.floor(Math.random() * 9000)),
-            term: "Collection " + String(index + 1).padStart(2, "0"),
+            term: String(10 + Math.floor(Math.random() * 90)),
             items: pool.slice(0, amount)
           };
         });
@@ -200,7 +200,7 @@
           button.setAttribute("aria-pressed", String(active));
           var code = document.createElement("span");
           code.className = "record-code";
-          code.textContent = "REC. " + record.id;
+          code.textContent = record.id;
           var term = document.createElement("span");
           term.className = "record-term";
           term.textContent = record.term;
@@ -216,7 +216,7 @@
           mobile.setAttribute("aria-pressed", String(active));
           var mobileCode = document.createElement("span");
           mobileCode.className = "mobile-series-code";
-          mobileCode.textContent = "REC. " + record.id;
+          mobileCode.textContent = record.id;
           var mobileTerm = document.createElement("span");
           mobileTerm.className = "mobile-series-term";
           mobileTerm.textContent = record.term;
@@ -375,13 +375,8 @@
       }
 
 
-      function randomArchiveWord() {
-        var words = ["AFTERIMAGE","STATIC","NIGHT SHIFT","BLUE ROOM","OUTTAKE","NO SIGNAL","SOFT ERROR","DUST INDEX","UNKNOWN","SIDE B","FALSE MEMORY","DARK MATTER","FRAME LOSS","SILENT FILE","ODD HOURS","COLD STORAGE"];
-        return words[Math.floor(Math.random() * words.length)];
-      }
-
       function randomArchiveNumber() {
-        return String(Math.floor(1000 + Math.random() * 8999));
+        return String(Math.floor(1000 + Math.random() * 9000));
       }
 
       function renderSequenceView() {
@@ -402,10 +397,10 @@
         diary.setAttribute("aria-label", "Unsorted archive records");
         var diaryTitle = document.createElement("h1");
         diaryTitle.className = "diary-title";
-        diaryTitle.textContent = randomArchiveWord() + " / " + randomArchiveNumber();
+        diaryTitle.textContent = "# " + randomArchiveNumber();
         var diaryMeta = document.createElement("div");
         diaryMeta.className = "diary-meta";
-        diaryMeta.textContent = randomArchiveWord() + " " + randomArchiveWord() + " / " + randomArchiveNumber() + " : " + randomArchiveNumber();
+        diaryMeta.textContent = randomArchiveNumber() + " / " + randomArchiveNumber() + " / " + randomArchiveNumber();
         var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
         var paletteSwatches = document.createElement("div");
         paletteSwatches.className = "diary-swatches";
