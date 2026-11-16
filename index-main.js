@@ -73,6 +73,8 @@
       };
 
       var plateObserver = null;
+      var mediaObserver = null;
+      var galleryLoadObserver = null;
 
       function padNumber(n) {
         return n < 10 ? "0" + n : String(n);
@@ -80,6 +82,29 @@
 
       function safeUrl(path) {
         return encodeURI(String(path || ""));
+      }
+
+      function observeMediaImage(img) {
+        if (!("IntersectionObserver" in window)) {
+          img.src = img.dataset.src || "";
+          img.removeAttribute("data-src");
+          return;
+        }
+        if (!mediaObserver) {
+          mediaObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (!entry.isIntersecting) return;
+              var target = entry.target;
+              mediaObserver.unobserve(target);
+              var source = target.dataset.src;
+              if (!source) return;
+              target.removeAttribute("data-src");
+              target.loading = "eager";
+              target.src = source;
+            });
+          }, { rootMargin: "900px 0px", threshold: 0 });
+        }
+        mediaObserver.observe(img);
       }
 
       function getNumericRatio(work) {
@@ -197,7 +222,14 @@
           mobile.type = "button";
           mobile.className = "mobile-series-btn" + (active ? " is-active" : "");
           mobile.setAttribute("aria-pressed", String(active));
-          mobile.textContent = record.id + " / " + record.term;
+          var mobileCode = document.createElement("span");
+          mobileCode.className = "mobile-series-code";
+          mobileCode.textContent = "REC. " + record.id;
+          var mobileTerm = document.createElement("span");
+          mobileTerm.className = "mobile-series-term";
+          mobileTerm.textContent = record.term;
+          mobile.appendChild(mobileCode);
+          mobile.appendChild(mobileTerm);
           mobile.addEventListener("click", function () { selectSeries(record.id); });
           dom.mobileSeries.appendChild(mobile);
         });
@@ -257,11 +289,17 @@
 
         var img = document.createElement("img");
         img.className = "plate-img";
-        img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
         img.alt = work.title ? work.title : "Photograph " + work._plate;
         img.decoding = "async";
+        img.draggable = false;
         img.loading = isPriority ? "eager" : "lazy";
-        if (isPriority) img.setAttribute("fetchpriority", "high");
+        if (isPriority) {
+          img.setAttribute("fetchpriority", "high");
+          img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
+        } else {
+          img.dataset.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
+          observeMediaImage(img);
+        }
 
         img.addEventListener("load", function () {
           if (img.naturalWidth && img.naturalHeight) {
@@ -368,6 +406,7 @@
       function renderSequenceView() {
         stopRotation();
         if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
+        if (galleryLoadObserver) { galleryLoadObserver.disconnect(); galleryLoadObserver = null; }
         dom.sequenceView.innerHTML = "";
         if (!state.filtered.length) {
           var empty = document.createElement("p");
@@ -376,24 +415,62 @@
           dom.sequenceView.appendChild(empty);
           return;
         }
+
         var grid = document.createElement("div");
         grid.className = "all-card-grid";
-        state.filtered.forEach(function(work, index) {
-          var card = document.createElement("button");
-          card.type = "button";
-          card.className = "all-photo-card card-shape-" + (index % 8);
-          card.setAttribute("aria-label", "Open photograph " + work._plate);
-          card.dataset.index = String(index);
-          var frame = buildMediaFrame(work, index, index < 2, true);
-          frame.classList.add("all-photo-frame");
-          card.appendChild(frame);
-          card.addEventListener("click", function() { openLightbox(state.filtered.indexOf(work)); });
-          grid.appendChild(card);
-        });
+        var sentinel = document.createElement("div");
+        sentinel.className = "gallery-sentinel";
+        sentinel.setAttribute("aria-hidden", "true");
+        grid.appendChild(sentinel);
         dom.sequenceView.appendChild(grid);
+
+        var cursor = 0;
+        var batchSize = window.matchMedia && window.matchMedia("(max-width: 900px)").matches ? 12 : 18;
+        var appending = false;
+
+        function appendBatch() {
+          if (appending || cursor >= state.filtered.length) return;
+          appending = true;
+          var fragment = document.createDocumentFragment();
+          var endIndex = Math.min(cursor + batchSize, state.filtered.length);
+          for (var index = cursor; index < endIndex; index++) {
+            var work = state.filtered[index];
+            var card = document.createElement("button");
+            card.type = "button";
+            card.className = "all-photo-card";
+            card.setAttribute("aria-label", "Open photograph " + work._plate);
+            card.dataset.index = String(index);
+            var frame = buildMediaFrame(work, index, index < 2, true);
+            frame.classList.add("all-photo-frame");
+            card.appendChild(frame);
+            card.addEventListener("click", function(selectedWork) {
+              return function() { openLightbox(state.filtered.indexOf(selectedWork)); };
+            }(work));
+            fragment.appendChild(card);
+          }
+          grid.insertBefore(fragment, sentinel);
+          cursor = endIndex;
+          appending = false;
+          setupPlateObserver();
+
+          if (cursor >= state.filtered.length) {
+            sentinel.remove();
+            if (galleryLoadObserver) { galleryLoadObserver.disconnect(); galleryLoadObserver = null; }
+          }
+        }
+
         state.activeIndex = 0;
-        setupPlateObserver();
         updateCounter(0);
+        appendBatch();
+
+        if ("IntersectionObserver" in window && cursor < state.filtered.length) {
+          galleryLoadObserver = new IntersectionObserver(function(entries) {
+            if (entries.some(function(entry) { return entry.isIntersecting; })) appendBatch();
+          }, { rootMargin: "950px 0px", threshold: 0 });
+          galleryLoadObserver.observe(sentinel);
+        } else {
+          while (cursor < state.filtered.length) appendBatch();
+        }
       }
 
       function extractDominantColor(image) {
@@ -616,7 +693,8 @@
           var img = document.createElement("img");
           img.src = safeUrl(work.file);
           img.alt = work.title || "Photograph " + work._plate;
-          img.loading = index < 6 ? "eager" : "lazy";
+          img.draggable = false;
+          img.loading = index < 4 ? "eager" : "lazy";
           img.decoding = "async";
           img.addEventListener("load", function() {
             if (img.naturalWidth && img.naturalHeight) frame.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
@@ -686,6 +764,7 @@
       }
 
       function setupPlateObserver() {
+        if (plateObserver) { plateObserver.disconnect(); plateObserver = null; }
         if (!("IntersectionObserver" in window)) return;
         var items = dom.sequenceView.querySelectorAll(".all-photo-card");
         if (!items.length) return;
@@ -719,6 +798,10 @@
         if (state.view === viewName) return;
         if (viewName !== "color") { state.colorGeneration++; state.colorBusy = false; }
         state.view = viewName;
+        document.body.classList.toggle("is-color-mode", viewName === "color");
+        document.documentElement.classList.toggle("is-color-mode", viewName === "color");
+        var themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) themeMeta.setAttribute("content", viewName === "color" ? "#080808" : "#ECE9E2");
         dom.modeButtons.forEach(function (btn) {
           var active = btn.dataset.view === viewName;
           btn.classList.toggle("is-active", active);
@@ -827,6 +910,7 @@
         img.src = safeUrl(work.file);
         img.alt = work.title ? work.title : "Photograph " + work._plate;
         img.decoding = "async";
+        img.draggable = false;
 
         img.addEventListener("load", function () {
           if (img.naturalWidth && img.naturalHeight) {
@@ -847,7 +931,6 @@
         dom.lbCaption.textContent = "PL. " + work._plate + " - " + (work.title || "Photograph") + (sub ? " · " + sub : "");
 
         preloadNeighbor(state.lightboxIndex + 1);
-        preloadNeighbor(state.lightboxIndex - 1);
       }
 
       function openOwnerReport() {
@@ -869,9 +952,19 @@
       }
 
       function bindEvents() {
+        document.addEventListener("contextmenu", function(e) {
+          if (e.target && e.target.closest && e.target.closest("img, .all-photo-card, .color-tile, .lb-media-wrap, .about-photo")) e.preventDefault();
+        });
+        document.addEventListener("dragstart", function(e) {
+          if (e.target && e.target.closest && e.target.closest("img")) e.preventDefault();
+        });
         dom.brandReset.addEventListener("click", function () {
           if (state.view !== "sequence") {
             state.view = "sequence";
+            document.body.classList.remove("is-color-mode");
+            document.documentElement.classList.remove("is-color-mode");
+            var themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) themeMeta.setAttribute("content", "#ECE9E2");
             dom.modeButtons.forEach(function (btn) {
               var active = btn.dataset.view === "sequence";
               btn.classList.toggle("is-active", active);
