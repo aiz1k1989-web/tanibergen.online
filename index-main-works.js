@@ -3,7 +3,7 @@ window.TANIBERGEN_CONFIG = {
   domain: "tanibergen.online",
   instagramHandle: "@isaac_4u",
   instagramUrl: "https://instagram.com/isaac_4u",
-  statement: "I’m Aizat Tanibergen, a photographer and videographer from Almaty, currently based in Bangkok. I enjoy experimenting with acid colours in my personal photography, so I wanted to give this archive a way to organise images by colour. This website is also a playground for ideas - a place to experiment with interactive projects, creative tools and things that make everyday life a little more interesting. Mostly, I make things here simply because I enjoy making them.",
+  statement: "I’m Aizat Tanibergen, a photographer and videographer from Almaty, now based in Bangkok. I love experimenting with acid colours in my personal work, which inspired me to organise this archive by colour. This site is also my playground for creative experiments, interactive ideas and little tools for self-development. Mostly, I make things here for the fun of making something new.",
   note: ""
 };
 
