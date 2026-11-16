@@ -126,17 +126,6 @@
         return "4 / 3";
       }
 
-      function getFormatLabel(work) {
-        if (work.width && work.height) {
-          var r = work.width / work.height;
-          if (r >= 2.0) return "PANORAMIC";
-          if (r > 1.05) return "HORIZONTAL";
-          if (r < 0.95) return "VERTICAL";
-          return "SQUARE";
-        }
-        return "ORIGINAL RATIO";
-      }
-
       function populateMeta() {
         var setText = function (id, value) {
           var el = document.getElementById(id);
@@ -177,19 +166,12 @@
       }
 
       function createArchiveRecords() {
-        var terms = [
-          "chromatic residue", "blind exposure", "unverified memory",
-          "light leak report", "negative space", "afterimage trace",
-          "weather in the frame", "misfiled evidence", "quiet interference",
-          "signal from nowhere", "nocturnal index", "false recollection"
-        ];
-        var shuffledTerms = shuffleCopy(terms);
-        return shuffledTerms.slice(0, 6).map(function (term) {
+        return shuffleCopy(works).slice(0, 6).map(function (_, index) {
           var pool = shuffleCopy(works);
           var amount = Math.min(pool.length, 13 + Math.floor(Math.random() * 18));
           return {
             id: String(1000 + Math.floor(Math.random() * 9000)),
-            term: term,
+            term: "Collection " + String(index + 1).padStart(2, "0"),
             items: pool.slice(0, amount)
           };
         });
@@ -255,29 +237,7 @@
       function createPlaceholderLayer(work, compact) {
         var box = document.createElement("div");
         box.className = "plate-placeholder" + (compact ? " is-compact" : "");
-
-        var top = document.createElement("div");
-        top.className = "ph-row";
-        var num = document.createElement("span");
-        num.textContent = "PL. " + work._plate;
-        var fmt = document.createElement("span");
-        fmt.textContent = getFormatLabel(work);
-        top.appendChild(num);
-        top.appendChild(fmt);
-
-        var mid = document.createElement("div");
-        mid.className = "ph-center";
-        var fileNote = document.createElement("span");
-        fileNote.className = "ph-file";
-        fileNote.textContent = "TANIBERGEN / PL. " + work._plate;
-        var hint = document.createElement("span");
-        hint.className = "ph-hint";
-        hint.textContent = "Loading image";
-        mid.appendChild(fileNote);
-        if (!compact) mid.appendChild(hint);
-
-        box.appendChild(top);
-        box.appendChild(mid);
+        box.setAttribute("aria-hidden", "true");
         return box;
       }
 
