@@ -1,9 +1,9 @@
 window.TANIBERGEN_CONFIG = {
-  title: "TANIBERGEN",
+  title: "Chroma Diary",
   domain: "tanibergen.online",
   instagramHandle: "@isaac_4u",
   instagramUrl: "https://instagram.com/isaac_4u",
-  statement: "A photographic archive by Tanibergen.",
+  statement: "A personal archive of photographs, colour, and light.",
   note: "Photographs are displayed in their original proportions, without cropping or applied filters."
 };
 
