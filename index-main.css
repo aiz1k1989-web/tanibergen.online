@@ -387,3 +387,6 @@ body.is-color-mode .plate-placeholder {
 .all-photo-frame { height:auto; }
 @media(max-width:1100px) { .all-card-grid { columns:2; column-gap:12px; } .all-photo-card { margin-bottom:12px; } }
 @media(max-width:600px) { .diary-intro { padding-bottom:18px; margin-bottom:14px; } .diary-title { font-size:34px; } .diary-meta { font-size:8px; letter-spacing:.065em; } .diary-swatches { height:11px; margin-top:15px; } .diary-palette { height:4px; margin-top:3px; } .all-card-grid { columns:2; column-gap:7px; } .all-photo-card { margin-bottom:7px; } }
+
+/* Preserve the exact lowercase domain identity in the masthead. */
+.brand-btn { text-transform:none; letter-spacing:.025em; }
