@@ -2,6 +2,16 @@
     (function () {
       "use strict";
 
+      var CHROMA_PALETTES = [
+        { name: "oxide", gradient: "linear-gradient(90deg,#241b1b 0%,#642f2d 24%,#b54c3d 49%,#dc8a65 74%,#ead2b6 100%)" },
+        { name: "monochrome", gradient: "linear-gradient(90deg,#080808 0%,#303030 25%,#777 50%,#c4c4c4 75%,#f0eee9 100%)" },
+        { name: "afterimage", gradient: "linear-gradient(90deg,#202b32 0%,#536c70 25%,#b1a48b 50%,#c77c55 75%,#652f31 100%)" },
+        { name: "electric", gradient: "linear-gradient(90deg,#171b4a 0%,#3c55a6 25%,#6c9aab 50%,#e3b64e 75%,#db563d 100%)" },
+        { name: "soft focus", gradient: "linear-gradient(90deg,#d9c9b7 0%,#c89d89 25%,#a5a58e 50%,#718b88 75%,#596b78 100%)" },
+        { name: "night flowers", gradient: "linear-gradient(90deg,#17151d 0%,#4b334d 25%,#9b5369 50%,#d58b78 75%,#e8c6a5 100%)" },
+        { name: "acid green", gradient: "linear-gradient(90deg,#171b16 0%,#455b35 25%,#9cae49 50%,#d4c85b 75%,#e5e0c2 100%)" },
+        { name: "blue hour", gradient: "linear-gradient(90deg,#101a2b 0%,#263e62 25%,#527a91 50%,#a6a9a0 75%,#e3c9a9 100%)" }
+      ];
       var config = window.TANIBERGEN_CONFIG || {};
       var rawWorks = Array.isArray(window.TANIBERGEN_WORKS) ? window.TANIBERGEN_WORKS : [];
 
@@ -20,7 +30,7 @@
           return item;
         });
 
-      works = shuffleCopy(works);
+      // Keep the photographic archive in its source order.
 
       var state = {
         view: "sequence",
@@ -132,7 +142,7 @@
           if (el && value) el.textContent = value;
         };
 
-        setText("info-title", config.title || "TANIBERGEN");
+        setText("info-title", config.title || "Chroma Diary");
         setText("info-statement", config.statement || "");
         setText("info-note", config.note || "");
         setText("info-domain", config.domain || "tanibergen.online");
@@ -311,6 +321,7 @@
 
       function scheduleRotation() {
         stopRotation();
+        return;
         if (document.hidden || state.view !== "sequence" || state.lightboxOpen || state.infoOpen || state.filtered.length < 2) return;
         var progress = dom.sequenceView.querySelector(".featured-progress-fill");
         if (progress) {
@@ -376,6 +387,28 @@
           return;
         }
 
+        var diary = document.createElement("section");
+        diary.className = "diary-intro";
+        diary.setAttribute("aria-label", "Chroma Diary colour study");
+        var diaryTitle = document.createElement("h1");
+        diaryTitle.className = "diary-title";
+        diaryTitle.textContent = "Chroma Diary";
+        var diaryMeta = document.createElement("div");
+        diaryMeta.className = "diary-meta";
+        diaryMeta.textContent = "A VISUAL ARCHIVE / COLOUR, LIGHT, PHOTOGRAPHS";
+        var palette = CHROMA_PALETTES[Math.floor(Math.random() * CHROMA_PALETTES.length)];
+        var paletteStrip = document.createElement("div");
+        paletteStrip.className = "diary-palette";
+        paletteStrip.setAttribute("aria-label", "Selected colour sequence");
+        paletteStrip.style.background = palette.gradient;
+        paletteStrip.title = palette.name;
+        diary.appendChild(diaryTitle);
+        diary.appendChild(diaryMeta);
+        diary.appendChild(paletteStrip);
+        dom.sequenceView.appendChild(diary);
+
+        var grid = document.createElement("div");
+        grid.className = "all-card-grid";
         var grid = document.createElement("div");
         grid.className = "all-card-grid";
         var sentinel = document.createElement("div");
