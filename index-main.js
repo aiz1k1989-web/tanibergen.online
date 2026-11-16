@@ -48,6 +48,7 @@
         records: [],
         blogLoaded: false,
         blogLoading: false,
+        blogError: false,
         blogIssues: [],
         blogArticle: null,
         lastFocused: null
@@ -150,8 +151,6 @@
         setText("info-title", "tanibergen.online");
         setText("info-statement", config.statement || "");
         setText("info-note", "");
-        var footerYear = document.getElementById("footer-year");
-        if (footerYear) footerYear.textContent = String(new Date().getFullYear());
         setText("info-domain", config.domain || "tanibergen.online");
         setText("rail-domain", config.domain || "tanibergen.online");
 
@@ -852,12 +851,14 @@
         if (state.view === "sequence") {
           dom.contactView.hidden = true;
           dom.colorView.hidden = true;
+          dom.blogView.hidden = true;
           dom.sequenceView.hidden = false;
           renderSequenceView();
         } else if (state.view === "contact") {
           dom.sequenceView.hidden = true;
           dom.contactView.hidden = false;
           dom.colorView.hidden = true;
+          dom.blogView.hidden = true;
           renderContactView();
         } else if (state.view === "blog") {
           dom.sequenceView.hidden = true;
@@ -956,6 +957,13 @@
           loading.textContent = state.blogLoading ? "Loading entries..." : "The journal is waiting for its first entry.";
           dom.blogView.appendChild(loading); loadBlogPosts(); return;
         }
+        if (state.blogError) {
+          var errorNote = document.createElement("p"); errorNote.className = "blog-status";
+          errorNote.textContent = "The journal could not be loaded. You can still open the posts on GitHub.";
+          var errorLink = document.createElement("a"); errorLink.href = "https://github.com/aiz1k1989-web/tanibergen.online/issues";
+          errorLink.textContent = "Open GitHub ↗"; errorLink.target = "_blank"; errorLink.rel = "noopener noreferrer";
+          errorNote.appendChild(document.createTextNode(" ")); errorNote.appendChild(errorLink); dom.blogView.appendChild(errorNote); return;
+        }
         if (!state.blogIssues.length) {
           var empty = document.createElement("p"); empty.className = "blog-status"; empty.textContent = "No entries yet.";
           dom.blogView.appendChild(empty); return;
@@ -978,14 +986,14 @@
       function loadBlogPosts() {
         if (state.blogLoading) return;
         state.blogLoading = true;
-        fetch(BLOG_API, { headers: { "Accept": "application/vnd.github+json" } })
+        fetch(BLOG_API, { cache: "no-store", headers: { "Accept": "application/vnd.github+json" } })
           .then(function(response){ if (!response.ok) throw new Error("GitHub API " + response.status); return response.json(); })
           .then(function(items){
             state.blogIssues = items.filter(function(item){ return !item.pull_request && /^\[BLOG\]/i.test(item.title || ""); });
-            state.blogLoaded = true;
+            state.blogLoaded = true; state.blogError = false;
           })
           .catch(function(){
-            state.blogLoaded = true; state.blogIssues = [];
+            state.blogLoaded = true; state.blogError = true; state.blogIssues = [];
             var note = document.createElement("p"); note.className = "blog-status";
             note.textContent = "Entries could not be loaded right now. Open the journal on GitHub to check the latest posts.";
             var link = document.createElement("a"); link.href = "https://github.com/aiz1k1989-web/tanibergen.online/issues";
