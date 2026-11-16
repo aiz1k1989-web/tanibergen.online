@@ -436,7 +436,7 @@ html,body { background:#000!important; color:#f2f2f0; }
   content:"";
   position:absolute;
   top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,#252525 0%,#8b3934 18%,#d2a16f 36%,#6e876c 54%,#527b9b 72%,#a18ba9 88%,#252525 100%);
+  background:var(--book-spectrum,linear-gradient(90deg,#252525,#777,#252525));
   opacity:.82;
 }
 .book-page-top,.book-page-bottom {
