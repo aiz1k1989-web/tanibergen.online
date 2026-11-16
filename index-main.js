@@ -153,75 +153,6 @@ var state = {
         }
       }
 
-      function createArchiveRecords() {
-        return shuffleCopy(works).slice(0, 6).map(function (_, index) {
-          var pool = shuffleCopy(works);
-          var amount = Math.min(pool.length, 13 + Math.floor(Math.random() * 18));
-          return {
-            id: String(1000 + Math.floor(Math.random() * 9000)),
-            term: "Collection " + String(index + 1).padStart(2, "0"),
-            items: pool.slice(0, amount)
-          };
-        });
-      }
-
-      function renderSeriesFilters() {
-        if (!state.records.length) state.records = createArchiveRecords();
-        dom.desktopSeries.innerHTML = "";
-        dom.mobileSeries.innerHTML = "";
-        state.records.forEach(function (record) {
-          var active = state.series === record.id;
-          var li = document.createElement("li");
-          var button = document.createElement("button");
-          button.type = "button";
-          button.className = "series-btn record-btn" + (active ? " is-active" : "");
-          button.setAttribute("aria-pressed", String(active));
-          var code = document.createElement("span");
-          code.className = "record-code";
-          code.textContent = "REC. " + record.id;
-          var term = document.createElement("span");
-          term.className = "record-term";
-          term.textContent = record.term;
-          button.appendChild(code);
-          button.appendChild(term);
-          button.addEventListener("click", function () { selectSeries(record.id); });
-          li.appendChild(button);
-          dom.desktopSeries.appendChild(li);
-
-          var mobile = document.createElement("button");
-          mobile.type = "button";
-          mobile.className = "mobile-series-btn" + (active ? " is-active" : "");
-          mobile.setAttribute("aria-pressed", String(active));
-          var mobileCode = document.createElement("span");
-          mobileCode.className = "mobile-series-code";
-          mobileCode.textContent = "REC. " + record.id;
-          var mobileTerm = document.createElement("span");
-          mobileTerm.className = "mobile-series-term";
-          mobileTerm.textContent = record.term;
-          mobile.appendChild(mobileCode);
-          mobile.appendChild(mobileTerm);
-          mobile.addEventListener("click", function () { selectSeries(record.id); });
-          dom.mobileSeries.appendChild(mobile);
-        });
-      }
-
-      function selectSeries(recordId) {
-        state.colorGeneration++;
-        state.colorGroups = [];
-        state.series = recordId;
-        if (recordId === "All") {
-          state.filtered = works.slice();
-        } else {
-          var record = state.records.find(function (item) { return item.id === recordId; });
-          state.filtered = record ? record.items.slice() : works.slice();
-        }
-        state.activeIndex = 0;
-        renderSeriesFilters();
-        renderActiveView();
-        updateCounter(0);
-        window.scrollTo({ top: 0, behavior: "auto" });
-      }
-
       function createPlaceholderLayer(work, compact) {
         var box = document.createElement("div");
         box.className = "plate-placeholder" + (compact ? " is-compact" : "");
@@ -297,17 +228,7 @@ var state = {
         return next;
       }
 
-      function scheduleRotation() {
-        stopRotation();
-        if (document.hidden || state.view !== "sequence" || state.lightboxOpen || state.infoOpen || state.filtered.length < 2) return;
-        var progress = dom.sequenceView.querySelector(".featured-progress-fill");
-        if (progress) {
-          progress.style.animation = "none";
-          void progress.offsetWidth;
-          progress.style.animation = "featured-progress " + rotationDuration + "ms linear forwards";
-        }
-        rotationTimer = window.setTimeout(advanceFeatured, rotationDuration);
-      }
+      function scheduleRotation() { stopRotation(); }
 
       function advanceFeatured() {
         if (state.view !== "sequence" || state.lightboxOpen || state.infoOpen || document.hidden) return;
@@ -674,15 +595,14 @@ var state = {
           if (e.target && e.target.closest && e.target.closest("img")) e.preventDefault();
         });
         dom.brandReset.addEventListener("click", function () {
-          if (state.view !== "sequence") {
-            state.view = "sequence";
-            dom.modeButtons.forEach(function (btn) {
-              var active = btn.dataset.view === "sequence";
-              btn.classList.toggle("is-active", active);
-              btn.setAttribute("aria-pressed", String(active));
-            });
-          }
-          selectSeries("All");
+          state.view = "sequence";
+          dom.modeButtons.forEach(function(btn) {
+            var active = btn.dataset.view === "sequence";
+            btn.classList.toggle("is-active", active);
+            btn.setAttribute("aria-pressed", String(active));
+          });
+          renderActiveView();
+          window.scrollTo({ top: 0, behavior: "auto" });
         });
 
         dom.modeButtons.forEach(function (btn) {
