@@ -562,7 +562,7 @@ body.is-color-mode .color-tile img { background:#f5f5f5; }
 .blog-body ul{padding-left:22px;margin:0 0 20px}
 .blog-body li{margin:6px 0}
 .blog-body img{display:block;width:auto;max-width:100%;max-height:78vh;height:auto;object-fit:contain;margin:28px auto;background:var(--surface)}
-.site-footer{min-height:64px;padding:16px var(--gutter);border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font:9px var(--mono);letter-spacing:.04em}
+ .site-footer{min-height:64px;padding:16px var(--gutter);border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:flex-end;gap:20px;color:var(--muted);font:9px var(--mono);letter-spacing:.04em}
 .github-credit{display:inline-flex;align-items:center;gap:8px;color:var(--ink);text-decoration:none}
 .github-credit svg{width:16px;height:16px;display:block}
 .github-credit:hover{text-decoration:underline;text-underline-offset:3px}
