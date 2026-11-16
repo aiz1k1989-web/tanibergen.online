@@ -36,9 +36,7 @@ var state = {
         lastFocused: null
       };
 
-      var rotationTimer = null;
-      var rotationDuration = 8200;
-      var imageCache = Object.create(null);
+      
       var ownerBuffer = "";
       var ownerPhrase = "bluehourindex";
       var colorCacheMemory = null;
@@ -203,74 +201,7 @@ var state = {
         return parts.join(" · ");
       }
 
-      function stopRotation() {
-        if (rotationTimer) {
-          window.clearTimeout(rotationTimer);
-          rotationTimer = null;
-        }
-      }
-
-      function preloadFeatured(index) {
-        var work = state.filtered[index];
-        if (!work || imageCache[index]) return;
-        var img = new Image();
-        img.decoding = "async";
-        img.fetchPriority = "low";
-        img.src = safeUrl(work.file);
-        imageCache[index] = img;
-      }
-
-      function randomNextIndex(current) {
-        var total = state.filtered.length;
-        if (total < 2) return current;
-        var next = current;
-        while (next === current) next = Math.floor(Math.random() * total);
-        return next;
-      }
-
-      function scheduleRotation() { stopRotation(); }
-
-      function advanceFeatured() {
-        if (state.view !== "sequence" || state.lightboxOpen || state.infoOpen || document.hidden) return;
-        var nextIndex = randomNextIndex(state.activeIndex);
-        var work = state.filtered[nextIndex];
-        var shell = dom.sequenceView.querySelector(".featured-shell");
-        var media = dom.sequenceView.querySelector(".featured-media");
-        var oldImage = media && media.querySelector(".featured-image.is-current");
-        if (!work || !media || !oldImage) return;
-
-        var nextImage = new Image();
-        nextImage.className = "featured-image is-entering";
-        nextImage.alt = work.title || "Photograph " + work._plate;
-        nextImage.decoding = "async";
-        nextImage.src = safeUrl(work.file);
-        nextImage.addEventListener("load", function () {
-          if (state.view !== "sequence" || !media.isConnected) return;
-          if (nextImage.naturalWidth && nextImage.naturalHeight) {
-            shell.style.aspectRatio = nextImage.naturalWidth + " / " + nextImage.naturalHeight;
-          }
-          media.appendChild(nextImage);
-          requestAnimationFrame(function () {
-            nextImage.classList.add("is-current");
-            nextImage.classList.remove("is-entering");
-            oldImage.classList.add("is-leaving");
-          });
-          window.setTimeout(function () {
-            if (oldImage.parentNode) oldImage.parentNode.removeChild(oldImage);
-            nextImage.classList.remove("is-current");
-            nextImage.classList.add("is-current");
-          }, 1150);
-          state.activeIndex = nextIndex;
-          updateCounter(nextIndex);
-          var caption = dom.sequenceView.querySelector(".featured-caption");
-          if (caption) caption.textContent = "PL. " + work._plate + " / " + (work.series || "Archive");
-          preloadFeatured(randomNextIndex(nextIndex));
-          scheduleRotation();
-        }, { once: true });
-        nextImage.addEventListener("error", function () {
-          scheduleRotation();
-        }, { once: true });
-      }
+      function stopRotation() {}
 
       function renderSequenceView() {
         stopRotation();
@@ -484,7 +415,6 @@ var state = {
         dom.infoToggle.setAttribute("aria-expanded", "false");
         document.body.classList.remove("is-locked");
         if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
-        scheduleRotation();
       }
 
       function openLightbox(index) {
@@ -507,7 +437,6 @@ var state = {
         dom.lbMediaWrap.innerHTML = "";
         document.body.classList.remove("is-locked");
         if (state.lastFocused && typeof state.lastFocused.focus === "function") state.lastFocused.focus();
-        scheduleRotation();
       }
 
       function stepLightbox(delta) {
@@ -584,7 +513,6 @@ var state = {
         var panel = document.getElementById("owner-report");
         if (panel) panel.hidden = true;
         if (!state.lightboxOpen && !state.infoOpen) document.body.classList.remove("is-locked");
-        scheduleRotation();
       }
 
       function bindEvents() {
@@ -639,11 +567,6 @@ var state = {
             ownerBuffer = "";
             openOwnerReport();
           }
-        });
-
-        document.addEventListener("visibilitychange", function () {
-          if (document.hidden) stopRotation();
-          else scheduleRotation();
         });
 
         dom.lbClose.addEventListener("click", closeLightbox);
