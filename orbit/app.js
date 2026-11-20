@@ -8,7 +8,8 @@ var motionLayer=document.getElementById("motion-layer");
 var active=0,lastFocus=null,rafPending=false,orbitCards=[],feedCards=[],flightCards=[],flightRects=[];
 var morphStarted=false,lastWidth=window.innerWidth,imageMeta={},savedScrollY=0,bodyLock=null,viewerTouch=null;
 var ringWeights=[8,14,20,26,31],ringRadii=[13,21,29,37,45],durations=[74,91,108,126,145];
-var MAX_FLIGHTS=window.matchMedia&&window.matchMedia("(max-width:760px)").matches?12:20;\nvar reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var MAX_FLIGHTS=window.matchMedia&&window.matchMedia("(max-width:760px)").matches?12:20;
+var reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function previewPath(file){return "../previews/"+file;}
 function originalPath(file){return "../"+file;}
 function setRatio(img,card,file){
