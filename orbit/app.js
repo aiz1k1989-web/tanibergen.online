@@ -8,7 +8,7 @@ var viewerCaption=document.getElementById("viewer-caption");
 var viewerCount=document.getElementById("viewer-count");
 var active=0,lastFocus=null;
 var ringWeights=[8,14,20,26,31];
-var ringRadii=[8.5,18,27.5,37,46];
+var ringRadii=[13,21,29,37,45];
 var durations=[74,91,108,126,145];
 function previewPath(file){return "../previews/"+file;}
 function originalPath(file){return "../"+file;}
@@ -28,12 +28,13 @@ function makeRings(){
    var work=works[cursor],index=cursor;cursor++;
    var angle=(360/count)*i+(ringIndex%2?360/count/2:0);
    var card=document.createElement("button");card.type="button";card.className="orbit-card";
-   card.style.setProperty("--angle",angle+"deg");
-   card.style.setProperty("--radius",ringRadii[ringIndex]+"%");
+   var radians=angle*Math.PI/180;
+   card.style.left=(50+Math.sin(radians)*ringRadii[ringIndex])+"%";
+   card.style.top=(50-Math.cos(radians)*ringRadii[ringIndex])+"%";
    card.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
    var photo=document.createElement("span");photo.className="photo";
    var img=document.createElement("img");img.alt="";img.loading="lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);
-   img.addEventListener("error",function(){if(!this.dataset.fallback){this.dataset.fallback="1";this.src=originalPath(work.file);}});
+   img.addEventListener("error",(function(path){return function(){if(!this.dataset.fallback){this.dataset.fallback="1";this.src=path;}};})(originalPath(work.file)));
    photo.appendChild(img);card.appendChild(photo);
    card.addEventListener("click",(function(n){return function(){openAt(n);};})(index));
    track.appendChild(card);
