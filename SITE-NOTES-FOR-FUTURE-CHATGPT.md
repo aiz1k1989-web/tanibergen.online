@@ -203,3 +203,14 @@ Last consolidated: 21 November 2026.
 - The `/mutant-type/` direction gives typography a stronger compositional role: oversized adaptive words with slow, restrained movement. Typography must remain behind the images and must not obscure them.
 - Both directions respect `prefers-reduced-motion`, safe areas, and mobile viewport sizing. Avoid excessive motion, overlays, interface clutter, and decorative controls.
 - Preserve the existing root site, `/claude/`, `/cut/`, all other routes, archive assets, and backups.
+
+
+## 15. MUTANT 04 - Streamline direction - 21 November 2026
+
+- New isolated route: `/mutant-04/`, created on `experiment/mutant-04-streamline`.
+- Uses the current archive manifest and preview metadata, deduplicates image paths, and preserves the first self-portrait as the first / largest tile.
+- Retains the draggable spatial archive but gives it a distinct typographic treatment: large, quiet `estelikter, archive` background lettering with restrained camera-linked movement.
+- Viewer uses adapted Streamline Core Line - Free controls (Move Left, Move Right, Delete 1). The original icons are from the free Core Line set and are adapted for this interface; attribution and CC BY 4.0 license are documented in `mutant-04/README.md`.
+- Keep controls subtle. Navigation supports pointer, keyboard, swipe, and large unobtrusive targets. Close via icon, Escape, backdrop click, or swipe down.
+- Continue to QA the full viewer lifecycle and focus cleanup. Do not claim actual iPhone testing unless performed.
+- Do not alter root, `/claude/`, `/mutant/`, `/mutant-type/`, `/cut/`, or other experiments unless explicitly asked.
