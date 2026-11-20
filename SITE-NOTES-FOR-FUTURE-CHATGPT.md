@@ -250,3 +250,13 @@ Last consolidated: 21 November 2026.
 
 ---
 Last consolidated: 21 November 2026.
+
+
+
+## 17. Retired routes - 21 November 2026
+
+- At the user's explicit request, the unsuccessful experimental routes `/mutant/`, `/mutant-type/`, and `/after-hours/` were removed from the published project source on 21 November 2026.
+- Their route files were removed from the cleanup branch and will be deleted from `main` only after the cleanup pull request is merged.
+- A dated backup branch preserves the complete pre-cleanup state: `backup/2026-11-21-before-remove-failed-versions`.
+- This removal applies only to those three route folders. Preserve `/mutant-04/`, `/mutant-05/`, `/mutant-focus/`, `/claude/`, `/cut/`, the primary root site, all image archives, and all other alternatives.
+- Historical notes above describe the retired experiments as they existed at the time. Do not recreate or promote them unless the user explicitly asks.
