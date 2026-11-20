@@ -6,7 +6,7 @@ var works=source.filter(function(work){if(!work||!work.file||seen[work.file])ret
 var hero=document.getElementById("hero-image"),heroButton=document.getElementById("hero-photo");
 var side=document.getElementById("opening-side"),montage=document.getElementById("montage");
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
-var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={};
+var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false;
 function pad(n){return String(n).padStart(3,"0");}
 function preview(file){return "../cut-previews/"+file;}
 function original(file){return "../"+file;}
@@ -62,33 +62,51 @@ function unlockScroll(){
  Object.keys(bodyState).forEach(function(key){document.body.style[key]=bodyState[key];});
  bodyState=null;window.scrollTo(0,savedY);
 }
+function showActiveImage(animate){
+ var file=original(works[active].file);
+ if(animate)viewerImage.classList.add("is-changing");
+ var reveal=function(){requestAnimationFrame(function(){viewerImage.classList.remove("is-changing");});};
+ viewerImage.onload=reveal;
+ viewerImage.src=file;
+ if(viewerImage.complete&&viewerImage.naturalWidth)reveal();
+ viewerImage.alt=active===0?"Self portrait by Aizat Tanibergen":"Photograph by Aizat Tanibergen";
+}
 function open(index){
  if(!works.length)return;
  active=(index+works.length)%works.length;
- if(viewer.hidden){lastFocus=document.activeElement;lockScroll();}
- viewer.hidden=false;viewer.classList.remove("is-open");void viewer.offsetWidth;viewer.classList.add("is-open");viewerImage.src=original(works[active].file);viewerImage.alt=active===0?"Self portrait by Aizat Tanibergen":"Photograph by Aizat Tanibergen";
- document.getElementById("viewer-close").focus({preventScroll:true});
+ if(viewer.hidden){
+  lastFocus=document.activeElement;lockScroll();
+  viewer.hidden=false;viewer.classList.remove("is-open");void viewer.offsetWidth;viewer.classList.add("is-open");
+  showActiveImage(false);
+  document.getElementById("viewer-close").focus({preventScroll:true});
+ }else{showActiveImage(true);}
 }
-function close(){
+function close(fromPointer){
  if(viewer.hidden)return;
- viewer.hidden=true;viewer.classList.remove("is-open");viewerImage.removeAttribute("src");unlockScroll();
- if(lastFocus&&typeof lastFocus.focus==="function")lastFocus.focus({preventScroll:true});
+ closeByPointer=!!fromPointer;
+ viewer.hidden=true;viewer.classList.remove("is-open");viewerImage.onload=null;viewerImage.removeAttribute("src");viewerImage.classList.remove("is-changing");unlockScroll();
+ if(lastFocus&&typeof lastFocus.focus==="function"){
+  lastFocus.focus({preventScroll:true});
+  if(closeByPointer&&typeof lastFocus.blur==="function")lastFocus.blur();
+ }
+ lastFocus=null;
 }
 function move(delta){open(active+delta);}
-document.getElementById("viewer-close").addEventListener("click",close);
+document.getElementById("viewer-close").addEventListener("click",function(){close(true);});
 document.getElementById("viewer-prev").addEventListener("click",function(){move(-1);});
 document.getElementById("viewer-next").addEventListener("click",function(){move(1);});
-viewer.addEventListener("click",function(event){if(event.target===viewer)close();});
+viewer.addEventListener("click",function(event){if(event.target===viewer)close(true);});
 viewer.addEventListener("touchstart",function(event){if(event.touches&&event.touches.length===1)touchStart={x:event.touches[0].clientX,y:event.touches[0].clientY};},{passive:true});
 viewer.addEventListener("touchend",function(event){
  if(!touchStart||!event.changedTouches||!event.changedTouches.length)return;
  var dx=event.changedTouches[0].clientX-touchStart.x,dy=event.changedTouches[0].clientY-touchStart.y;
- if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)*1.2)move(dx<0?1:-1);
+ if(Math.abs(dx)>48&&Math.abs(dx)>Math.abs(dy)*1.15)move(dx<0?1:-1);
+ else if(dy>90&&dy>Math.abs(dx)*1.2)close(true);
  touchStart=null;
 },{passive:true});
 document.addEventListener("keydown",function(event){
  if(viewer.hidden)return;
- if(event.key==="Escape")close();
+ if(event.key==="Escape")close(false);
  else if(event.key==="ArrowLeft")move(-1);
  else if(event.key==="ArrowRight")move(1);
 });
