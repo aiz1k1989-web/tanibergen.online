@@ -24,7 +24,7 @@ function makeTiles(){
 }
 function resize(){vw=innerWidth;vh=innerHeight;scale=clamp(vw/1280,.62,1.08);dirty=true}
 function sampleColor(img,item){
- try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=8;c.height=8;ctx.drawImage(img,0,0,8,8);const p=ctx.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<p.length;i+=4){r+=p[i];g+=p[i+1];b+=p[i+2]}const n=p.length/4;item.color="rgb("+Math.round(r/n)+","+Math.round(g/n)+","+Math.round(b/n)+")";if(item.index===nearest)document.body.style.setProperty("--ambient",item.color)}catch(e){item.color="#090909"}
+ try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=8;c.height=8;ctx.drawImage(img,0,0,8,8);const p=ctx.getImageData(0,0,8,8).data;let r=0,g=0,b=0;for(let i=0;i<p.length;i+=4){r+=p[i];g+=p[i+1];b+=p[i+2]}const n=p.length/4,k=.2;item.color="rgb("+Math.round(r/n*k)+","+Math.round(g/n*k)+","+Math.round(b/n*k)+")";if(item.index===nearest)document.body.style.setProperty("--ambient",item.color)}catch(e){item.color="#090909"}
 }
 function load(item){
  if(item.loaded)return;item.loaded=true;item.img.onload=()=>{item.img.classList.add("ready");sampleColor(item.img,item);dirty=true};item.img.src="../cut-previews/"+item.file;
@@ -71,7 +71,7 @@ function move(delta){
 }
 function close(){
  if(viewer.hidden)return;
- viewer.classList.remove("open");viewer.hidden=true;viewImage.onload=null;viewImage.removeAttribute("src");viewImage.classList.remove("switching");
+ viewer.classList.remove("open");viewImage.onload=null;viewImage.removeAttribute("src");viewImage.classList.remove("switching");const finish=()=>{if(!viewer.classList.contains("open"))viewer.hidden=true};viewer.addEventListener("transitionend",function done(e){if(e.target===viewer){viewer.removeEventListener("transitionend",done);finish()} });setTimeout(finish,280);
  if(closeByKeyboard&&returnFocus&&returnFocus.focus)returnFocus.focus({preventScroll:true});
  else if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  returnFocus=null;active=-1;
