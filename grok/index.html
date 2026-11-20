@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>tanibergen.online — grok</title>
+<meta name="description" content="Aizat Tanibergen. A night reading of the archive.">
+<meta name="theme-color" content="#120e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120e0b;--ink:#f3eadf;--dim:#a89888;--line:rgba(243,234,223,.18);--hot:#e23b2f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.04em;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+a:hover{color:#fff}
+header{position:fixed;z-index:5;inset:0 0 auto 0;display:flex;justify-content:space-between;align-items:center;padding:18px 22px;mix-blend-mode:difference;pointer-events:none}
+header a,header span{pointer-events:auto}
+.mark{font-family:"Instrument Serif",serif;font-size:18px;letter-spacing:0}
+nav.side{position:fixed;z-index:4;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:7px;mix-blend-mode:difference}
+nav.side a{width:7px;height:7px;border-radius:50%;border:1px solid #fff;opacity:.45}
+nav.side a.on{background:#fff;opacity:1}
+.plate{min-height:100svh;display:grid;align-items:end;padding:88px 22px 28px;border-bottom:1px solid var(--line);position:relative}
+.hero{grid-template-columns:minmax(0,1.15fr) minmax(240px,.7fr);gap:36px;align-items:end}
+.hero figure{margin:0}
+.hero img{width:100%;height:min(78svh,860px);object-fit:cover;object-position:50% 30%;display:block;border-radius:2px;background:#1a1410}
+.copy h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(56px,8vw,108px);line-height:.86;letter-spacing:-.03em}
+.copy h1 em{font-style:italic;color:#f6d7c4}
+.lede{margin-top:22px;max-width:36ch;color:var(--dim);line-height:1.55;font-size:13px}
+.meta{margin-top:28px;display:flex;gap:18px;flex-wrap:wrap;text-transform:uppercase;font-size:11px}
+.meta b{font-weight:500;color:var(--hot)}
+.frame{display:grid;grid-template-columns:72px 1fr 120px;gap:18px;align-items:end}
+.frame img{width:100%;max-height:78svh;object-fit:contain;display:block;background:#000}
+.idx{font-variant-numeric:tabular-nums;color:var(--dim);padding-bottom:8px}
+.cap{text-align:right;color:var(--dim);padding-bottom:8px;text-transform:uppercase;font-size:11px}
+footer.plate{min-height:70svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+footer a{border-bottom:1px solid var(--hot)}
+.versions{display:flex;gap:16px;margin-top:8px}
+@media(max-width:800px){
+  .hero,.frame{grid-template-columns:1fr;gap:16px}
+  .cap,.idx{text-align:left;padding:0}
+  nav.side{display:none}
+  .copy h1{font-size:64px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="mark" href="#top">tanibergen</a>
+  <span>grok</span>
+  <a href="https://instagram.com/isaac_4u" target="_blank" rel="noopener">@isaac_4u</a>
+</header>
+nav class="side" id="dots" aria-label="Plates"></nav>
+<main id="top">
+<section class="plate hero" id="p0">
+  <figure>
+    <img id="me" alt="Aizat Tanibergen, late night" src="../previews/1/12.webp">
+  </figure>
+  <div class="copy">
+    <h1>late<br>night<em>.</em></h1>
+    <p class="lede">Aizat Tanibergen, Almaty, now Bangkok. The cut is a montage. Claude is a map you can drag. This one refuses both: one plate, then the next, the photograph kept whole.</p>
+    <div class="meta"><span><b>00</b> portrait</span><span>IMG_9519</span><span>scroll</span></div>
+  </div>
+</section>
+<div id="roll"></div>
+<footer class="plate">
+  <p>the archive stays where it was.</p>
+  <div class="versions">
+    <a href="../">cut</a>
+    <a href="../claude/">claude</a>
+    <a href="../alt/">index</a>
+  </div>
+</footer>
+</main>
+<script>
+const FRAMES = ["1/1","1/8","1/12","1/16","2/1","3/4","3/14","4/1","4/9","4/17","5/1","5/10","6/1","6/12","6/16","7/1","7/2","1/10","4/6","5/17"];
+const roll = document.getElementById("roll");
+const dots = document.getElementById("dots");
+function dot(id){
+  const a = document.createElement("a");
+  a.href = "#"+id;
+  dots.appendChild(a);
+  return a;
+}
+dot("p0");
+FRAMES.forEach((f,i)=>{
+  const n = String(i+1).padStart(2,"0");
+  const s = document.createElement("section");
+  s.className = "plate frame";
+  s.id = "p"+(i+1);
+  s.innerHTML = `<div class="idx">${n}</div><img alt="" loading="lazy" decoding="async" src="../previews/${f}.webp"><div class="cap">${f.replace("/"," · ")}</div>`;
+  roll.appendChild(s);
+  dot(s.id);
+});
+const plates = [...document.querySelectorAll(".plate")];
+const links = [...dots.querySelectorAll("a")];
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const i = plates.indexOf(e.target);
+    links.forEach((l,j)=>l.classList.toggle("on", j===i));
+  });
+},{threshold:.55});
+plates.forEach(p=>io.observe(p));
+links[0].classList.add("on");
+fetch("portrait.b64").then(r=>r.ok?r.text():"").then(t=>{
+  if(t && t.length>100) document.getElementById("me").src = "data:image/webp;base64,"+t.trim();
+}).catch(()=>{});
+</script>
+</body>
+</html>
