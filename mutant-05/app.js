@@ -174,7 +174,7 @@ viewer.addEventListener("pointerup",event=>{
 viewer.addEventListener("pointercancel",()=>touchStart=null);
 document.addEventListener("keydown",onKeydown);
 function loadMetadata(){
-  fetch("../previews/metadata.json",{cache:"force-cache"})
+  fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"})
     .then(response=>response.ok?response.json():{})
     .then(data=>{metadata=data||{};buildArchive()})
     .catch(()=>buildArchive());

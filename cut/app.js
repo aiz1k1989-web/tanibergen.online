@@ -111,5 +111,5 @@ document.addEventListener("keydown",function(event){
  else if(event.key==="ArrowRight")move(1);
 });
 function init(){render();}
-fetch("../previews/metadata.json",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("Image metadata unavailable");return response.json();}).then(function(data){metadata=data||{};init();}).catch(init);
+fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("Image metadata unavailable");return response.json();}).then(function(data){metadata=data||{};init();}).catch(init);
 })();

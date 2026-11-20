@@ -250,7 +250,7 @@
   },{passive:true});
 
   function init(){
-    fetch("../previews/metadata.json",{cache:"force-cache"})
+    fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"})
       .then(function(response){ if (!response.ok) throw new Error("Metadata unavailable"); return response.json(); })
       .then(function(data){ metadata = data || {}; })
       .catch(function(){ metadata = {}; })

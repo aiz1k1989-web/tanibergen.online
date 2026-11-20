@@ -188,7 +188,7 @@ function init(){
  if(ringRoot.childElementCount)return;
  makeRings();makeFeed();updateScroll();
 }
-fetch("../previews/metadata.json",{cache:"force-cache"})
+fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"})
  .then(function(response){if(!response.ok)throw new Error("metadata unavailable");return response.json();})
  .then(function(meta){imageMeta=meta||{};init();})
  .catch(init);
