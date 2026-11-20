@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>tanibergen.online</title>
+<meta name="theme-color" content="#0b0b0b">
+<style>
+:root{--bg:#0b0b0b;--fg:#e9e6df}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y proximity;background:#0b0b0b}
+body{background:var(--bg);color:var(--fg);font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;transition:background-color .7s ease;-webkit-font-smoothing:antialiased}
+header{position:fixed;inset:0 0 auto 0;display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 0;z-index:5;mix-blend-mode:difference;color:#fff;pointer-events:none}
+header a{color:inherit;text-decoration:none;pointer-events:auto}
+.n{position:fixed;left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:5;mix-blend-mode:difference;color:#fff;font-variant-numeric:tabular-nums}
+.f{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:64px 0;scroll-snap-align:center}
+.f img{display:block;width:auto;height:auto;max-width:88vw;max-height:76svh;cursor:zoom-in;-webkit-tap-highlight-color:transparent}
+.f.first img{max-height:84svh;max-width:92vw}
+@media (min-width:900px){.f img{max-height:80svh;max-width:70vw}.f.first img{max-height:88svh;max-width:80vw}}
+#v{position:fixed;inset:0;background:#000;z-index:10;display:none;align-items:center;justify-content:center;touch-action:pan-y}
+#v.on{display:flex}
+#v img{max-width:100vw;max-height:100svh;object-fit:contain;cursor:zoom-out}
+#v b{position:fixed;left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);font-weight:400;color:#8a8780;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){body{transition:none}}
+</style>
+</head>
+<body>
+<header><a href="./">tanibergen.online</a><a href="https://instagram.com/isaac_4u" target="_blank" rel="noopener">@isaac_4u ↗</a></header>
+<main id="m"></main>
+<div class="n" id="n">001</div>
+<div id="v" aria-hidden="true"><img alt=""><b></b></div>
+<script>
+const W=[["1/1",640,480,"#261e10"],["1/2",480,640,"#171610"],["1/3",427,640,"#0b0a05"],["1/4",360,640,"#19130c"],["1/5",512,640,"#221400"],["1/6",360,640,"#0f0e0b"],["1/7",480,640,"#1c170e"],["1/8",360,640,"#1b1710"],["1/9",427,640,"#1b1102"],["1/10",640,427,"#0f0806"],["1/11",480,640,"#0f0905"],["1/12",480,640,"#1e160d"],["1/13",480,640,"#0a0e10"],["1/14",360,640,"#100d07"],["1/15",360,640,"#1d1710"],["1/16",432,640,"#0e0d13"],["1/17",640,427,"#060606"],["1/18",640,505,"#0c0d0c"],["1/19",640,427,"#0c0602"],["1/20",640,427,"#161613"],["2/1",427,640,"#201910"],["2/2",427,640,"#0c120e"],["2/20",480,640,"#0b0e08"],["3/1",427,640,"#090401"],["3/2",480,640,"#11100e"],["3/3",640,640,"#0b0606"],["3/4",640,427,"#100a03"],["3/5",640,640,"#0d0d0d"],["3/6",640,640,"#1b1b1c"],["3/7",360,640,"#170f06"],["3/8",427,640,"#020202"],["3/9",640,427,"#040609"],["3/10",427,640,"#1b1d1e"],["3/11",640,640,"#070908"],["3/12",640,480,"#171717"],["3/13",640,427,"#0a0604"],["3/14",640,427,"#090303"],["4/1",499,640,"#171513"],["4/2",640,640,"#101110"],["4/3",640,640,"#0a0d0e"],["4/4",360,640,"#0c0904"],["4/5",360,640,"#0e0e0b"],["4/6",360,640,"#15160d"],["4/7",360,640,"#070b0b"],["4/8",640,426,"#080402"],["4/9",640,480,"#160e03"],["4/10",427,640,"#1b1d13"],["4/11",640,360,"#070909"],["4/12",427,640,"#0b0603"],["4/13",640,640,"#15191b"],["4/14",640,427,"#0f0a06"],["4/15",480,640,"#140f18"],["4/16",640,427,"#0d0604"],["4/17",427,640,"#130c04"],["4/18",640,427,"#0f0f0f"],["4/19",427,640,"#040404"],["4/20",427,640,"#1e1a12"],["5/1",640,384,"#0c1114"],["5/2",427,640,"#060f15"],["5/3",640,463,"#060402"],["5/4",640,640,"#0f1213"],["5/5",640,360,"#110c08"],["5/7",640,640,"#09090d"],["5/8",640,640,"#090c0d"],["5/9",640,427,"#070c0d"],["5/10",640,640,"#151214"],["5/11",640,427,"#060806"],["5/12",457,640,"#0b0502"],["5/14",427,640,"#0b0a07"],["5/15",427,640,"#070705"],["5/16",427,640,"#0b0904"],["5/17",640,640,"#120e08"],["5/18",640,640,"#0c0803"],["5/19",427,640,"#100402"],["5/20",640,427,"#0a0a09"],["6/1",640,427,"#040505"],["6/2",427,640,"#131313"],["6/3",512,640,"#0b0703"],["6/4",640,640,"#030d0f"],["6/5",640,427,"#100806"],["6/6",640,427,"#090d10"],["6/7",427,640,"#080101"],["6/8",427,640,"#050402"],["6/9",640,427,"#11100d"],["6/11",512,640,"#0f0501"],["6/12",640,640,"#1d1318"],["6/13",640,426,"#0a0a0a"],["6/14",512,640,"#080504"],["6/15",640,427,"#0c0c0b"],["6/16",640,426,"#0d0d0d"],["6/17",480,640,"#050706"],["6/18",640,427,"#111111"],["6/19",427,640,"#0c1216"],["7/1",640,427,"#181816"],["7/2",480,640,"#090908"],["7/3",512,640,"#070811"],["7/4",640,427,"#161616"],["7/5",640,427,"#090909"]];
+const P=n=>String(n+1).padStart(3,"0"),m=document.getElementById("m"),nn=document.getElementById("n");
+W.forEach((w,i)=>{
+  const s=document.createElement("section");s.className="f"+(i?"":" first");s.dataset.i=i;s.dataset.c=w[3];
+  const g=document.createElement("img");g.width=w[1];g.height=w[2];g.alt="";g.decoding="async";
+  g.src="../previews/"+w[0]+".webp";if(i>1)g.loading="lazy";
+  g.onclick=()=>open(i);s.appendChild(g);m.appendChild(s);
+});
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){document.body.style.setProperty("--bg",e.target.dataset.c);
+    document.querySelector('meta[name=theme-color]').content=e.target.dataset.c;nn.textContent=P(+e.target.dataset.i)}
+}),{threshold:.55});
+document.querySelectorAll(".f").forEach(s=>io.observe(s));
+const v=document.getElementById("v"),vi=v.querySelector("img"),vb=v.querySelector("b");let cur=0;
+function show(i){cur=(i+W.length)%W.length;vi.src="../"+W[cur][0]+".webp";vb.textContent=P(cur)}
+function open(i){show(i);v.classList.add("on");document.body.style.overflow="hidden"}
+function close(){v.classList.remove("on");document.body.style.overflow="";vi.removeAttribute("src");
+  const t=m.children[cur];if(t)t.scrollIntoView({block:"center"})}
+vi.onclick=close;
+addEventListener("keydown",e=>{if(!v.classList.contains("on"))return;
+  if(e.key==="Escape")close();if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1)});
+let x0=null;
+v.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
+v.addEventListener("touchend",e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;
+  if(Math.abs(d)>45)show(cur+(d<0?1:-1));x0=null});
+</script>
+</body>
+</html>
