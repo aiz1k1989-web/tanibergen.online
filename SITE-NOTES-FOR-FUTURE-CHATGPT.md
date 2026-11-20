@@ -186,3 +186,20 @@ Last consolidated: 21 November 2026.
 - Photo changes inside the viewer need a gentle transition without replaying the entire viewer entrance on every image.
 - Before any release, manually QA the viewer lifecycle: open image, next/previous repeatedly, swipe, close by each supported method, reopen, verify scroll restoration, and verify no focus outline remains. Check both desktop and iPhone-sized viewports. Do not claim device testing unless actually performed.
 - Do not ship a visible control or interaction that has not been tested for its complete open/change/close lifecycle. A visually polished static screenshot is not sufficient QA.
+
+
+
+## 14. MUTANT experiments - 21 November 2026
+
+- The user requested a combined / improved version based on the Claude spatial-photo-field concept, with two independent alternatives in separate folders: `/mutant/` and `/mutant-type/`.
+- The root website and the current primary `estelikter` implementation must remain untouched. Do not promote either experiment without a separate explicit request.
+- Both alternatives should use the current `index-main-works.js` manifest and `previews/metadata.json`, not Claude's old hardcoded 98-entry array. Deduplicate paths while preserving the first self-portrait as the first item. Never silently drop selected archive photographs.
+- Use high-quality `cut-previews/` for the field and load untouched originals only after opening a photograph. Preserve natural aspect ratios and do not crop.
+- Keep the recognizable spatial / draggable archive idea from Claude, but improve the interaction: responsive sizing, drag and inertial movement, trackpad / wheel navigation, pinch zoom, keyboard movement, and an image-first fullscreen viewer.
+- Fullscreen viewer should support left/right navigation zones, touch swipe, keyboard arrows, Escape, vertical swipe-down dismissal, and a discreet close affordance. Avoid a text-heavy Close button or visible slideshow controls.
+- Viewer lifecycle is mandatory QA: open, navigate repeatedly, close by every supported method, reopen, verify focus cleanup, scroll / camera stability, and no persistent selection outline or red focus ring. Pointer focus must not leave a visible outline; keyboard focus remains accessible with a restrained non-red indicator.
+- Keep mobile browser zoom accessible. Never use `user-scalable=no`.
+- The `/mutant/` direction uses quiet, large background typography reading `estelikter, archive`, with subtle responsive parallax behind the photographs.
+- The `/mutant-type/` direction gives typography a stronger compositional role: oversized adaptive words with slow, restrained movement. Typography must remain behind the images and must not obscure them.
+- Both directions respect `prefers-reduced-motion`, safe areas, and mobile viewport sizing. Avoid excessive motion, overlays, interface clutter, and decorative controls.
+- Preserve the existing root site, `/claude/`, `/cut/`, all other routes, archive assets, and backups.
