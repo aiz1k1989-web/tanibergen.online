@@ -85,5 +85,6 @@ function updateScroll(){
 function requestUpdate(){if(!rafPending){rafPending=true;window.requestAnimationFrame(updateScroll);}}
 window.addEventListener("scroll",requestUpdate,{passive:true});
 window.addEventListener("resize",function(){if(Math.abs(window.innerWidth-lastWidth)>2){lastWidth=window.innerWidth;clearFlight();}requestUpdate();});
-function init(){makeRings();makeFeed();updateScroll();}\nfetch("../previews/metadata.json",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("metadata unavailable");return response.json();}).then(function(meta){imageMeta=meta||{};init();}).catch(init);
+function init(){makeRings();makeFeed();updateScroll();}
+fetch("../previews/metadata.json",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("metadata unavailable");return response.json();}).then(function(meta){imageMeta=meta||{};init();}).catch(init);
 })();
