@@ -232,3 +232,21 @@ Last consolidated: 21 November 2026.
 
 ---
 Last consolidated: 21 November 2026.
+
+
+## 16. MUTANT 05 - Editorial sequence - 21 November 2026
+
+- New isolated route: `/mutant-05/`, developed on `experiment/mutant-05-editorial-sequence`. Keep the root website and every prior route untouched.
+- Direction: a long-form editorial photo sequence, not another draggable spatial field. The opening self-portrait is the first and largest image; subsequent works are grouped into deliberate one-, two-, and three-image spreads with asymmetrical widths and generous black negative space.
+- Use the current `index-main-works.js` archive manifest and `previews/metadata.json`; deduplicate file paths while preserving the first self-portrait. Every unique selected work must remain present exactly once.
+- Use `cut-previews/` for gallery images and load the original WebP only when a visitor opens a photograph. Preserve natural aspect ratios, reserve layout space from metadata, and avoid cropping or borders.
+- The page is mobile-first. Desktop spreads can be asymmetrical; mobile becomes a clear single-column sequence with natural image proportions and no horizontal navigation.
+- Typography stays minimal: exact site identity `tanibergen.online`, Kazakh Latin title `estelikter.`, and existing Instagram handle. No invented credits, captions, dates, or project names.
+- Streamline controls use one consistent **Core Line - Free** set for previous, next, and close actions. Attribution and CC BY 4.0 license must be included in `mutant-05/README.md`.
+- Viewer: immersive image-first display, quiet close icon, unobtrusive navigation zones, keyboard arrows, Escape, horizontal touch swipe, vertical swipe-down dismissal, focus trap, safe-area padding, and restored scroll position. No persistent pointer focus ring after close; keyboard focus remains visible with a restrained non-red outline.
+- Subtle image entrance transitions are allowed, but no autoplay, scroll hijacking, continuous motion, parallax, or dramatic zoom. Respect `prefers-reduced-motion`.
+- Keep static HTML/CSS/JS only. No external libraries, web fonts, tracking scripts, or backend. Verify syntax, archive count, metadata coverage, image paths, and viewer lifecycle. Do not claim real-device testing unless performed.
+- The Website Auditor review of `tanibergen.online` should inform technical fixes where relevant, but do not add SEO copy or promotional UI that competes with the photography.
+
+---
+Last consolidated: 21 November 2026.
