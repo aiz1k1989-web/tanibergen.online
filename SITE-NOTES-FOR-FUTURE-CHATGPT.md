@@ -260,3 +260,20 @@ Last consolidated: 21 November 2026.
 - A dated backup branch preserves the complete pre-cleanup state: `backup/2026-11-21-before-remove-failed-versions`.
 - This removal applies only to those three route folders. Preserve `/mutant-04/`, `/mutant-05/`, `/mutant-focus/`, `/claude/`, `/cut/`, the primary root site, all image archives, and all other alternatives.
 - Historical notes above describe the retired experiments as they existed at the time. Do not recreate or promote them unless the user explicitly asks.
+
+
+## 18. Permanent base routes - 21 November 2026
+
+The user explicitly confirmed that the following six alternative routes are the permanent foundation of the project. They must always remain in the repository and must never be deleted, renamed, repurposed, or treated as failed experiments during cleanup:
+
+- `/mutant-focus/`
+- `/mutant-05/`
+- `/mutant-04/`
+- `/orbit/`
+- `/alt/`
+- `/studio/`
+
+This is a standing preservation rule. Only the user can explicitly authorize removal or replacement of one of these six routes. Before any cleanup, compare the proposed deletions against this list and stop if any protected route is included. Preserve their source files and direct public URLs.
+
+The user separately asked to rebuild `/repponen/` using the design principles of https://repponen.com/ as inspiration, integrated with the user's own photographic archive. This route remains a protected independent alternative. Do not overwrite the root site or the six permanent base routes while working on it.
+
