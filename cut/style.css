@@ -21,9 +21,9 @@ h1 span{color:var(--red)}
 .opening-side .photo-opening:nth-child(2){width:84%;margin-left:auto;margin-top:4vh}
 .photo-opening:focus-visible,.photo:focus-visible{outline:1px solid var(--red);outline-offset:4px}
 .archive{padding:12vh 3.2vw 14vh}
-.montage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:7px;grid-auto-flow:dense;column-gap:12px;row-gap:12px;align-items:start;min-width:0}
-.photo{grid-column:span var(--span,4);grid-row:span var(--rows,24);align-self:start;width:100%;height:auto;min-height:0}
-.photo img{width:100%;height:auto}
+.montage{display:block;column-count:3;column-gap:18px;column-fill:balance;width:100%;min-width:0}
+.photo{display:inline-block;vertical-align:top;width:100%;height:auto;margin:0 0 18px;padding:0;break-inside:avoid;overflow:visible}
+.photo img{display:block;width:100%;height:auto;max-width:100%;object-fit:contain}
 .viewer{position:fixed;inset:0;z-index:30;display:grid;grid-template-columns:56px minmax(0,1fr) 56px;grid-template-rows:52px minmax(0,1fr);align-items:center;justify-items:center;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:rgba(5,5,5,.985);overscroll-behavior:contain}
 .viewer[hidden]{display:none}
 .viewer-figure{grid-column:2;grid-row:1/3;width:100%;height:100%;min-height:0;margin:0;display:flex;align-items:center;justify-content:center}
@@ -46,8 +46,8 @@ h1 span{color:var(--red)}
  .opening-side .photo-opening{width:100%}
  .opening-side .photo-opening:nth-child(2){width:100%;margin:0}
  .archive{padding:68px 17px 90px}
- .montage{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:5px;grid-auto-flow:dense;column-gap:7px;row-gap:8px}
- .photo{grid-column:span var(--mobile-span,3);grid-row:span var(--mobile-rows,28)}
+ .montage{column-count:2;column-gap:8px}
+ .photo{margin-bottom:8px}
  .viewer{grid-template-columns:36px minmax(0,1fr) 36px;grid-template-rows:42px minmax(0,1fr);padding:max(8px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))}
  .viewer-figure{grid-row:1/3}
  .viewer-close{grid-row:1;font-size:26px;padding:8px}
