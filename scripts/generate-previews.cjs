@@ -7,6 +7,7 @@ const ROOT = process.cwd();
 
 async function main() {
   let processed = 0;
+  const dimensions = {};
   for (const series of SERIES) {
     const sourceDir = path.join(ROOT, series);
     let entries = [];
@@ -22,7 +23,10 @@ async function main() {
       const outputDir = path.join(ROOT, "previews", series);
       const output = path.join(outputDir, entry.name);
       await fs.mkdir(outputDir, { recursive: true });
-      await sharp(input)
+      const source = sharp(input);
+      const metadata = await source.metadata();
+      dimensions[series + "/" + entry.name] = { width: metadata.width, height: metadata.height };
+      await source
         .rotate()
         .resize({ width: 640, height: 640, fit: "inside", withoutEnlargement: true })
         .webp({ quality: 54, effort: 5 })
@@ -30,7 +34,8 @@ async function main() {
       processed++;
     }
   }
-  console.log(`Generated ${processed} responsive previews.`);
+  await fs.writeFile(path.join(ROOT, "previews", "metadata.json"), JSON.stringify(dimensions));
+  console.log(`Generated ${processed} responsive previews and image dimensions.`);
 }
 
 main().catch((error) => {
