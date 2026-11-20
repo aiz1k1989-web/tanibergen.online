@@ -1,4 +1,4 @@
-:root{color-scheme:dark;--bg:#08090c;--ink:#f1f0eb;--muted:#777983;--line:rgba(241,240,235,.17);--mono:"Courier New",monospace;--sans:Arial,Helvetica,sans-serif;--morph:0;--feed-progress:0}
+:root{color-scheme:dark;--bg:#08090c;--ink:#f1f0eb;--muted:#777983;--line:rgba(241,240,235,.17);--mono:"Courier New",monospace;--sans:Arial,Helvetica,sans-serif;--feed-progress:0}
 *{box-sizing:border-box}
 html{background:var(--bg);scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -9,7 +9,7 @@ a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
 .eyebrow{grid-column:1/-1;margin:0 0 22px;color:var(--muted);font:9px var(--mono);letter-spacing:.16em}
 h1{font-size:clamp(68px,10.5vw,150px);line-height:.78;letter-spacing:-.095em;font-weight:500;margin:0}
 h1 i{font-weight:400;color:#aeb0b8}.intro-note{font:11px/1.7 var(--mono);color:#a1a3aa;margin:0 0 5px;text-align:right}
-.orbit-section{height:142vh;min-height:920px;position:relative;padding-top:2vh}
+.orbit-section{height:165vh;min-height:1080px;position:relative;padding-top:2vh}
 .orbit-stage{width:min(90vw,1040px);aspect-ratio:1;position:sticky;top:4vh;margin:0 auto;isolation:isolate;will-change:transform}
 .orbit-halo{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,#f47767,#f4c76d,#9ad7b6,#78b9ed,#a995ed,#e88cc6,#f47767);opacity:.72;filter:blur(25px);mask:radial-gradient(closest-side,transparent 87%,#000 89%,#000 90%,transparent 93%);-webkit-mask:radial-gradient(closest-side,transparent 87%,#000 89%,#000 90%,transparent 93%);pointer-events:none}
 .orbit-rings{position:absolute;inset:0}.orbit-track{position:absolute;inset:0;border-radius:50%;animation:orbit-spin var(--duration,90s) linear infinite;will-change:transform}
@@ -20,7 +20,7 @@ h1 i{font-weight:400;color:#aeb0b8}.intro-note{font:11px/1.7 var(--mono);color:#
 .orbit-card .photo{width:100%;height:100%;display:block;animation:orbit-counter var(--duration,90s) linear infinite;animation-direction:reverse}
 .orbit-track:nth-child(even) .orbit-card .photo{animation-direction:normal}
 .orbit-card img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;background:#11131a}
-body.is-morphing .orbit-track,body.is-morphing .orbit-card .photo{animation-play-state:paused}
+body.is-morphing .orbit-track,body.is-morphing .orbit-card .photo{animation-play-state:paused}body.is-morphing .orbit-card{visibility:hidden!important}
 .orbit-core{position:absolute;left:50%;top:50%;width:23%;aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.16);border-radius:50%;background:#0c0d11;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;box-shadow:0 0 60px rgba(0,0,0,.7);overflow:hidden;z-index:5}
 .core-portrait-wrap{position:absolute;inset:0;border-radius:50%;overflow:hidden;opacity:.8}
 .core-portrait-wrap:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(8,9,12,.9))}
@@ -32,7 +32,7 @@ body.is-morphing .orbit-track,body.is-morphing .orbit-card .photo{animation-play
 .scroll-cue{position:absolute;bottom:3vh;left:5vw;margin:0;color:#555862;font:8px var(--mono);letter-spacing:.16em;opacity:var(--cue-opacity,1)}
 .scroll-cue span{margin-left:8px;color:#aaa}
 body.is-paused .orbit-track,body.is-paused .orbit-card .photo{animation-play-state:paused}
-.ribbon-section{padding:7vh 4vw 10vh;opacity:var(--feed-progress);will-change:opacity}
+.ribbon-section{padding:7vh 4vw 10vh;opacity:var(--feed-progress);will-change:opacity}.ribbon-item img{opacity:0;transition:opacity .18s linear}body.is-landed .ribbon-item img{opacity:1}
 .ribbon-heading{display:flex;justify-content:space-between;padding:0 0 14px;border-bottom:1px solid var(--line);font:9px var(--mono);letter-spacing:.14em;color:var(--muted);margin-bottom:22px}
 .ribbon-feed{columns:4 180px;column-gap:12px}
 .ribbon-item{display:block;width:100%;padding:0;margin:0 0 12px;border:0;background:#111216;break-inside:avoid;cursor:pointer;overflow:hidden;position:relative}
@@ -41,7 +41,7 @@ body.is-paused .orbit-track,body.is-paused .orbit-card .photo{animation-play-sta
 .ribbon-item:focus-visible{outline:1px solid white;outline-offset:3px}
 .closing{border-top:1px solid var(--line);padding:22px 4vw 26px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font:9px var(--mono);letter-spacing:.1em;color:var(--muted)}
 .closing p{margin:0}.closing a{color:var(--ink)}
-.viewer{position:fixed;inset:0;z-index:20;background:rgba(5,6,9,.98);display:grid;grid-template-columns:70px minmax(0,1fr) 70px;grid-template-rows:60px minmax(0,1fr) 48px;align-items:center;justify-items:center;padding:0 3vw}
+.motion-layer{position:fixed;inset:0;z-index:15;pointer-events:none;overflow:visible;opacity:1}.flight-frame{position:absolute;left:0;top:0;transform-origin:top left;will-change:transform,opacity;overflow:hidden;border:1px solid rgba(255,255,255,.18);background:#111;backface-visibility:hidden}.flight-frame img{width:100%;height:100%;display:block;object-fit:cover}.viewer{position:fixed;inset:0;z-index:20;background:rgba(5,6,9,.98);display:grid;grid-template-columns:70px minmax(0,1fr) 70px;grid-template-rows:60px minmax(0,1fr) 48px;align-items:center;justify-items:center;padding:0 3vw}
 .viewer[hidden]{display:none}.viewer-figure{grid-column:2;grid-row:2;margin:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
 .viewer-figure img{max-width:100%;max-height:calc(100% - 28px);width:auto;height:auto;object-fit:contain}
 .viewer-figure figcaption{height:28px;display:flex;align-items:end;font:9px var(--mono);letter-spacing:.12em;color:var(--muted)}
@@ -54,7 +54,7 @@ body.is-paused .orbit-track,body.is-paused .orbit-card .photo{animation-play-sta
  .topbar{height:58px;padding:0 17px;font-size:9px}.wordmark span{display:none}
  .intro{padding:55px 18px 12px;display:block}.eyebrow{margin-bottom:20px;font-size:8px}
  h1{font-size:clamp(64px,17vw,100px);line-height:.82}.intro-note{margin:22px 0 0;text-align:left;font-size:9px}
- .orbit-section{height:125vh;min-height:790px;padding-top:5vh}
+ .orbit-section{height:145vh;min-height:900px;padding-top:5vh}
  .orbit-stage{width:100vw;top:9vh}.orbit-halo{filter:blur(15px)}
  .orbit-card{width:clamp(25px,7%,43px);border-width:1px}
  .orbit-core{width:24%;gap:5px}.core-name{font-size:6px}.core-count{font-size:5px}
