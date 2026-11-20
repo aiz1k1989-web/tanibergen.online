@@ -7,6 +7,7 @@ window.TANIBERGEN_CONFIG = {
   note: ""
 };
 
+// BEGIN GENERATED ARCHIVE
 window.TANIBERGEN_WORKS = [];
 const TANIBERGEN_SERIES = [20, 20, 20, 20, 20, 20, 5];
 const TANIBERGEN_EXCLUDED = new Set(["photos/2/3.webp","photos/2/4.webp","photos/2/5.webp","photos/2/6.webp","photos/2/7.webp","photos/2/8.webp","photos/2/9.webp","photos/2/10.webp","photos/2/11.webp","photos/2/12.webp","photos/2/13.webp","photos/2/14.webp","photos/2/15.webp","photos/2/16.webp","photos/2/17.webp","photos/2/18.webp","photos/2/19.webp","photos/3/15.webp","photos/3/16.webp","photos/3/17.webp","photos/3/18.webp","photos/3/19.webp","photos/3/20.webp","photos/5/13.webp","photos/5/6.webp","photos/6/20.webp"]);

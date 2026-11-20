@@ -53,10 +53,10 @@ async function buildManifest(seriesFolders) {
 
   const manifestPath = path.join(ROOT, "index-main-works.js");
   const existing = await fs.readFile(manifestPath, "utf8");
-  const configEnd = existing.indexOf("window.TANIBERGEN_WORKS = [];");
+  const configEnd = existing.indexOf("// BEGIN GENERATED ARCHIVE");
   if (configEnd < 0) throw new Error("Could not locate TANIBERGEN_CONFIG in index-main-works.js");
   const config = existing.slice(0, configEnd);
-  const source = config + "window.TANIBERGEN_WORKS = " + JSON.stringify(works, null, 2) + ";\n";
+  const source = config + "// BEGIN GENERATED ARCHIVE\nwindow.TANIBERGEN_WORKS = " + JSON.stringify(works, null, 2) + ";\n";
   await fs.writeFile(manifestPath, source);
   return works;
 }
@@ -64,7 +64,7 @@ async function buildManifest(seriesFolders) {
 async function main() {
   const directories = await fs.readdir(PHOTOS_ROOT, {withFileTypes:true});
   const seriesFolders = directories
-    .filter(entry => entry.isDirectory() && /^\\d+$/.test(entry.name))
+    .filter(entry => entry.isDirectory() && /^\d+$/.test(entry.name))
     .map(entry => entry.name)
     .sort((a,b) => Number(a)-Number(b));
 
