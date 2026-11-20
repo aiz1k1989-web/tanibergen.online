@@ -7,8 +7,8 @@ var hero=document.getElementById("hero-image"),heroButton=document.getElementByI
 var side=document.getElementById("opening-side"),montage=document.getElementById("montage");
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
 var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},observer=null;
-var desktopSpans=[4,3,5,4,3,6,3,4,5,3,6,4,3,5,4,8,3,4,5,3,6,4,3,4];
-var mobileSpans=[3,3,6,3,3,3,6,3,3,3,6,3];
+var desktopSpans=[5,3,4,4,3,5,4,3,5,3,4,4,3,5,4,3];
+var mobileSpans=[3,3,3,3,6,3,3,3,3,6];
 function pad(n){return String(n).padStart(3,"0");}
 function preview(file){return "../cut-previews/"+file;}
 function original(file){return "../"+file;}
@@ -20,7 +20,7 @@ function setImageDimensions(img,file){
 function makeOpening(work,index){
  var button=document.createElement("button");button.type="button";button.className="photo-opening";button.setAttribute("aria-label","Open photograph "+pad(index+1));
  var image=document.createElement("img");image.alt="";image.loading="eager";image.decoding="async";image.draggable=false;
- setImageDimensions(image,work.file);image.src=preview(work.file);button.appendChild(image);
+ setImageDimensions(image,work.file);image.addEventListener("load",layoutMontage,{once:true});image.addEventListener("error",layoutMontage,{once:true});image.src=preview(work.file);button.appendChild(image);
  button.addEventListener("click",function(){open(index);});return button;
 }
 function makePhoto(work,index){
@@ -53,11 +53,12 @@ function layoutMontage(){
   if(!work)return;
   var span=Number(getComputedStyle(card).getPropertyValue(mobile?"--mobile-span":"--span"))||3;
   var m=getDimensions(work.file),image=card.querySelector("img");
-  var imageWidth=m&&m.width?m.width:image.naturalWidth,imageHeight=m&&m.height?m.height:image.naturalHeight;
+  var imageWidth=m&&m.width?m.width:(image.naturalWidth||image.width),imageHeight=m&&m.height?m.height:(image.naturalHeight||image.height);
   if(!imageWidth||!imageHeight||!columnWidth)return;
   var cardWidth=span*columnWidth+(span-1)*gap;
   var desiredHeight=cardWidth*imageHeight/imageWidth;
   var rows=Math.max(8,Math.ceil((desiredHeight+rowGap)/(rowHeight+rowGap)));
+  card.style.setProperty("--rows",String(rows));
   card.style.gridRowEnd="span "+rows;
  });
 }
@@ -102,6 +103,7 @@ document.addEventListener("keydown",function(event){
  else if(event.key==="ArrowRight")move(1);
 });
 window.addEventListener("resize",layoutMontage,{passive:true});
+window.addEventListener("orientationchange",layoutMontage,{passive:true});
 function init(){render();}
 fetch("../previews/metadata.json",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("Image metadata unavailable");return response.json();}).then(function(data){metadata=data||{};init();}).catch(init);
 })();
