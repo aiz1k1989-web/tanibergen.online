@@ -70,8 +70,16 @@ document.addEventListener("keydown",function(e){if(viewer.hidden)return;if(e.key
 function updateScroll(){
  scrollTick=false;var section=document.getElementById("orbit-section"),rect=section.getBoundingClientRect(),vh=window.innerHeight;
  var span=Math.max(1,rect.height-vh*.48),progress=Math.max(0,Math.min(1,(vh*.42-rect.top)/span));
+ var feed=Math.max(0,Math.min(1,(progress-.38)/.62));
  document.documentElement.style.setProperty("--morph",progress.toFixed(4));
- document.documentElement.style.setProperty("--feed-progress",Math.max(0,Math.min(1,(progress-.38)/.62)).toFixed(4));
+ document.documentElement.style.setProperty("--morph-scale",(1-progress*.38).toFixed(4));
+ document.documentElement.style.setProperty("--morph-opacity",(1-progress*.92).toFixed(4));
+ document.documentElement.style.setProperty("--morph-blur",(progress*5).toFixed(2)+"px");
+ document.documentElement.style.setProperty("--controls-opacity",Math.max(0,1-progress*1.5).toFixed(4));
+ document.documentElement.style.setProperty("--cue-opacity",Math.max(0,1-progress*2).toFixed(4));
+ document.documentElement.style.setProperty("--stage-events",progress>.96?"none":"auto");
+ document.documentElement.style.setProperty("--feed-progress",feed.toFixed(4));
+ document.documentElement.style.setProperty("--feed-translate",((1-feed)*34).toFixed(2)+"px");
 }
 function requestScrollUpdate(){if(!scrollTick){scrollTick=true;window.requestAnimationFrame(updateScroll);}}
 window.addEventListener("scroll",requestScrollUpdate,{passive:true});window.addEventListener("resize",requestScrollUpdate);
