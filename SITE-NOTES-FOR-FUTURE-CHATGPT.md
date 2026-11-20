@@ -90,10 +90,10 @@ The user has deliberately explored different directions. These are not all simul
 - Main site is a static GitHub Pages project. No backend is required for the public portfolio.
 - Main source files include `index.html`, `index-main.css`, `index-main.js`, and `index-main-works.js`.
 - The archive manifest in `index-main-works.js` defines the working image list and exclusions. Reuse it where appropriate rather than inventing paths.
-- Original WebP assets live in numbered folders `1/` through `7/`.
-- Generated mobile previews live in `previews/1/` through `previews/7/`.
+- Original WebP assets live in `photos/1/` through `photos/7/`, with personal portraits in `photos/me/`.
+- Generated mobile previews live in `previews/photos/`; high-quality archive previews live in `cut-previews/photos/`.
 - The GitHub Actions workflow `.github/workflows/generate-mobile-previews.yml` regenerates previews when source archive images change. Preserve it.
-- For an alternative route inside a subfolder, remember that image paths need to be relative to that subfolder (for example, `../previews/...` and `../1/...`).
+- For an alternative route inside a subfolder, remember that image paths need to be relative to that subfolder (for example, `../previews/photos/...` and `../photos/...`).
 - Gallery thumbnails should use previews. Full-resolution originals should only be assigned to the fullscreen/open-image viewer when requested by the visitor.
 - Keep source images intact. Do not convert, overwrite, crop, or recompress the originals as part of generating previews.
 - Avoid adding large dependencies or a build system to a static site unless clearly justified.
@@ -163,7 +163,7 @@ Last consolidated: 20 November 2026.
 - Keep the visual rhythm of a photographic contact sheet. Let images retain their actual proportions. Do not force uniform card ratios or crop.
 - For the current black /cut/ direction, retain the multi-column behavior but remove all old paper surfaces, placeholders, borders, captions, shadows, and other framing. The images should sit directly on black.
 - Avoid returning to CSS grid row-span masonry for this archive. It produced holes / unstable placement in the current /cut/ implementation.
-- Keep the first image (1/1.webp, the user's self-portrait) as the opening frame. The remaining archive should continue naturally below it.
+- Keep the first image (`photos/1/1.webp`, the user's self-portrait) as the opening frame. The remaining archive should continue naturally below it.
 
 ---
 Last consolidated: 21 November 2026.
@@ -283,7 +283,7 @@ The user separately asked to rebuild `/repponen/` using the design principles of
 
 - The user asked to apply the concept of https://repponen.com/ to their own work, not to copy the reference website. The route `/repponen/` is an independent alternative; never replace the root website as part of this work.
 - The direction uses large confident typography, asymmetrical editorial composition, deliberate negative space, a restrained warm paper palette, and a long photographic archive. The photographs remain the primary content.
-- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. It deduplicates the 99 manifest records to 98 unique image paths and keeps `1/1.webp` (the user's self-portrait) first and largest.
+- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. It deduplicates the 99 manifest records to 98 unique image paths and keeps `photos/1/1.webp` (the user's self-portrait) first and largest.
 - Gallery thumbnails use `cut-previews/`; untouched originals load only after a visitor opens an image. Dimensions come from `previews/metadata.json`. All 98 unique paths have metadata and a matching high-resolution preview at the time of implementation.
 - The fullscreen viewer has image-only navigation, touch swipe, keyboard arrows, Escape, focus restoration, scroll restoration, and reduced-motion support. Do not reintroduce a prominent text Close button, red focus ring, or visible slideshow counter.
 - Streamline icons are from Core Line - Free: Move Left, Move Right, Delete 1. Keep the CC BY 4.0 attribution in `repponen/README.md`.
