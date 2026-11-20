@@ -4,91 +4,138 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <title>tanibergen.online</title>
+<meta name="description" content="Aizat Tanibergen, photographer and videographer from Almaty, now based in Bangkok.">
 <meta name="theme-color" content="#0b0b0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='3' fill='%23888'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#0b0b0b}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:#fff;transition:background-color .9s ease;font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:#fff;transition:background-color 1s ease;font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;-webkit-font-smoothing:antialiased;-webkit-touch-callout:none}
 #s{position:fixed;inset:0;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 #s.d{cursor:grabbing}
-.p{position:absolute;left:0;top:0;will-change:transform}
-.p img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none}
-header,.n{position:fixed;z-index:5;mix-blend-mode:difference;color:#fff;pointer-events:none}
-header{inset:0 0 auto 0;display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 0}
-header a{color:inherit;text-decoration:none;pointer-events:auto}
-.n{left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);font-variant-numeric:tabular-nums}
-#v{position:fixed;inset:0;background:#000;z-index:10;display:none;align-items:center;justify-content:center}
-#v.on{display:flex}
-#v img{max-width:100vw;max-height:100svh;object-fit:contain;cursor:zoom-out}
-#v b{position:fixed;left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);font-weight:400;color:#8a8780;font-variant-numeric:tabular-nums}
-@media (prefers-reduced-motion:reduce){html,body{transition:none}}
+.p{position:absolute;left:0;top:0;will-change:transform,opacity}
+.p img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;opacity:0;transition:opacity 1.1s ease}
+.p img.in{opacity:1}
+header,.n{position:fixed;z-index:5;mix-blend-mode:difference;color:#fff;opacity:0;transition:opacity 1.4s ease .5s}
+.ready header,.ready .n{opacity:1}
+header{inset:0 0 auto 0;display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 0;pointer-events:none}
+header a{color:inherit;text-decoration:none;pointer-events:auto;padding:4px 0}
+header a:hover{text-decoration:underline;text-underline-offset:3px}
+.n{left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);background:none;border:0;font:inherit;letter-spacing:inherit;cursor:pointer;padding:6px 0;font-variant-numeric:tabular-nums}
+a:focus-visible,.n:focus-visible{outline:1px solid #fff;outline-offset:4px}
+#v{position:fixed;inset:0;z-index:10;display:none}
+#v.on{display:block}
+#vbg{position:absolute;inset:0;background:#000}
+#vi{position:absolute;transform-origin:0 0;cursor:zoom-out;display:block;-webkit-user-drag:none}
+#vb{position:absolute;left:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);color:#8a8780;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){html,body,.p img,header,.n{transition:none}}
 </style>
 </head>
 <body>
 <header><a href="./">tanibergen.online</a><a href="https://instagram.com/isaac_4u" target="_blank" rel="noopener">@isaac_4u ↗</a></header>
 <div id="s"></div>
-<div class="n" id="n">001</div>
-<div id="v"><img alt=""><b></b></div>
+<button class="n" id="n" aria-label="Next photograph">001 / 098</button>
+<div id="v"><div id="vbg"></div><img id="vi" alt=""><span id="vb"></span></div>
 <script>
-const W=[["1/1",340,255,"#261e10",2680,1202],["1/2",195,260,"#171610",4709,1170],["1/3",147,220,"#0b0a05",1276,1954],["1/4",146,260,"#19130c",1633,468],["1/5",176,220,"#221400",3835,1627],["1/6",124,220,"#0f0e0b",5000,1526],["1/7",195,260,"#1c170e",3197,1944],["1/8",169,300,"#1b1710",3099,789],["1/9",147,220,"#1b1102",224,2053],["1/10",300,200,"#0f0806",391,1943],["1/11",195,260,"#0f0905",879,39],["1/12",225,300,"#1e160d",470,423],["1/13",165,220,"#0a0e10",3824,1925],["1/14",169,300,"#100d07",59,2317],["1/15",169,300,"#1d1710",2059,433],["1/16",176,260,"#0e0d13",925,1584],["1/17",260,173,"#060606",3121,509],["1/18",190,150,"#0c0d0c",800,1244],["1/19",260,173,"#0c0602",2366,1185],["1/20",260,173,"#161613",4215,2062],["2/1",173,260,"#201910",1331,30],["2/2",173,260,"#0c120e",1715,1986],["2/20",142,190,"#0b0e08",4996,561],["3/1",147,220,"#090401",1649,26],["3/2",165,220,"#11100e",2298,2312],["3/3",300,300,"#0b0606",2670,2351],["3/4",260,173,"#100a03",2696,955],["3/5",220,220,"#0d0d0d",1971,1253],["3/6",190,190,"#1b1b1c",131,841],["3/7",107,190,"#170f06",2755,1543],["3/8",173,260,"#020202",3484,1207],["3/9",190,127,"#040609",4353,1744],["3/10",127,190,"#1b1d1e",5103,1164],["3/11",260,260,"#070908",4973,792],["3/12",300,225,"#171717",1154,1594],["3/13",220,147,"#0a0604",4300,449],["3/14",300,200,"#090303",1531,1191],["4/1",203,260,"#171513",3520,833],["4/2",190,190,"#101110",2319,1549],["4/3",260,260,"#0a0d0e",4583,1963],["4/4",146,260,"#0c0904",3594,479],["4/5",107,190,"#0e0e0b",457,1677],["4/6",169,300,"#15160d",3050,1586],["4/7",146,260,"#070b0b",4365,1185],["4/8",300,200,"#080402",2288,159],["4/9",300,225,"#160e03",447,23],["4/10",173,260,"#1b1d13",4647,23],["4/11",300,169,"#070909",3815,501],["4/12",127,190,"#0b0603",4280,17],["4/13",260,260,"#15191b",3907,49],["4/14",260,173,"#0f0a06",1156,561],["4/15",165,220,"#140f18",2305,2012],["4/16",300,200,"#0d0604",1209,1292],["4/17",200,300,"#130c04",3585,54],["4/18",220,147,"#0f0f0f",1909,1681],["4/19",200,300,"#040404",4966,17],["4/20",200,300,"#1e1a12",4631,819],["5/1",260,156,"#0c1114",1955,954],["5/2",127,190,"#060f15",5063,2398],["5/3",220,159,"#060402",3184,27],["5/4",190,190,"#0f1213",4317,2293],["5/5",260,146,"#110c08",1602,2308],["5/7",220,220,"#09090d",2291,824],["5/8",300,300,"#090c0d",2349,448],["5/9",260,173,"#070c0d",3047,1240],["5/10",260,260,"#151214",2684,472],["5/11",190,127,"#060806",3477,2418],["5/12",186,260,"#0b0502",853,850],["5/14",147,220,"#0b0a07",893,1967],["5/15",173,260,"#070705",3529,1991],["5/16",173,260,"#0b0904",56,87],["5/17",220,220,"#120e08",817,440],["5/18",220,220,"#0c0803",4622,2367],["5/19",173,260,"#100402",4220,783],["5/20",220,147,"#0a0a09",475,1360],["6/1",300,200,"#040505",14,1216],["6/2",173,260,"#131313",3074,2343],["6/3",176,220,"#0b0703",2736,1960],["6/4",220,220,"#030d0f",3903,1279],["6/5",220,147,"#100806",846,2469],["6/6",190,127,"#090d10",2021,88],["6/7",200,300,"#080101",1154,2321],["6/8",127,190,"#050402",1156,939],["6/9",260,173,"#11100d",1979,1996],["6/11",208,260,"#0f0501",1670,1528],["6/12",260,260,"#1d1318",57,444],["6/13",260,173,"#0a0a0a",3809,834],["6/14",208,260,"#080504",42,1627],["6/15",300,200,"#0c0c0b",400,880],["6/16",300,200,"#0d0d0d",2734,173],["6/17",195,260,"#050706",405,2373],["6/18",260,173,"#111111",4591,1647],["6/19",173,260,"#0c1216",4611,477],["7/1",300,200,"#181816",1966,2422],["7/2",225,300,"#090908",4991,1934],["7/3",208,260,"#070811",3514,1595],["7/4",190,127,"#161616",1654,923],["7/5",260,173,"#090909",3856,2465]],COLS=14,ROWS=7,CELL=380;
-const S=document.getElementById("s"),N=document.getElementById("n"),meta=document.querySelector("meta[name=theme-color]");
-const P=i=>String(i+1).padStart(3,"0"),mod=(a,b)=>((a%b)+b)%b;
-let sc,Wb,Hb,pad,vw,vh,cx,cy,vx=0,vy=0,dirty=1,near=-1;
+const W=[["1/1",340,255,"#261e10",2680,1202],["1/2",195,260,"#171610",4709,1170],["1/3",147,220,"#0b0a05",1276,1954],["1/4",146,260,"#19130c",1633,468],["1/5",176,220,"#221400",3835,1627],["1/6",124,220,"#0f0e0b",5000,1526],["1/7",195,260,"#1c170e",3197,1944],["1/8",169,300,"#1b1710",3099,789],["1/9",147,220,"#1b1102",224,2053],["1/10",300,200,"#0f0806",391,1943],["1/11",195,260,"#0f0905",879,39],["1/12",225,300,"#1e160d",470,423],["1/13",165,220,"#0a0e10",3824,1925],["1/14",169,300,"#100d07",59,2317],["1/15",169,300,"#1d1710",2059,433],["1/16",176,260,"#0e0d13",925,1584],["1/17",260,173,"#060606",3121,509],["1/18",190,150,"#0c0d0c",800,1244],["1/19",260,173,"#0c0602",2366,1185],["1/20",260,173,"#161613",4215,2062],["2/1",173,260,"#201910",1331,30],["2/2",173,260,"#0c120e",1715,1986],["2/20",142,190,"#0b0e08",4996,561],["3/1",147,220,"#090401",1649,26],["3/2",165,220,"#11100e",2298,2312],["3/3",300,300,"#0b0606",2670,2351],["3/4",260,173,"#100a03",2696,955],["3/5",220,220,"#0d0d0d",1971,1253],["3/6",190,190,"#1b1b1c",131,841],["3/7",107,190,"#170f06",2755,1543],["3/8",173,260,"#020202",3484,1207],["3/9",190,127,"#040609",4353,1744],["3/10",127,190,"#1b1d1e",5103,1164],["3/11",260,260,"#070908",4973,792],["3/12",300,225,"#171717",1154,1594],["3/13",220,147,"#0a0604",4300,449],["3/14",300,200,"#090303",1531,1191],["4/1",203,260,"#171513",3520,833],["4/2",190,190,"#101110",2319,1549],["4/3",260,260,"#0a0d0e",4583,1963],["4/4",146,260,"#0c0904",3594,479],["4/5",107,190,"#0e0e0b",457,1677],["4/6",169,300,"#15160d",3050,1586],["4/7",146,260,"#070b0b",4365,1185],["4/8",300,200,"#080402",2288,159],["4/9",300,225,"#160e03",447,23],["4/10",173,260,"#1b1d13",4647,23],["4/11",300,169,"#070909",3815,501],["4/12",127,190,"#0b0603",4280,17],["4/13",260,260,"#15191b",3907,49],["4/14",260,173,"#0f0a06",1156,561],["4/15",165,220,"#140f18",2305,2012],["4/16",300,200,"#0d0604",1209,1292],["4/17",200,300,"#130c04",3585,54],["4/18",220,147,"#0f0f0f",1909,1681],["4/19",200,300,"#040404",4966,17],["4/20",200,300,"#1e1a12",4631,819],["5/1",260,156,"#0c1114",1955,954],["5/2",127,190,"#060f15",5063,2398],["5/3",220,159,"#060402",3184,27],["5/4",190,190,"#0f1213",4317,2293],["5/5",260,146,"#110c08",1602,2308],["5/7",220,220,"#09090d",2291,824],["5/8",300,300,"#090c0d",2349,448],["5/9",260,173,"#070c0d",3047,1240],["5/10",260,260,"#151214",2684,472],["5/11",190,127,"#060806",3477,2418],["5/12",186,260,"#0b0502",853,850],["5/14",147,220,"#0b0a07",893,1967],["5/15",173,260,"#070705",3529,1991],["5/16",173,260,"#0b0904",56,87],["5/17",220,220,"#120e08",817,440],["5/18",220,220,"#0c0803",4622,2367],["5/19",173,260,"#100402",4220,783],["5/20",220,147,"#0a0a09",475,1360],["6/1",300,200,"#040505",14,1216],["6/2",173,260,"#131313",3074,2343],["6/3",176,220,"#0b0703",2736,1960],["6/4",220,220,"#030d0f",3903,1279],["6/5",220,147,"#100806",846,2469],["6/6",190,127,"#090d10",2021,88],["6/7",200,300,"#080101",1154,2321],["6/8",127,190,"#050402",1156,939],["6/9",260,173,"#11100d",1979,1996],["6/11",208,260,"#0f0501",1670,1528],["6/12",260,260,"#1d1318",57,444],["6/13",260,173,"#0a0a0a",3809,834],["6/14",208,260,"#080504",42,1627],["6/15",300,200,"#0c0c0b",400,880],["6/16",300,200,"#0d0d0d",2734,173],["6/17",195,260,"#050706",405,2373],["6/18",260,173,"#111111",4591,1647],["6/19",173,260,"#0c1216",4611,477],["7/1",300,200,"#181816",1966,2422],["7/2",225,300,"#090908",4991,1934],["7/3",208,260,"#070811",3514,1595],["7/4",190,127,"#161616",1654,923],["7/5",260,173,"#090909",3856,2465]],COLS=14,ROWS=7,CELL=380,UW=COLS*CELL,UH=ROWS*CELL,T=W.length;
+const $=s=>document.querySelector(s),S=$("#s"),C=$("#n"),META=$("meta[name=theme-color]"),V=$("#v"),VI=$("#vi"),VB=$("#vb"),VBG=$("#vbg");
+const p3=i=>String(i+1).padStart(3,"0"),mod=(a,b)=>((a%b)+b)%b;
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,DUR=n=>RM?1:n;
+let sc,Wb,Hb,pad,vw,vh,cx,cy,tx,ty,vx=0,vy=0,near=-1,dirty=true,flight=true,order=0,drag=false,cur=-1,hid=-1,closing=false;
 const els=W.map((w,i)=>{
   const d=document.createElement("div");d.className="p";d.dataset.i=i;
   const g=document.createElement("img");g.alt="";g.decoding="async";d.appendChild(g);S.appendChild(d);
-  return {d,g,loaded:0};
+  return{d,g,on:false};
 });
 function size(){
-  vw=innerWidth;vh=innerHeight;sc=Math.min(Math.max(vw/1300,.55),1.15);
-  Wb=COLS*CELL*sc;Hb=ROWS*CELL*sc;pad=CELL*sc;
-  els.forEach((e,i)=>{e.d.style.width=W[i][1]*sc+"px";e.d.style.height=W[i][2]*sc+"px"});dirty=1;
+  vw=innerWidth;vh=innerHeight;sc=Math.min(Math.max(vw/1300,.66),1.15);
+  Wb=UW*sc;Hb=UH*sc;pad=CELL*sc;
+  els.forEach((e,i)=>{e.d.style.width=W[i][1]*sc+"px";e.d.style.height=W[i][2]*sc+"px"});dirty=true;
 }
-// start centred on the self-portrait
-{const f=W[0];size();cx=(f[4]+f[1]/2)*sc;cy=(f[5]+f[2]/2)*sc;}
+size();
+tx=W[0][4]+W[0][1]/2;ty=W[0][5]+W[0][2]/2;cx=tx+900;cy=ty+260;
 addEventListener("resize",size);
+function load(e,i){
+  e.g.onload=()=>{e.g.style.transitionDelay=(order++%7)*70+"ms";e.g.classList.add("in");if(i===0)document.body.classList.add("ready")};
+  e.g.src="../previews/"+W[i][0]+".webp";
+}
 function draw(){
-  let best=1e12,bi=0;
-  for(let i=0;i<W.length;i++){
-    const w=W[i],e=els[i];
-    const x=mod(w[4]*sc-cx+vw/2+pad,Wb)-pad,y=mod(w[5]*sc-cy+vh/2+pad,Hb)-pad;
-    const ew=w[1]*sc,eh=w[2]*sc;
-    e.d.style.transform="translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0)";
-    const vis=x<vw+300&&x+ew>-300&&y<vh+300&&y+eh>-300;
-    if(vis&&!e.loaded){e.g.src="../previews/"+w[0]+".webp";e.loaded=1}
-    const dx=x+ew/2-vw/2,dy=y+eh/2-vh/2,dd=dx*dx+dy*dy;
+  const r0=Math.hypot(vw,vh)*.55;let best=1e12,bi=0;
+  for(let i=0;i<T;i++){
+    const w=W[i],e=els[i],ew=w[1]*sc,eh=w[2]*sc;
+    const x=mod((w[4]-cx)*sc+vw/2+pad,Wb)-pad,y=mod((w[5]-cy)*sc+vh/2+pad,Hb)-pad;
+    const dd=Math.hypot(x+ew/2-vw/2,y+eh/2-vh/2),f=Math.min(dd/r0,1),f2=f*f;
+    e.d.style.transform="translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) scale("+(1-.05*f2).toFixed(3)+")";
+    e.d.style.opacity=(1-.55*f2).toFixed(3);
+    if(!e.on&&x<vw+320&&x+ew>-320&&y<vh+320&&y+eh>-320){e.on=true;load(e,i)}
     if(dd<best){best=dd;bi=i}
   }
-  if(bi!==near){near=bi;document.body.style.setProperty("--bg",W[bi][3]);meta.content=W[bi][3];N.textContent=P(bi)}
+  if(bi!==near){near=bi;const c=W[bi][3];document.body.style.setProperty("--bg",c);META.content=c;C.textContent=p3(bi)+" / "+p3(T-1)}
 }
-function tick(){
-  if(!drag&&(Math.abs(vx)>.05||Math.abs(vy)>.05)){cx-=vx;cy-=vy;vx*=.93;vy*=.93;dirty=1}
-  if(dirty){draw();dirty=0}
+let last=performance.now();
+function tick(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;
+  if(!drag&&(Math.abs(vx)>8||Math.abs(vy)>8)&&!RM){tx-=vx*dt/sc;ty-=vy*dt/sc;const q=Math.exp(-dt*3.4);vx*=q;vy*=q}
+  const k=1-Math.exp(-dt*(RM?60:drag?26:flight?3.2:9)),ex=tx-cx,ey=ty-cy;
+  if(Math.abs(ex)>.01||Math.abs(ey)>.01){cx+=ex*k;cy+=ey*k;dirty=true}
+  if(dirty){draw();dirty=false}
   requestAnimationFrame(tick);
 }
-let drag=0,lx,ly,moved=0,tgt=null,lt=0;
-S.addEventListener("pointerdown",e=>{if(v.classList.contains("on"))return;drag=1;moved=0;lx=e.clientX;ly=e.clientY;vx=vy=0;
+/* input */
+let lx,ly,lt,moved=0,tgt=null;
+S.addEventListener("pointerdown",e=>{drag=true;flight=false;moved=0;lx=e.clientX;ly=e.clientY;lt=e.timeStamp;vx=vy=0;
   tgt=e.target.closest(".p");S.classList.add("d");S.setPointerCapture(e.pointerId)});
-S.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;
-  moved+=Math.abs(dx)+Math.abs(dy);cx-=dx;cy-=dy;vx=dx*.6+vx*.4;vy=dy*.6+vy*.4;lx=e.clientX;ly=e.clientY;dirty=1});
-function up(){if(!drag)return;drag=0;S.classList.remove("d");
+S.addEventListener("pointermove",e=>{if(!drag)return;
+  const dx=e.clientX-lx,dy=e.clientY-ly,dtm=Math.max(e.timeStamp-lt,1);
+  moved+=Math.abs(dx)+Math.abs(dy);tx-=dx/sc;ty-=dy/sc;
+  vx=dx/dtm*1000*.5+vx*.5;vy=dy/dtm*1000*.5+vy*.5;lx=e.clientX;ly=e.clientY;lt=e.timeStamp});
+function up(e){if(!drag)return;drag=false;S.classList.remove("d");
+  if(e.timeStamp-lt>90){vx=vy=0}
   if(moved<8&&tgt)openV(+tgt.dataset.i);tgt=null}
 S.addEventListener("pointerup",up);S.addEventListener("pointercancel",up);
-S.addEventListener("wheel",e=>{e.preventDefault();cx+=e.deltaX;cy+=e.deltaY;dirty=1},{passive:false});
-const v=document.getElementById("v"),vi=v.querySelector("img"),vb=v.querySelector("b");let cur=0;
-function show(i){cur=mod(i,W.length);vi.src="../"+W[cur][0]+".webp";vb.textContent=P(cur)}
-function openV(i){show(i);v.classList.add("on")}
-function closeV(){v.classList.remove("on");vi.removeAttribute("src");const w=W[cur];
-  cx=(w[4]+w[1]/2)*sc;cy=(w[5]+w[2]/2)*sc;vx=vy=0;dirty=1}
-vi.onclick=closeV;
+S.addEventListener("wheel",e=>{e.preventDefault();flight=false;const m=e.deltaMode===1?16:1;tx+=e.deltaX*m/sc;ty+=e.deltaY*m/sc},{passive:false});
+function shortest(i){const w=W[i];return[mod(w[4]+w[1]/2-tx+UW/2,UW)-UW/2,mod(w[5]+w[2]/2-ty+UH/2,UH)-UH/2]}
+function fly(i){const d=shortest(i);flight=true;vx=vy=0;tx+=d[0];ty+=d[1]}
+C.addEventListener("click",()=>fly((near+1)%T));
+/* viewer */
+function fit(i){const ar=W[i][1]/W[i][2];const fw=Math.min(vw*.92,vh*.92*ar),fh=fw/ar;return{fw,fh,fl:(vw-fw)/2,ft:(vh-fh)/2}}
+function place(i){const f=fit(i);VI.style.left=f.fl+"px";VI.style.top=f.ft+"px";VI.style.width=f.fw+"px";VI.style.height=f.fh+"px";return f}
+function setImg(i){
+  VI.src="../previews/"+W[i][0]+".webp";VB.textContent=p3(i);
+  const o=new Image();o.src="../"+W[i][0]+".webp";
+  const sw=()=>{if(cur===i&&V.classList.contains("on"))VI.src=o.src};
+  o.decode().then(sw,sw);
+}
+function hide(i){if(hid>=0)els[hid].g.style.visibility="";if(i>=0)els[i].g.style.visibility="hidden";hid=i}
+function openV(i){
+  cur=i;const r=els[i].d.getBoundingClientRect();hide(i);const f=place(i);setImg(i);V.classList.add("on");
+  VBG.animate([{opacity:0},{opacity:1}],{duration:DUR(420),easing:"ease"});
+  VB.animate([{opacity:0},{opacity:1}],{duration:DUR(600),easing:"ease"});
+  VI.animate([{transform:"translate("+(r.left-f.fl)+"px,"+(r.top-f.ft)+"px) scale("+(r.width/f.fw)+")"},{transform:"none"}],{duration:DUR(620),easing:"cubic-bezier(.2,.75,.15,1)"});
+}
+function nav(i){
+  cur=mod(i,T);const d=shortest(cur);tx+=d[0];ty+=d[1];cx=tx;cy=ty;draw();
+  hide(cur);place(cur);setImg(cur);VI.animate([{opacity:0},{opacity:1}],{duration:DUR(240),easing:"ease"});
+}
+function closeV(){
+  if(!V.classList.contains("on")||closing)return;closing=true;
+  const r=els[cur].d.getBoundingClientRect(),f=fit(cur),o={duration:DUR(480),easing:"cubic-bezier(.5,0,.2,1)",fill:"forwards"};
+  VBG.animate([{opacity:1},{opacity:0}],o);VB.animate([{opacity:1},{opacity:0}],o);
+  VI.animate([{transform:"none"},{transform:"translate("+(r.left-f.fl)+"px,"+(r.top-f.ft)+"px) scale("+(r.width/f.fw)+")"}],o).onfinish=()=>{
+    V.classList.remove("on");[VI,VBG,VB].forEach(n=>n.getAnimations().forEach(a=>a.cancel()));VI.removeAttribute("src");hide(-1);closing=false;cur=-1};
+}
+V.addEventListener("click",closeV);
 addEventListener("keydown",e=>{
-  if(v.classList.contains("on")){if(e.key==="Escape")closeV();if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1);return}
-  const k=60;if(e.key==="ArrowLeft")vx+=k/6;if(e.key==="ArrowRight")vx-=k/6;if(e.key==="ArrowUp")vy+=k/6;if(e.key==="ArrowDown")vy-=k/6});
+  if(V.classList.contains("on")){if(e.key==="Escape")closeV();else if(e.key==="ArrowRight")nav(cur+1);else if(e.key==="ArrowLeft")nav(cur-1);return}
+  flight=false;const s=520;
+  if(e.key==="ArrowLeft")vx+=s;else if(e.key==="ArrowRight")vx-=s;else if(e.key==="ArrowUp")vy+=s;else if(e.key==="ArrowDown")vy-=s;
+  else if(e.key===" "&&e.target===document.body){e.preventDefault();fly((near+1)%T)}
+});
 let x0=null;
-v.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
-v.addEventListener("touchend",e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;
-  if(Math.abs(d)>45)show(cur+(d<0?1:-1));x0=null});
-tick();
+V.addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
+V.addEventListener("touchend",e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>45)nav(cur+(d<0?1:-1));x0=null});
+setTimeout(()=>document.body.classList.add("ready"),2500);
+requestAnimationFrame(tick);
 </script>
 </body>
 </html>
