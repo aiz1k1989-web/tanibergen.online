@@ -78,7 +78,7 @@ function openAt(index){
  if(!works.length)return;
  active=(index+works.length)%works.length;
  var work=works[active];lastFocus=document.activeElement;
- lockPage();viewer.hidden=false;
+ if(viewer.hidden)lockPage();viewer.hidden=false;
  viewerImage.removeAttribute("src");viewerImage.alt="Photograph by Aizat Tanibergen";viewerImage.src=originalPath(work.file);
  viewerCaption.textContent="AIZAT TANIBERGEN / "+String(active+1).padStart(3,"0");
  viewerCount.textContent=String(active+1).padStart(3,"0")+" / "+String(works.length).padStart(3,"0");
