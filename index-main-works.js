@@ -22,7 +22,7 @@ TANIBERGEN_SERIES.forEach((count, seriesIndex) => {
     if (TANIBERGEN_EXCLUDED.has("photos/" + (seriesIndex + 1) + "/" + frame + ".webp")) continue;
     window.TANIBERGEN_WORKS.push({
       id: String(tanibergenOrder).padStart(2, "0"),
-      file: (seriesIndex === 5 && frame === 10 ? "photos/1/16.webp" : (seriesIndex + 1) + "/" + frame + ".webp"),
+      file: (seriesIndex === 5 && frame === 10 ? "photos/1/16.webp" : "photos/" + (seriesIndex + 1) + "/" + frame + ".webp"),
       series: "Series " + folder,
       scale: TANIBERGEN_SCALES[rhythm],
       align: TANIBERGEN_ALIGNMENTS[rhythm],
