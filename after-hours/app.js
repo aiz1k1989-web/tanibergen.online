@@ -9,6 +9,7 @@
   var viewerCount=document.getElementById("viewer-count");
   var active=0;
   var lastFocus=null;
+  var dimensions={};
   var previewPath=function(file){return "../previews/"+file;};
   var originalPath=function(file){return "../"+file;};
   function makePreview(img,work){
@@ -38,23 +39,28 @@
     if(lastFocus&&lastFocus.focus)lastFocus.focus();
   }
   function move(delta){openAt(active+delta);}
-  if(works.length){
+  function renderArchive(){
+    if(!works.length)return;
     var first=works[0];
     hero.src=previewPath(first.file);
     hero.addEventListener("error",function(){hero.src=originalPath(first.file);},{once:true});
     works.forEach(function(work,index){
       var fig=document.createElement("figure");fig.className="work-item";fig.tabIndex=0;fig.setAttribute("role","button");fig.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
-      var img=document.createElement("img");img.alt="Photograph "+String(index+1).padStart(3,"0")+" by Aizat Tanibergen";img.width=800;img.height=1000;makePreview(img,work);
+      var media=document.createElement("div");media.className="work-media";
+      var size=dimensions[work.file];
+      if(size&&size.width&&size.height)media.style.aspectRatio=size.width+" / "+size.height;
+      var img=document.createElement("img");img.alt="Photograph "+String(index+1).padStart(3,"0")+" by Aizat Tanibergen";makePreview(img,work);media.appendChild(img);
       var cap=document.createElement("figcaption");
       var no=document.createElement("span");no.textContent="FRAME "+String(index+1).padStart(3,"0");
       var series=document.createElement("span");series.textContent="AT / "+String(work.series||"").replace("Series ","S");
-      cap.appendChild(no);cap.appendChild(series);fig.appendChild(img);fig.appendChild(cap);
+      cap.appendChild(no);cap.appendChild(series);fig.appendChild(media);fig.appendChild(cap);
       fig.addEventListener("click",function(){openAt(index);});
       fig.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();openAt(index);}});
       grid.appendChild(fig);
     });
     document.getElementById("total-count").textContent=String(works.length).padStart(3,"0")+" FRAMES";
   }
+  fetch("../previews/metadata.json").then(function(response){if(!response.ok)throw new Error("Image metadata unavailable");return response.json();}).then(function(data){dimensions=data||{};}).catch(function(){dimensions={};}).then(renderArchive);
   document.getElementById("viewer-close").addEventListener("click",closeViewer);
   document.getElementById("viewer-prev").addEventListener("click",function(){move(-1);});
   document.getElementById("viewer-next").addEventListener("click",function(){move(1);});
