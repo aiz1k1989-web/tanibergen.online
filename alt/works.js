@@ -20,7 +20,7 @@ TANIBERGEN_SERIES.forEach((count, seriesIndex) => {
     tanibergenOrder += 1;
     window.TANIBERGEN_WORKS.push({
       id: String(tanibergenOrder).padStart(2, "0"),
-      file: "../" + (seriesIndex + 1) + "/" + frame + ".webp",
+      file: "../photos/" + (seriesIndex + 1) + "/" + frame + ".webp",
       series: "Series " + folder,
       scale: TANIBERGEN_SCALES[rhythm],
       align: TANIBERGEN_ALIGNMENTS[rhythm],

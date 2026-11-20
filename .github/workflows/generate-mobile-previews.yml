@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "previews/**"
       - "cut-previews/**"
+      - "index-main-works.js"
   workflow_dispatch:
 
 permissions:
@@ -33,17 +34,17 @@ jobs:
       - name: Install image processor
         run: npm install --no-save --no-package-lock sharp
 
-      - name: Generate previews
+      - name: Generate manifest and previews
         run: node scripts/generate-previews.cjs
 
-      - name: Commit generated previews
+      - name: Commit generated manifest and previews
         run: |
-          if [ -n "$(git status --porcelain -- previews cut-previews)" ]; then
+          if [ -n "$(git status --porcelain -- index-main-works.js previews cut-previews)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add previews/ cut-previews/
-            git commit -m "Generate optimized photographic previews"
+            git add index-main-works.js previews/ cut-previews/
+            git commit -m "Generate archive manifest and optimized previews"
             git push
           else
-            echo "Previews are already up to date."
+            echo "Manifest and previews are already up to date."
           fi

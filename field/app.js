@@ -75,5 +75,5 @@ function progress(){
 window.addEventListener("scroll",function(){if(!raf){raf=true;window.requestAnimationFrame(progress);}},{passive:true});
 window.addEventListener("resize",progress,{passive:true});
 function init(){render();progress();}
-fetch("../previews/metadata.json",{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("metadata unavailable");return r.json();}).then(function(m){metadata=m||{};init();}).catch(init);
+fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"}).then(function(r){if(!r.ok)throw new Error("metadata unavailable");return r.json();}).then(function(m){metadata=m||{};init();}).catch(init);
 })();

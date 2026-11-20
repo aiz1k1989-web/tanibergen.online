@@ -4,8 +4,8 @@
   const allWorks = Array.isArray(window.TANIBERGEN_WORKS)
     ? window.TANIBERGEN_WORKS
     : [];
-  const featuredFile = "4/1.webp";
-  const portraitFile = "1/1.webp";
+  const featuredFile = "photos/4/1.webp";
+  const portraitFile = "photos/1/1.webp";
   const works = allWorks.filter(work => work.file !== featuredFile && work.file !== portraitFile);
   const allViewerWorks = allWorks.slice();
 

@@ -97,6 +97,6 @@ document.addEventListener("keydown",e=>{
  if(e.key==="ArrowRight"){cx+=420/scale;dirty=true}else if(e.key==="ArrowLeft"){cx-=420/scale;dirty=true}else if(e.key==="ArrowUp"){cy-=420/scale;dirty=true}else if(e.key==="ArrowDown"){cy+=420/scale;dirty=true}else if(e.key==="Enter"&&document.activeElement===document.body)open(nearest,true);
 });
 addEventListener("resize",resize);
-fetch("../previews/metadata.json",{cache:"force-cache"}).then(r=>r.ok?r.json():{}).then(data=>{Object.assign(meta,data||{});makeTiles()}).catch(makeTiles);
+fetch("../previews/metadata.json?v=photos-root-01",{cache:"force-cache"}).then(r=>r.ok?r.json():{}).then(data=>{Object.assign(meta,data||{});makeTiles()}).catch(makeTiles);
 requestAnimationFrame(frame);
 })();
