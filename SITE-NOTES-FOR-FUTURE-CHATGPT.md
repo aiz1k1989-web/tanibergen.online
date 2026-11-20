@@ -289,3 +289,12 @@ The user separately asked to rebuild `/repponen/` using the design principles of
 - Streamline icons are from Core Line - Free: Move Left, Move Right, Delete 1. Keep the CC BY 4.0 attribution in `repponen/README.md`.
 - Canva generation was started for an editable visual prototype using three actual photographs from the user's archive. Treat any completed Canva result as an art-direction reference only; the GitHub Pages implementation remains the website source of truth.
 - Validation completed: JavaScript parses; all six permanent base routes exist on the experiment branch; 98 unique archive paths have metadata and matching `cut-previews/` files. Do not claim real iPhone or browser-device testing unless it is actually performed.
+
+
+## 20. Central photo library - 21 November 2026
+
+- All original photography is organized under `photos/`. Numbered archive series live at `photos/1/` through `photos/7/`; new series continue as `photos/8/`, `photos/9/`, and so on. Personal About portraits live in `photos/me/`.
+- Generated lightweight previews live under `previews/photos/`; high-quality archive previews live under `cut-previews/photos/`. The metadata manifest uses original paths beginning with `photos/`.
+- All public archive routes must read image paths from the shared `index-main-works.js` manifest where possible. Do not reintroduce root-level numbered photo folders or hardcoded series paths.
+- The Repponen About section shows one randomly selected portrait from the 19 images in `photos/me/` each time the page loads. The full set must remain available; do not expose all 19 as a gallery unless asked.
+- The preview-generation workflow scans numbered photo folders plus `photos/me/`, preserves original files, and regenerates both preview tiers. New archive series should be added to the shared manifest and preview generator.

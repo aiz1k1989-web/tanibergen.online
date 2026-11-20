@@ -40,7 +40,7 @@
 
   if (grid) {
     photos.forEach((photo, index) => {
-      if (photo.file === "4/1.webp") return;
+      if (photo.file === "photos/4/1.webp") return;
       const button = document.createElement("button");
       button.className = "photo-item";
       button.type = "button";

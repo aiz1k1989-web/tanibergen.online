@@ -13,7 +13,7 @@
     works.push({file:file});
   });
 
-  var portraitIndex = works.findIndex(function(item){ return item.file === "1/1.webp"; });
+  var portraitIndex = works.findIndex(function(item){ return item.file === "photos/1/1.webp"; });
   if (portraitIndex > 0) works.unshift(works.splice(portraitIndex,1)[0]);
 
   var grid = document.getElementById("work-grid");
@@ -31,6 +31,7 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var metadata = {};
+  var aboutPhotos = ["me1.webp","me2.jpg","me3.jpg","me4.jpg","me5.jpg","me6.jpg","me7.webp","me8.webp","me9.webp","me10.webp","me11.webp","me12.webp","me13.webp","me14.webp","me15.webp","me16.webp","me17.jpg","me18.jpg","me19.jpg"];
 
   function previewUrl(file){
     return "../cut-previews/" + file;
@@ -77,10 +78,24 @@
     return button;
   }
 
+  function buildAboutPortrait(){
+    var image = document.getElementById("about-photo");
+    if (!image || !aboutPhotos.length) return;
+    var selected = aboutPhotos[Math.floor(Math.random() * aboutPhotos.length)];
+    image.src = "../previews/photos/me/" + selected.replace(/\.(jpe?g|png|avif)$/i, ".webp");
+    image.alt = "Portrait of Aizat Tanibergen";
+    image.addEventListener("error", function(){
+      if (image.dataset.fallback) return;
+      image.dataset.fallback = "1";
+      image.src = "../photos/me/" + selected;
+    });
+  }
+
   function buildArchive(){
     if (!works.length) return;
+    buildAboutPortrait();
     var heroItem = works[0];
-    if (heroItem.file !== "1/1.webp") {
+    if (heroItem.file !== "photos/1/1.webp") {
       heroPhoto.src = previewUrl(heroItem.file);
       setImageDimensions(heroPhoto,heroItem.file);
     } else {
