@@ -47,7 +47,7 @@ function frame(now){const dt=Math.min((now-lastTime)/1000,.05);lastTime=now;if(!
 function open(index,fromKeyboard){
  if(!tiles.length)return;active=mod(index,tiles.length);returnFocus=tiles[active].el;keyboardOpen=!!fromKeyboard;
  const item=tiles[active];load(item);viewer.hidden=false;viewer.classList.remove("open");void viewer.offsetWidth;viewer.classList.add("open");show(item);
- if(fromKeyboard)closeBtn.focus({preventScroll:true});
+ if(fromKeyboard)closeBtn.focus({preventScroll:true});else viewer.focus({preventScroll:true});
 }
 function show(item){
  viewImage.classList.add("switching");viewImage.onload=()=>viewImage.classList.remove("switching");viewImage.src="../cut-previews/"+item.file;
@@ -93,7 +93,7 @@ viewer.addEventListener("click",e=>{if(e.target===viewer)close()});
 let touch=null;viewer.addEventListener("touchstart",e=>{if(e.touches.length===1)touch={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
 viewer.addEventListener("touchend",e=>{if(!touch||!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-touch.x,dy=e.changedTouches[0].clientY-touch.y;if(Math.abs(dx)>46&&Math.abs(dx)>Math.abs(dy)*1.1)navigate(dx<0?1:-1);else if(dy>90&&dy>Math.abs(dx)*1.2)close();touch=null},{passive:true});
 document.addEventListener("keydown",e=>{
- if(!viewer.hidden){if(e.key==="Escape")close();else if(e.key==="ArrowRight")navigate(1);else if(e.key==="ArrowLeft")navigate(-1);return}
+ if(!viewer.hidden){if(e.key==="Escape")close();else if(e.key==="ArrowRight")navigate(1);else if(e.key==="ArrowLeft")navigate(-1);else if(e.key==="Tab"){e.preventDefault();closeBtn.focus({preventScroll:true})}return}
  if(e.key==="ArrowRight"){cx+=420/scale;dirty=true}else if(e.key==="ArrowLeft"){cx-=420/scale;dirty=true}else if(e.key==="ArrowUp"){cy-=420/scale;dirty=true}else if(e.key==="ArrowDown"){cy+=420/scale;dirty=true}else if(e.key==="Enter"&&document.activeElement===document.body)open(nearest,true);
 });
 addEventListener("resize",resize);
