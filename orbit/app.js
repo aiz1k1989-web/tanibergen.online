@@ -5,11 +5,11 @@ var ringRoot=document.getElementById("orbit-rings"),feedRoot=document.getElement
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
 var viewerCaption=document.getElementById("viewer-caption"),viewerCount=document.getElementById("viewer-count");
 var motionLayer=document.getElementById("motion-layer");
-var active=0,lastFocus=null,rafPending=false,orbitCards=[],feedCards=[],flightCards=[],flightRects=[],morphStarted=false,lastWidth=window.innerWidth;
+var active=0,lastFocus=null,rafPending=false,orbitCards=[],feedCards=[],flightCards=[],flightRects=[],morphStarted=false,lastWidth=window.innerWidth,imageMeta={};
 var ringWeights=[8,14,20,26,31],ringRadii=[13,21,29,37,45],durations=[74,91,108,126,145];
 function previewPath(file){return "../previews/"+file;}
 function originalPath(file){return "../"+file;}
-function setRatio(img,card){function apply(){if(img.naturalWidth&&img.naturalHeight)card.style.setProperty("--ratio",(img.naturalWidth/img.naturalHeight).toFixed(4));}if(img.complete)apply();else img.addEventListener("load",apply,{once:true});}
+function setRatio(img,card,file){var meta=imageMeta[file];if(meta&&meta.width&&meta.height){card.style.setProperty("--ratio",(meta.width/meta.height).toFixed(4));img.width=meta.width;img.height=meta.height;return;}function apply(){if(img.naturalWidth&&img.naturalHeight)card.style.setProperty("--ratio",(img.naturalWidth/img.naturalHeight).toFixed(4));}if(img.complete)apply();else img.addEventListener("load",apply,{once:true});}
 function makeRings(){
  if(!works.length)return;
  var total=works.length;document.getElementById("core-count").textContent=String(total).padStart(3,"0")+" FRAMES";document.getElementById("ribbon-count").textContent=String(total).padStart(3,"0")+" FRAMES";
@@ -21,7 +21,7 @@ function makeRings(){
   for(var i=0;i<count;i++){
    var work=works[cursor],index=cursor++,angle=360/count*i+(ringIndex%2?360/count/2:0),rad=angle*Math.PI/180;
    var card=document.createElement("button");card.type="button";card.className="orbit-card";card.style.left=(50+Math.sin(rad)*ringRadii[ringIndex])+"%";card.style.top=(50-Math.cos(rad)*ringRadii[ringIndex])+"%";card.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
-   var photo=document.createElement("span");photo.className="photo";var img=document.createElement("img");img.alt="";img.loading="lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);setRatio(img,card);photo.appendChild(img);card.appendChild(photo);
+   var photo=document.createElement("span");photo.className="photo";var img=document.createElement("img");img.alt="";img.loading="lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);setRatio(img,card,work.file);photo.appendChild(img);card.appendChild(photo);
    card.addEventListener("click",(function(n){return function(){openAt(n);};})(index));track.appendChild(card);orbitCards[index]=card;
   }
   ringRoot.appendChild(track);
@@ -31,7 +31,7 @@ function makeFeed(){
  var fragment=document.createDocumentFragment();
  works.forEach(function(work,index){
   var card=document.createElement("button");card.type="button";card.className="ribbon-item";card.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
-  var img=document.createElement("img");img.alt="";img.loading=index<12?"eager":"lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);setRatio(img,card);card.appendChild(img);card.addEventListener("click",function(){openAt(index);});fragment.appendChild(card);feedCards[index]=card;
+  var img=document.createElement("img");img.alt="";img.loading=index<12?"eager":"lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);setRatio(img,card,work.file);card.appendChild(img);card.addEventListener("click",function(){openAt(index);});fragment.appendChild(card);feedCards[index]=card;
  });
  feedRoot.appendChild(fragment);
 }
@@ -85,5 +85,5 @@ function updateScroll(){
 function requestUpdate(){if(!rafPending){rafPending=true;window.requestAnimationFrame(updateScroll);}}
 window.addEventListener("scroll",requestUpdate,{passive:true});
 window.addEventListener("resize",function(){if(Math.abs(window.innerWidth-lastWidth)>2){lastWidth=window.innerWidth;clearFlight();}requestUpdate();});
-makeRings();makeFeed();updateScroll();
+function init(){makeRings();makeFeed();updateScroll();}\nfetch("../previews/metadata.json",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("metadata unavailable");return response.json();}).then(function(meta){imageMeta=meta||{};init();}).catch(init);
 })();
