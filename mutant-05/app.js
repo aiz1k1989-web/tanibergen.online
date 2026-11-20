@@ -86,8 +86,9 @@ function unlockScroll(){
   window.scrollTo(0,scrollPosition);
 }
 function showImage(index){
-  activeIndex=modulo(index,works.length);
-  const work=works[activeIndex];
+  const targetIndex=modulo(index,works.length);
+  activeIndex=targetIndex;
+  const work=works[targetIndex];
   viewerImage.classList.add("is-switching");
   const preview=imagePath(work.file);
   viewerImage.onload=()=>viewerImage.classList.remove("is-switching");
@@ -97,7 +98,7 @@ function showImage(index){
   original.decoding="async";
   original.src=originalPath(work.file);
   const reveal=()=>{
-    if(activeIndex!==index||viewer.hidden)return;
+    if(activeIndex!==targetIndex||viewer.hidden)return;
     viewerImage.onload=()=>viewerImage.classList.remove("is-switching");
     viewerImage.src=original.src;
     if(viewerImage.complete)viewerImage.classList.remove("is-switching");
