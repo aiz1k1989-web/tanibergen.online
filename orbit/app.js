@@ -81,17 +81,18 @@ function updateScroll(){
  document.documentElement.style.setProperty("--cue-opacity",clamp(1-progress*2.4,0,1).toFixed(4));
  document.body.classList.toggle("is-morphing",progress>.10);
  if(progress>.10){
-  var stageRect=stage.getBoundingClientRect();
   for(var i=0;i<orbitCards.length;i++){
    var source=orbitCards[i],target=feedCards[i];if(!source||!target)continue;
    var a=source.getBoundingClientRect(),b=target.getBoundingClientRect();
    var dx=(b.left+b.width/2)-(a.left+a.width/2);
    var dy=(b.top+b.height/2)-(a.top+a.height/2);
    var scale=Math.max(.01,b.width/Math.max(1,a.width));
-   source.style.setProperty("--dx",dx.toFixed(2)+"px");
-   source.style.setProperty("--dy",dy.toFixed(2)+"px");
-   source.style.setProperty("--target-scale",scale.toFixed(4));
+   source.style.setProperty("--tx",(dx*morph).toFixed(2)+"px");
+   source.style.setProperty("--ty",(dy*morph).toFixed(2)+"px");
+   source.style.setProperty("--scale",(1+(scale-1)*morph).toFixed(4));
   }
+ }else{
+  orbitCards.forEach(function(card){if(card){card.style.setProperty("--tx","0px");card.style.setProperty("--ty","0px");card.style.setProperty("--scale","1");}});
  }
 }
 function requestScrollUpdate(){if(!scrollTick){scrollTick=true;window.requestAnimationFrame(updateScroll);}}
