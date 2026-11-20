@@ -15,7 +15,7 @@ h1 i{font-weight:400;color:#aeb0b8}.intro-note{font:11px/1.7 var(--mono);color:#
 .orbit-rings{position:absolute;inset:0}.orbit-track{position:absolute;inset:0;border-radius:50%;animation:orbit-spin var(--duration,90s) linear infinite;will-change:transform}
 .orbit-track:nth-child(even){animation-direction:reverse}
 .orbit-track::after{content:"";position:absolute;inset:var(--inset);border:1px solid rgba(255,255,255,.075);border-radius:50%;pointer-events:none}
-.orbit-card{position:absolute;left:50%;top:50%;width:clamp(30px,6.5%,74px);aspect-ratio:var(--ratio,1);display:block;padding:0;border:1px solid rgba(255,255,255,.22);border-radius:1px;background:#15171d;overflow:hidden;cursor:pointer;transform:translate(-50%,-50%) translate3d(calc(var(--dx,0px)*var(--morph)),calc(var(--dy,0px)*var(--morph)),0) scale(calc(1 + (var(--target-scale,1) - 1)*var(--morph)));transform-origin:center;transition:border-color .25s;z-index:1;will-change:transform}
+.orbit-card{position:absolute;left:50%;top:50%;width:clamp(30px,6.5%,74px);aspect-ratio:var(--ratio,1);display:block;padding:0;border:1px solid rgba(255,255,255,.22);border-radius:1px;background:#15171d;overflow:hidden;cursor:pointer;transform:translate(-50%,-50%) translate3d(var(--tx,0px),var(--ty,0px),0) scale(var(--scale,1));transform-origin:center;transition:border-color .25s;z-index:1;will-change:transform}
 .orbit-card:hover,.orbit-card:focus-visible{z-index:4;border-color:#fff;outline:1px solid rgba(255,255,255,.6);outline-offset:2px}
 .orbit-card .photo{width:100%;height:100%;display:block;animation:orbit-counter var(--duration,90s) linear infinite;animation-direction:reverse}
 .orbit-track:nth-child(even) .orbit-card .photo{animation-direction:normal}
