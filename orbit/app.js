@@ -1,51 +1,57 @@
 (function(){
 "use strict";
 var works=Array.isArray(window.TANIBERGEN_WORKS)?window.TANIBERGEN_WORKS:[];
-var ringRoot=document.getElementById("orbit-rings");
-var viewer=document.getElementById("viewer");
-var viewerImage=document.getElementById("viewer-image");
-var viewerCaption=document.getElementById("viewer-caption");
-var viewerCount=document.getElementById("viewer-count");
-var active=0,lastFocus=null;
-var ringWeights=[8,14,20,26,31];
-var ringRadii=[13,21,29,37,45];
-var durations=[74,91,108,126,145];
+var ringRoot=document.getElementById("orbit-rings"),feedRoot=document.getElementById("ribbon-feed");
+var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
+var viewerCaption=document.getElementById("viewer-caption"),viewerCount=document.getElementById("viewer-count");
+var active=0,lastFocus=null,scrollTick=false;
+var ringWeights=[8,14,20,26,31],ringRadii=[13,21,29,37,45],durations=[74,91,108,126,145];
 function previewPath(file){return "../previews/"+file;}
 function originalPath(file){return "../"+file;}
+function setRatio(img,card){
+ function apply(){if(img.naturalWidth&&img.naturalHeight){var ratio=img.naturalWidth/img.naturalHeight;card.style.setProperty("--ratio",ratio.toFixed(4));}}
+ if(img.complete)apply();else img.addEventListener("load",apply,{once:true});
+}
 function makeRings(){
  if(!works.length)return;
- document.getElementById("core-count").textContent=String(works.length).padStart(3,"0")+" FRAMES";
- var weights=ringWeights.slice(),sum=weights.reduce(function(a,b){return a+b;},0);
- var counts=weights.map(function(w){return Math.floor(works.length*w/sum);});
- var remainder=works.length-counts.reduce(function(a,b){return a+b;},0);
+ var total=works.length;
+ document.getElementById("core-count").textContent=String(total).padStart(3,"0")+" FRAMES";
+ document.getElementById("ribbon-count").textContent=String(total).padStart(3,"0")+" FRAMES";
+ var sum=ringWeights.reduce(function(a,b){return a+b;},0);
+ var counts=ringWeights.map(function(w){return Math.floor(total*w/sum);});
+ var remainder=total-counts.reduce(function(a,b){return a+b;},0);
  for(var r=0;r<remainder;r++)counts[counts.length-1-r%counts.length]++;
  var cursor=0;
  counts.forEach(function(count,ringIndex){
-  var track=document.createElement("div");track.className="orbit-track";
-  track.style.setProperty("--duration",durations[ringIndex]+"s");
+  var track=document.createElement("div");track.className="orbit-track";track.style.setProperty("--duration",durations[ringIndex]+"s");
   track.style.setProperty("--inset",(100-ringRadii[ringIndex]*2)+"%");
   for(var i=0;i<count;i++){
-   var work=works[cursor],index=cursor;cursor++;
-   var angle=(360/count)*i+(ringIndex%2?360/count/2:0);
+   var work=works[cursor],index=cursor++;var angle=360/count*i+(ringIndex%2?360/count/2:0),rad=angle*Math.PI/180;
    var card=document.createElement("button");card.type="button";card.className="orbit-card";
-   var radians=angle*Math.PI/180;
-   card.style.left=(50+Math.sin(radians)*ringRadii[ringIndex])+"%";
-   card.style.top=(50-Math.cos(radians)*ringRadii[ringIndex])+"%";
+   card.style.left=(50+Math.sin(rad)*ringRadii[ringIndex])+"%";card.style.top=(50-Math.cos(rad)*ringRadii[ringIndex])+"%";
    card.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
    var photo=document.createElement("span");photo.className="photo";
    var img=document.createElement("img");img.alt="";img.loading="lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);
-   img.addEventListener("error",(function(path){return function(){if(!this.dataset.fallback){this.dataset.fallback="1";this.src=path;}};})(originalPath(work.file)));
-   photo.appendChild(img);card.appendChild(photo);
-   card.addEventListener("click",(function(n){return function(){openAt(n);};})(index));
-   track.appendChild(card);
+   setRatio(img,card);photo.appendChild(img);card.appendChild(photo);
+   card.addEventListener("click",(function(n){return function(){openAt(n);};})(index));track.appendChild(card);
   }
   ringRoot.appendChild(track);
  });
 }
+function makeFeed(){
+ var fragment=document.createDocumentFragment();
+ works.forEach(function(work,index){
+  var card=document.createElement("button");card.type="button";card.className="ribbon-item";
+  card.setAttribute("aria-label","Open photograph "+String(index+1).padStart(3,"0"));
+  var img=document.createElement("img");img.alt="";img.loading="lazy";img.decoding="async";img.draggable=false;img.src=previewPath(work.file);
+  setRatio(img,card);card.appendChild(img);
+  card.addEventListener("click",function(){openAt(index);});fragment.appendChild(card);
+ });
+ feedRoot.appendChild(fragment);
+}
 function openAt(index){
  if(!works.length)return;
- active=(index+works.length)%works.length;
- var work=works[active];lastFocus=document.activeElement;
+ active=(index+works.length)%works.length;var work=works[active];lastFocus=document.activeElement;
  viewer.hidden=false;document.body.style.overflow="hidden";
  viewerImage.removeAttribute("src");viewerImage.alt="Photograph by Aizat Tanibergen";viewerImage.src=originalPath(work.file);
  viewerCaption.textContent="AIZAT TANIBERGEN / "+String(active+1).padStart(3,"0");
@@ -61,5 +67,13 @@ document.getElementById("viewer-prev").addEventListener("click",function(){move(
 document.getElementById("viewer-next").addEventListener("click",function(){move(1);});
 viewer.addEventListener("click",function(e){if(e.target===viewer)closeViewer();});
 document.addEventListener("keydown",function(e){if(viewer.hidden)return;if(e.key==="Escape")closeViewer();if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1);});
-makeRings();
+function updateScroll(){
+ scrollTick=false;var section=document.getElementById("orbit-section"),rect=section.getBoundingClientRect(),vh=window.innerHeight;
+ var span=Math.max(1,rect.height-vh*.48),progress=Math.max(0,Math.min(1,(vh*.42-rect.top)/span));
+ document.documentElement.style.setProperty("--morph",progress.toFixed(4));
+ document.documentElement.style.setProperty("--feed-progress",Math.max(0,Math.min(1,(progress-.38)/.62)).toFixed(4));
+}
+function requestScrollUpdate(){if(!scrollTick){scrollTick=true;window.requestAnimationFrame(updateScroll);}}
+window.addEventListener("scroll",requestScrollUpdate,{passive:true});window.addEventListener("resize",requestScrollUpdate);
+makeRings();makeFeed();updateScroll();
 })();
