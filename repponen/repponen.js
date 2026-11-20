@@ -18,7 +18,6 @@
 
   var grid = document.getElementById("work-grid");
   var heroPhoto = document.getElementById("hero-photo");
-  var heroButton = document.querySelector(".hero-image");
   var viewer = document.getElementById("viewer");
   var viewerImage = document.getElementById("viewer-image");
   var viewerClose = document.getElementById("viewer-close");
@@ -31,7 +30,6 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var metadata = {};
-  var originalLoaded = false;
 
   function previewUrl(file){
     return "../cut-previews/" + file;
@@ -114,12 +112,10 @@
   function loadViewerImage(){
     var item = works[currentIndex];
     if (!item) return;
-    originalLoaded = false;
     viewerImage.classList.remove("is-loaded");
     viewerImage.alt = "Photograph " + (currentIndex + 1) + " from Aizat Tanibergen's archive";
     viewerImage.dataset.fallback = "";
     viewerImage.onload = function(){
-      originalLoaded = true;
       viewerImage.classList.add("is-loaded");
     };
     viewerImage.onerror = function(){
