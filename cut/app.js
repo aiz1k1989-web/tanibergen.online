@@ -27,6 +27,20 @@ function makePhoto(work,index){
  setImageDimensions(image,work.file);image.src=preview(work.file);button.appendChild(image);
  button.addEventListener("click",function(){open(index);});return button;
 }
+function setupArchiveMotion(){
+ if(!("IntersectionObserver" in window))return;
+ if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ document.documentElement.classList.add("motion-ready");
+ var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+   if(entry.isIntersecting){
+    entry.target.classList.add("is-visible");
+    observer.unobserve(entry.target);
+   }
+  });
+ },{root:null,rootMargin:"0px 0px -6% 0px",threshold:0.01});
+ montage.querySelectorAll(".photo").forEach(function(photo){observer.observe(photo);});
+}
 function render(){
  if(!works.length)return;
  // The first archive image is the author's self-portrait and must remain the opening image.
@@ -36,6 +50,7 @@ function render(){
  var fragment=document.createDocumentFragment();
  for(var j=3;j<works.length;j++)fragment.appendChild(makePhoto(works[j],j));
  montage.appendChild(fragment);
+ setupArchiveMotion();
 }
 function lockScroll(){
  savedY=window.scrollY||window.pageYOffset||0;
@@ -51,12 +66,12 @@ function open(index){
  if(!works.length)return;
  active=(index+works.length)%works.length;
  if(viewer.hidden){lastFocus=document.activeElement;lockScroll();}
- viewer.hidden=false;viewerImage.src=original(works[active].file);viewerImage.alt=active===0?"Self portrait by Aizat Tanibergen":"Photograph by Aizat Tanibergen";
+ viewer.hidden=false;viewer.classList.remove("is-open");void viewer.offsetWidth;viewer.classList.add("is-open");viewerImage.src=original(works[active].file);viewerImage.alt=active===0?"Self portrait by Aizat Tanibergen":"Photograph by Aizat Tanibergen";
  document.getElementById("viewer-close").focus({preventScroll:true});
 }
 function close(){
  if(viewer.hidden)return;
- viewer.hidden=true;viewerImage.removeAttribute("src");unlockScroll();
+ viewer.hidden=true;viewer.classList.remove("is-open");viewerImage.removeAttribute("src");unlockScroll();
  if(lastFocus&&typeof lastFocus.focus==="function")lastFocus.focus({preventScroll:true});
 }
 function move(delta){open(active+delta);}
