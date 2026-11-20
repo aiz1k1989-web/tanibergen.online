@@ -165,3 +165,11 @@ Last consolidated: 20 November 2026.
 
 ---
 Last consolidated: 21 November 2026.
+
+
+## 12. Latin-script Kazakh and subtle motion preference - 21 November 2026
+
+- When Kazakh words appear in the visual identity or interface, use Kazakh Latin transliteration by default. The current /cut/ title is estelikter. rather than Cyrillic.
+- The user explicitly requested gentle, refined animation for /cut/: subtle entrance on the opening title and photographs, a quiet reveal as archive images enter the viewport, a barely perceptible hover response, and a soft image-viewer opening.
+- Motion must remain restrained and serve the photographs. No continuous movement, autoplay, parallax, scroll hijacking, dramatic zoom, or decorative effects.
+- Respect prefers-reduced-motion; content must remain immediately visible and usable when reduced motion is enabled.
