@@ -173,3 +173,14 @@ Last consolidated: 21 November 2026.
 - The user explicitly requested gentle, refined animation for /cut/: subtle entrance on the opening title and photographs, a quiet reveal as archive images enter the viewport, a barely perceptible hover response, and a soft image-viewer opening.
 - Motion must remain restrained and serve the photographs. No continuous movement, autoplay, parallax, scroll hijacking, dramatic zoom, or decorative effects.
 - Respect prefers-reduced-motion; content must remain immediately visible and usable when reduced motion is enabled.
+
+
+## 13. Release and interaction quality rules - 21 November 2026
+
+- The user explicitly approved promoting the black /cut/ photographic archive to the root domain. Preserve the former root website and all alternatives in Git history and dated backup branches; do not delete their source files or routes.
+- Kazakh words in the visible identity use Latin script by default.
+- Never leave a red focus outline or selection frame around a photograph after the fullscreen viewer closes. Test opening and closing with pointer, touch, Escape, and keyboard navigation. Pointer-close should not leave a persistent focus ring; keyboard focus must remain accessible and use a restrained non-red focus indicator.
+- Fullscreen photo browsing must feel current and effortless, not like an old slideshow. Avoid prominent Prev/Next arrows, text-heavy Close buttons, counters, or control bars. Prefer immersive image-first viewing, discreet close affordance, large unobtrusive navigation zones, horizontal swipe/keyboard navigation, and vertical swipe-down to dismiss on touch devices.
+- Photo changes inside the viewer need a gentle transition without replaying the entire viewer entrance on every image.
+- Before any release, manually QA the viewer lifecycle: open image, next/previous repeatedly, swipe, close by each supported method, reopen, verify scroll restoration, and verify no focus outline remains. Check both desktop and iPhone-sized viewports. Do not claim device testing unless actually performed.
+- Do not ship a visible control or interaction that has not been tested for its complete open/change/close lifecycle. A visually polished static screenshot is not sufficient QA.
