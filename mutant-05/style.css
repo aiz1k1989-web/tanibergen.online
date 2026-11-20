@@ -45,7 +45,7 @@ button{font:inherit}
 .frame:hover img{transform:scale(1.006);transition:transform 1.1s var(--ease)}
 .site-footer{display:flex;justify-content:flex-end;padding:0 var(--space) calc(env(safe-area-inset-bottom) + 20px);font:9px var(--mono);color:rgba(241,239,235,.24)}
 .site-footer a{transition:color .2s}.site-footer a:hover{color:var(--muted)}
-.viewer{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:calc(env(safe-area-inset-top) + 18px) calc(env(safe-area-inset-right) + 18px) calc(env(safe-area-inset-bottom) + 18px) calc(env(safe-area-inset-left) + 18px);opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s}
+.viewer{position:fixed;z-index:20;touch-action:none;inset:0;display:grid;place-items:center;padding:calc(env(safe-area-inset-top) + 18px) calc(env(safe-area-inset-right) + 18px) calc(env(safe-area-inset-bottom) + 18px) calc(env(safe-area-inset-left) + 18px);opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s}
 .viewer[hidden]{display:none}
 .viewer.is-open{opacity:1;visibility:visible}
 .viewer.is-closing{opacity:0;visibility:visible}
