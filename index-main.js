@@ -1021,6 +1021,14 @@
         state.lastFocused = document.activeElement;
         state.infoOpen = true;
         dom.infoDrawer.hidden = false;
+        var aboutImage = dom.infoDrawer.querySelector(".about-photo img");
+        if (aboutImage && !aboutImage.getAttribute("src")) {
+          aboutImage.src = aboutImage.dataset.previewSrc || "";
+          aboutImage.addEventListener("error", function () {
+            var original = aboutImage.dataset.originalSrc;
+            if (original && aboutImage.getAttribute("src") !== original) aboutImage.src = original;
+          }, { once: true });
+        }
         dom.infoToggle.setAttribute("aria-expanded", "true");
         document.body.classList.add("is-locked");
         dom.infoClose.focus();
