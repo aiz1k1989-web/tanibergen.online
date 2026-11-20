@@ -48,8 +48,8 @@ function layoutMontage(){
  var mobile=window.matchMedia("(max-width:760px)").matches;
  var columns=mobile?6:12,rowHeight=mobile?5:7,gap=mobile?7:12,rowGap=mobile?8:12;
  var width=montage.clientWidth,columnWidth=(width-gap*(columns-1))/columns;
- Array.prototype.forEach.call(montage.children,function(card){
-  var work=works[3+Number(Array.prototype.indexOf.call(montage.children,card))];
+ Array.prototype.forEach.call(montage.children,function(card,index){
+  var work=works[index+3];
   if(!work)return;
   var span=Number(getComputedStyle(card).getPropertyValue(mobile?"--mobile-span":"--span"))||3;
   var m=getDimensions(work.file),image=card.querySelector("img");
