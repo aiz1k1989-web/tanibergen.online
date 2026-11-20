@@ -51,7 +51,7 @@
   function makeCard(item,index){
     var button = document.createElement("button");
     var img = document.createElement("img");
-    var desktopSpans = [7,5,4,4,6,6,3,9,5,7,4,8,6,6,4,4,8,4];
+    var desktopSpans = [7,5,4,4,4,6,6,3,9,5,7,4,8,6,6,4,4,4];
     var span = desktopSpans[(index - 1) % desktopSpans.length];
     var mobileSpan = (index % 7 === 0 || index % 11 === 0) ? 2 : 1;
 
