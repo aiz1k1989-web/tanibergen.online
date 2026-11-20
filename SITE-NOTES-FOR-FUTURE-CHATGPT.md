@@ -147,7 +147,7 @@ These instructions apply to future work, especially the `/cut/` alternative, and
 - The user wants the visual quality of gallery previews to be high. The existing 640px / quality-54 previews are too degraded for this route. Use a separate high-resolution WebP preview tier for `/cut/`, while retaining lazy loading and loading the untouched original only when a visitor opens a photograph.
 - Use Repponen as a reference for art direction, typography, composition, and editorial intelligence, not as a template to copy. Keep the site personal and image-led.
 - Prefer deliberate typographic scale, asymmetrical image placement, negative space, and a small number of strong decisions over decorative effects or interface chrome.
-- Streamline iconography should be restrained. Do not add icons merely to fill space; the photography and typography should remain dominant.
+- Streamline iconography should be restrained. Do not add icons merely to fill space; the photography and typography should remain dominant. If used, keep it to tiny functional details such as one external-link mark.
 
 ---
 Last consolidated: 20 November 2026.
