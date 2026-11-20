@@ -1,53 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="kk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f4f3ef">
-<meta name="description" content="A photographic sequence by Aizat Tanibergen.">
-<title>THE CUT - Aizat Tanibergen</title>
-<link rel="stylesheet" href="style.css?v=cut-01">
+<meta name="theme-color" content="#050505">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Aizat Tanibergen.">
+<title>tanibergen.online - Aizat Tanibergen</title>
+<link rel="preload" as="image" href="../cut-previews/1/1.webp" fetchpriority="high">
+<link rel="stylesheet" href="style.css?v=cut-black-02">
 </head>
 <body>
-<header class="topbar">
+<header class="site-header">
   <a class="wordmark" href="#top">tanibergen.online</a>
-  <span class="topbar-center">PHOTOGRAPHY / MOVING IMAGE</span>
-  <a class="contact" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">CONTACT ↗</a>
+  <!-- Link icon by Streamline, Micro Line - Free, CC BY 4.0: https://www.streamlinehq.com/icons/micro-line-free -->
+  <a class="contact-link" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer" aria-label="Instagram @isaac_4u">
+    <span>@isaac_4u</span>
+    <img src="https://assets.streamlinehq.com/image/private/w_68,h_68,ar_1/f_auto/v1/icons/interface-essential/link-abc7b.png?_a=DATAiZkSZAA0" alt="" aria-hidden="true">
+  </a>
 </header>
 <main id="top">
-  <section class="opening" aria-label="Introduction">
-    <div class="opening-meta">
-      <p class="eyebrow">A PHOTOGRAPHIC SEQUENCE</p>
-      <h1>THE<br>CUT<span>.</span></h1>
-      <div class="intro-bottom">
-        <p>Aizat Tanibergen<br>Almaty / Bangkok</p>
-        <p>01 — 99<br>SELECTED FRAMES</p>
-      </div>
-    </div>
-    <button class="frame frame-main" type="button" data-index="0" aria-label="Open photograph 001"><img id="hero-image" alt="" fetchpriority="high"></button>
-    <div class="opening-side" id="opening-side" aria-label="Opening frames"></div>
-    <div class="opening-caption"><span>01 / OPENING FRAME</span><span>SCROLL TO CONTINUE ↓</span></div>
+  <section class="opening" aria-label="Photographs">
+    <h1>естеліктер<span>.</span></h1>
+    <button class="photo-opening hero-photo" id="hero-photo" type="button" aria-label="Open self-portrait">
+      <img id="hero-image" width="1920" height="1441" alt="Self portrait by Aizat Tanibergen" fetchpriority="high" decoding="async">
+    </button>
+    <div class="opening-side" id="opening-side"></div>
   </section>
-  <section class="sequence" id="sequence" aria-label="Photographic sequence">
-    <div class="sequence-head">
-      <span>THE SEQUENCE</span>
-      <span id="sequence-count">094 FRAMES</span>
-    </div>
+  <section class="archive" aria-label="Photographic archive">
     <div class="montage" id="montage"></div>
   </section>
 </main>
-<footer class="footer">
-  <span>AIZAT TANIBERGEN</span>
-  <span>PHOTOGRAPHER &amp; VIDEOGRAPHER</span>
-  <a href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">@ISAAC_4U ↗</a>
-</footer>
 <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photograph viewer">
-  <div class="viewer-top"><span id="viewer-count">001 / 099</span><button id="viewer-close" type="button">CLOSE <span>×</span></button></div>
+  <button class="viewer-close" id="viewer-close" type="button" aria-label="Close photograph">×</button>
   <button class="viewer-nav prev" id="viewer-prev" type="button" aria-label="Previous photograph">←</button>
-  <figure class="viewer-figure"><img id="viewer-image" alt=""><figcaption id="viewer-caption"></figcaption></figure>
+  <figure class="viewer-figure"><img id="viewer-image" alt=""></figure>
   <button class="viewer-nav next" id="viewer-next" type="button" aria-label="Next photograph">→</button>
 </div>
 <script src="../index-main-works.js?v=20261120-mobile-previews-01"></script>
-<script src="app.js?v=cut-01"></script>
+<script src="app.js?v=cut-black-02"></script>
 </body>
 </html>

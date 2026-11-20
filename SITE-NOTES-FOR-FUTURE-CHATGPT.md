@@ -133,5 +133,21 @@ Before calling any redesign complete, verify:
 - [ ] Root `main` and all existing alternatives/backups remain untouched until explicit approval.
 - [ ] A direct preview link and clear publication status are provided.
 
+
+## 10. New explicit visual rules from 20 November 2026
+
+These instructions apply to future work, especially the `/cut/` alternative, and take priority over older layout experiments when they conflict.
+
+- The visible site identity and logo must remain exactly `tanibergen.online`. Do not invent a project title, studio name, or alternate brand for the site.
+- The user dislikes filler interface copy. Use as few visible words, headings, category labels, captions, instructions, counters, and decorative metadata as possible. Do not add phrases just to make a page look designed.
+- The user is open to a short Kazakh artistic title such as `естеліктер` (memories). When used as the graphic title, a small red full stop is a preferred accent.
+- The `/cut/` direction should use a black background.
+- Photographs must have no visible frames, gray backing blocks, borders, card surfaces, shadows, or forced crops. Keep natural proportions and let the image edges sit directly on the page background.
+- The first archive frame is the user's self-portrait. Keep it as the first and largest opening image; never shuffle it behind other images.
+- The user wants the visual quality of gallery previews to be high. The existing 640px / quality-54 previews are too degraded for this route. Use a separate high-resolution WebP preview tier for `/cut/`, while retaining lazy loading and loading the untouched original only when a visitor opens a photograph.
+- Use Repponen as a reference for art direction, typography, composition, and editorial intelligence, not as a template to copy. Keep the site personal and image-led.
+- Prefer deliberate typographic scale, asymmetrical image placement, negative space, and a small number of strong decisions over decorative effects or interface chrome.
+- Streamline iconography should be restrained. Do not add icons merely to fill space; the photography and typography should remain dominant. If used, keep it to tiny functional details such as one external-link mark.
+
 ---
 Last consolidated: 20 November 2026.
