@@ -151,3 +151,17 @@ These instructions apply to future work, especially the `/cut/` alternative, and
 
 ---
 Last consolidated: 20 November 2026.
+
+
+## 11. Archive layout preference confirmed on 21 November 2026
+
+- The user specifically remembers and liked the archive/contact-sheet layout refined on 16 November 2026.
+- The successful implementation used CSS multi-column flow, not a CSS grid with manually calculated row spans.
+- Preferred behavior: three natural-flow columns on desktop, two columns on mobile, varied image heights from original aspect ratios, consistent narrow gutters, and cards that never split across columns.
+- Keep the visual rhythm of a photographic contact sheet. Let images retain their actual proportions. Do not force uniform card ratios or crop.
+- For the current black /cut/ direction, retain the multi-column behavior but remove all old paper surfaces, placeholders, borders, captions, shadows, and other framing. The images should sit directly on black.
+- Avoid returning to CSS grid row-span masonry for this archive. It produced holes / unstable placement in the current /cut/ implementation.
+- Keep the first image (1/1.webp, the user's self-portrait) as the opening frame. The remaining archive should continue naturally below it.
+
+---
+Last consolidated: 21 November 2026.
