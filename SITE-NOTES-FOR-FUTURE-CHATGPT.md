@@ -283,7 +283,7 @@ The user separately asked to rebuild `/repponen/` using the design principles of
 
 - The user asked to apply the concept of https://repponen.com/ to their own work, not to copy the reference website. The route `/repponen/` is an independent alternative; never replace the root website as part of this work.
 - The direction uses large confident typography, asymmetrical editorial composition, deliberate negative space, a restrained warm paper palette, and a long photographic archive. The photographs remain the primary content.
-- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. It deduplicates the 99 manifest records to 98 unique image paths and keeps `photos/1/1.webp` (the user's self-portrait) first and largest.
+- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. The generated manifest currently contains 98 unique archive image paths and keeps `photos/1/1.webp` (the user's self-portrait) first and largest.
 - Gallery thumbnails use `cut-previews/`; untouched originals load only after a visitor opens an image. Dimensions come from `previews/metadata.json`. All 98 unique paths have metadata and a matching high-resolution preview at the time of implementation.
 - The fullscreen viewer has image-only navigation, touch swipe, keyboard arrows, Escape, focus restoration, scroll restoration, and reduced-motion support. Do not reintroduce a prominent text Close button, red focus ring, or visible slideshow counter.
 - Streamline icons are from Core Line - Free: Move Left, Move Right, Delete 1. Keep the CC BY 4.0 attribution in `repponen/README.md`.
