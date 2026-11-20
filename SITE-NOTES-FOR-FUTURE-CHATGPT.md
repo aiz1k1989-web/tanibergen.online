@@ -214,3 +214,21 @@ Last consolidated: 21 November 2026.
 - Keep controls subtle. Navigation supports pointer, keyboard, swipe, and large unobtrusive targets. Close via icon, Escape, backdrop click, or swipe down.
 - Continue to QA the full viewer lifecycle and focus cleanup. Do not claim actual iPhone testing unless performed.
 - Do not alter root, `/claude/`, `/mutant/`, `/mutant-type/`, `/cut/`, or other experiments unless explicitly asked.
+
+
+
+## 15. Fourth MUTANT direction and conversation handoff - 21 November 2026
+
+- A fourth independent route is being developed at `/mutant-focus/`. It must remain separate from the primary `estelikter` site and from `/mutant/`, `/mutant-type/`, and `/claude/`.
+- Direction: a spatial photographic field with oversized adaptive background typography `estelikter` / `archive`, responsive parallax tied to camera movement, and a very restrained photographic focus cue.
+- The focus cue uses the Streamline **Focus Center** icon from **Micro Line - Free**, with attribution recorded in `mutant-focus/ATTRIBUTION.md`. Do not add more icons unless they materially improve an interaction.
+- The Streamline icon is used only as a small hover/focus cue on a photograph. It must never become a decorative overlay or compete with the image.
+- Keep the archive image-led, preserve natural ratios, use `cut-previews/` for thumbnails, and load originals only in the fullscreen viewer.
+- The viewer must keep keyboard focus inside the modal, support Escape and arrow keys, touch navigation and swipe-down dismissal, and must not leave a red or persistent pointer focus outline after closing.
+- Keep mobile browser zoom enabled. Respect safe areas and `prefers-reduced-motion`. Avoid external font downloads and unnecessary dependencies.
+- The user requested that every future project conversation end with a plain-text list of the available site versions and their backup branches. Include the live primary, each alternative route, and the relevant dated backup branches. Do not use a table or cards for this handoff list.
+- Current known routes: root `/` (primary `estelikter`), `/claude/`, `/cut/`, `/mutant/`, `/mutant-type/`, and `/mutant-focus/`. Verify actual main-branch presence and publication before claiming a route is live.
+- Known backup branches include `backup/2026-11-20-before-cut-black-rebuild`, `backup/2026-11-21-before-cut-archive-fix`, `backup/2026-11-21-before-cut-motion`, `backup/2026-11-21-before-mutant-llm`, and `backup/2026-11-21-before-mutant-focus`. Verify before presenting as available.
+
+---
+Last consolidated: 21 November 2026.
