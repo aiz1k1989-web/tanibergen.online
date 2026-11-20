@@ -260,3 +260,32 @@ Last consolidated: 21 November 2026.
 - A dated backup branch preserves the complete pre-cleanup state: `backup/2026-11-21-before-remove-failed-versions`.
 - This removal applies only to those three route folders. Preserve `/mutant-04/`, `/mutant-05/`, `/mutant-focus/`, `/claude/`, `/cut/`, the primary root site, all image archives, and all other alternatives.
 - Historical notes above describe the retired experiments as they existed at the time. Do not recreate or promote them unless the user explicitly asks.
+
+
+## 18. Permanent base routes - 21 November 2026
+
+The user explicitly confirmed that the following six alternative routes are the permanent foundation of the project. They must always remain in the repository and must never be deleted, renamed, repurposed, or treated as failed experiments during cleanup:
+
+- `/mutant-focus/`
+- `/mutant-05/`
+- `/mutant-04/`
+- `/orbit/`
+- `/alt/`
+- `/studio/`
+
+This is a standing preservation rule. Only the user can explicitly authorize removal or replacement of one of these six routes. Before any cleanup, compare the proposed deletions against this list and stop if any protected route is included. Preserve their source files and direct public URLs.
+
+The user separately asked to rebuild `/repponen/` using the design principles of https://repponen.com/ as inspiration, integrated with the user's own photographic archive. This route remains a protected independent alternative. Do not overwrite the root site or the six permanent base routes while working on it.
+
+
+
+## 19. Repponen-inspired photographic archive - 21 November 2026
+
+- The user asked to apply the concept of https://repponen.com/ to their own work, not to copy the reference website. The route `/repponen/` is an independent alternative; never replace the root website as part of this work.
+- The direction uses large confident typography, asymmetrical editorial composition, deliberate negative space, a restrained warm paper palette, and a long photographic archive. The photographs remain the primary content.
+- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. It deduplicates the 99 manifest records to 98 unique image paths and keeps `1/1.webp` (the user's self-portrait) first and largest.
+- Gallery thumbnails use `cut-previews/`; untouched originals load only after a visitor opens an image. Dimensions come from `previews/metadata.json`. All 98 unique paths have metadata and a matching high-resolution preview at the time of implementation.
+- The fullscreen viewer has image-only navigation, touch swipe, keyboard arrows, Escape, focus restoration, scroll restoration, and reduced-motion support. Do not reintroduce a prominent text Close button, red focus ring, or visible slideshow counter.
+- Streamline icons are from Core Line - Free: Move Left, Move Right, Delete 1. Keep the CC BY 4.0 attribution in `repponen/README.md`.
+- Canva was used to create an editable visual prototype with three actual photographs from the user's archive. Treat it as an art-direction reference only; the GitHub Pages implementation remains the website source of truth.
+- Validation completed: JavaScript parses; all six permanent base routes exist on the experiment branch; 98 unique archive paths have metadata and matching `cut-previews/` files. Do not claim real iPhone or browser-device testing unless it is actually performed.
