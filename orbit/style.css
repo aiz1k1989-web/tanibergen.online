@@ -19,7 +19,7 @@ h1 i{font-weight:400;color:#aeb0b8}
 .orbit-track{position:absolute;inset:0;border-radius:50%;animation:orbit-spin var(--duration,90s) linear infinite;will-change:transform}
 .orbit-track:nth-child(even){animation-direction:reverse}
 .orbit-track::after{content:"";position:absolute;inset:var(--inset);border:1px solid rgba(255,255,255,.075);border-radius:50%;pointer-events:none}
-.orbit-card{position:absolute;left:50%;top:50%;width:clamp(28px,6.5%,72px);aspect-ratio:1;display:block;padding:0;border:1px solid rgba(255,255,255,.2);background:#15171d;overflow:hidden;cursor:pointer;transform:rotate(var(--angle)) translateY(calc(var(--radius) * -1)) rotate(calc(var(--angle) * -1));transition:border-color .25s,scale .25s;z-index:1}
+.orbit-card{position:absolute;left:50%;top:50%;width:clamp(28px,6.5%,72px);aspect-ratio:1;display:block;padding:0;border:1px solid rgba(255,255,255,.2);background:#15171d;overflow:hidden;cursor:pointer;transform:translate(-50%,-50%);transition:border-color .25s,scale .25s;z-index:1}
 .orbit-card:hover,.orbit-card:focus-visible{z-index:4;border-color:#fff;scale:1.28;outline:none}
 .orbit-card .photo{width:100%;height:100%;display:block;animation:orbit-counter var(--duration,90s) linear infinite;animation-direction:reverse}
 .orbit-track:nth-child(even) .orbit-card .photo{animation-direction:normal}
