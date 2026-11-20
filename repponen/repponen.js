@@ -25,6 +25,7 @@
   var viewerNext = document.getElementById("viewer-next");
   var viewerFigure = document.getElementById("viewer-figure");
   var currentIndex = 0;
+  var viewerLoadId = 0;
   var returnFocus = null;
   var savedScrollY = 0;
   var touchStartX = 0;
@@ -112,14 +113,16 @@
   function loadViewerImage(){
     var item = works[currentIndex];
     if (!item) return;
+    var loadId = ++viewerLoadId;
     viewerImage.classList.remove("is-loaded");
     viewerImage.alt = "Photograph " + (currentIndex + 1) + " from Aizat Tanibergen's archive";
     viewerImage.dataset.fallback = "";
     viewerImage.onload = function(){
+      if (loadId !== viewerLoadId) return;
       viewerImage.classList.add("is-loaded");
     };
     viewerImage.onerror = function(){
-      if (viewerImage.dataset.fallback) return;
+      if (loadId !== viewerLoadId || viewerImage.dataset.fallback) return;
       viewerImage.dataset.fallback = "1";
       viewerImage.src = previewUrl(item.file);
     };
@@ -146,6 +149,7 @@
   function closeViewer(){
     if (viewer.hidden) return;
     viewer.classList.remove("is-open");
+    viewerLoadId += 1;
     viewer.hidden = true;
     document.body.classList.remove("viewer-locked");
     document.body.style.position = "";
