@@ -54,3 +54,25 @@ h1 span{color:var(--red)}
  .viewer-nav{font-size:20px;padding:7px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Quiet motion: reveal the photographs without turning the archive into an effect. */
+@media(prefers-reduced-motion:no-preference){
+  .opening h1{animation:soft-rise 850ms cubic-bezier(.2,.7,.2,1) both}
+  .hero-photo{animation:soft-rise 1050ms 90ms cubic-bezier(.2,.7,.2,1) both}
+  .opening-side .photo-opening:nth-child(1){animation:soft-rise 900ms 180ms cubic-bezier(.2,.7,.2,1) both}
+  .opening-side .photo-opening:nth-child(2){animation:soft-rise 950ms 260ms cubic-bezier(.2,.7,.2,1) both}
+  .photo-opening img,.photo img{transition:transform 950ms cubic-bezier(.2,.7,.2,1)}
+  .photo-opening:hover img,.photo-opening:focus-visible img,
+  .photo:hover img,.photo:focus-visible img{transform:scale(1.008)}
+  .motion-ready .photo{opacity:0;transform:translate3d(0,12px,0);transition:opacity 760ms ease,transform 900ms cubic-bezier(.2,.7,.2,1)}
+  .motion-ready .photo.is-visible{opacity:1;transform:translate3d(0,0,0)}
+  .viewer.is-open{animation:viewer-appear 260ms ease-out both}
+  .viewer.is-open .viewer-figure img{animation:photo-appear 520ms cubic-bezier(.2,.7,.2,1) both}
+}
+@keyframes soft-rise{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes viewer-appear{from{opacity:0}to{opacity:1}}
+@keyframes photo-appear{from{opacity:.65;transform:scale(.988)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .motion-ready .photo{opacity:1!important;transform:none!important}
+}
