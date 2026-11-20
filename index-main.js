@@ -301,11 +301,17 @@
         img.decoding = "async";
         img.draggable = false;
         img.loading = isPriority ? "eager" : "lazy";
+
+        var originalSource = safeUrl(work.file);
+        var useMobilePreview = compact && window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
+        var displaySource = useMobilePreview ? safeUrl(work.thumb || ("previews/" + work.file)) : originalSource;
+        img.dataset.originalSrc = originalSource;
+
         if (isPriority) {
           img.setAttribute("fetchpriority", "high");
-          img.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
+          img.src = displaySource;
         } else {
-          img.dataset.src = safeUrl(compact && work.thumb ? work.thumb : work.file);
+          img.dataset.src = displaySource;
           observeMediaImage(img);
         }
 
@@ -317,6 +323,12 @@
         });
 
         img.addEventListener("error", function () {
+          var fallbackSource = img.dataset.originalSrc;
+          if (fallbackSource && img.getAttribute("src") !== fallbackSource) {
+            img.removeAttribute("data-original-src");
+            img.src = fallbackSource;
+            return;
+          }
           frame.classList.add("is-missing");
         });
 
