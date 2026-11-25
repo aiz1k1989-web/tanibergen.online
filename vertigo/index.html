@@ -6,21 +6,19 @@
 <meta name="theme-color" content="#050505">
 <title>VERTIGO / tanibergen.online</title>
 <style>
-:root{color-scheme:dark}
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#050505}
 body{overscroll-behavior:none;touch-action:none;-webkit-tap-highlight-color:transparent}
 #stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate;touch-action:none}
-.scene{position:absolute;inset:0;overflow:hidden;background:#050505;contain:layout paint style}
-.photo,.portal{position:absolute;display:block;transform-origin:0 0;will-change:transform;backface-visibility:hidden}
-.photo{object-fit:contain;max-width:none;max-height:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
-.portal{overflow:hidden;background:#050505}
-.portal img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
-@media(prefers-reduced-motion:reduce){.photo,.portal{will-change:auto}}
+.art{position:absolute;overflow:visible;transform-origin:0 0;will-change:transform;backface-visibility:hidden}
+.art-base{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.nested-frame{position:absolute;overflow:hidden;background:#050505;box-shadow:0 1px 10px rgba(0,0,0,.12);contain:layout paint}
+.nested-frame>.art{position:relative;left:0!important;top:0!important;width:100%!important;height:100%!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){.art{will-change:auto}}
 </style>
 </head>
 <body>
-<main id="stage" aria-label="VERTIGO photographic sequence"><div class="scene" id="scene"></div></main>
+<main id="stage" aria-label="VERTIGO photographic sequence"></main>
 <script>
 (() => {
 'use strict';
@@ -30,30 +28,38 @@ const stage=document.getElementById('stage');
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const imagePaths=[];
 [20,20,20,20,18].forEach((count,group)=>{
-  for(let number=1;number<=count;number++) imagePaths.push('../photos/'+(group+1)+'/'+number+'.webp');
+  for(let number=1;number<=count;number++)imagePaths.push('../photos/'+(group+1)+'/'+number+'.webp');
 });
 
-let scene=document.getElementById('scene');
 let index=0;
 let busy=false;
-let queue=0;
-let wheelBucket=0;
+let queued=0;
+let wheelDebt=0;
 let touchStartY=0;
-let transitions=Array.from({length:TOTAL},(_,i)=>({
-  from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:10
-}));
-
+let currentArt=null;
+let currentRect=null;
+let currentRatio=1;
+let currentDepth=1;
+let transitions=Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:9.2}));
 const imageCache=new Map();
+const MAX_DEPTH=18;
 
-
-const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
-const lerp=(a,b,t)=>a+(b-a)*t;
-const smooth=t=>t*t*(3-2*t);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const mod=(n,m)=>(n%m+m)%m;
 
-function stageRect(){
-  const r=stage.getBoundingClientRect();
-  return {left:0,top:0,width:r.width,height:r.height};
+function imageAt(i,priority=false){
+  const key=mod(i,TOTAL);
+  if(imageCache.has(key))return imageCache.get(key);
+  const promise=new Promise(resolve=>{
+    const img=new Image();
+    img.decoding='async';
+    if(priority)img.fetchPriority='high';
+    img.onload=()=>resolve(img);
+    img.onerror=()=>resolve(null);
+    img.src=imagePaths[key];
+  });
+  imageCache.set(key,promise);
+  return promise;
 }
 
 function fitImage(img){
@@ -66,260 +72,198 @@ function fitImage(img){
   return {left:(sw-width)/2,top:(sh-height)/2,width,height};
 }
 
-function getImage(i,priority){
-  const key=mod(i,TOTAL);
-  if(imageCache.has(key))return imageCache.get(key);
-  const promise=new Promise(resolve=>{
-    const img=new Image();
-    img.decoding='async';
-    if(priority)img.fetchPriority='high';
-    img.onload=()=>{if(img.decode)img.decode().catch(()=>{}).finally(()=>resolve(img));else resolve(img)};
-    img.onerror=()=>resolve(null);
-    img.src=imagePaths[key];
-  });
-  imageCache.set(key,promise);
-  return promise;
+function makeArt(img,i){
+  const art=document.createElement('div');
+  art.className='art';
+  art.dataset.frame=String(i+1);
+  art.style.aspectRatio=img.naturalWidth+'/'+img.naturalHeight;
+  const base=document.createElement('img');
+  base.className='art-base';
+  base.alt='';
+  base.draggable=false;
+  base.src=imagePaths[mod(i,TOTAL)];
+  art.appendChild(base);
+  return art;
 }
 
-function trimCache(){
-  const keep=new Set([mod(index-1,TOTAL),index,mod(index+1,TOTAL),mod(index+2,TOTAL)]);
-  for(const key of imageCache.keys())if(!keep.has(key))imageCache.delete(key);
-}
-
-function getPortalRect(img,nextImg,i,parentRect){
-  const cfg=transitions[i]||{};
-  const nextRatio=nextImg.naturalWidth/nextImg.naturalHeight;
-  const requested=clamp((Number(cfg.w)||9.2)/100,.078,.102);
-  let width=parentRect.width*requested;
-  let height=width/nextRatio;
-  const maxHeight=parentRect.height*.17;
-  if(height>maxHeight){height=maxHeight;width=height*nextRatio}
-  const centerX=parentRect.left+parentRect.width*clamp((Number(cfg.x)||50)/100,.12,.88);
-  const centerY=parentRect.top+parentRect.height*clamp((Number(cfg.y)||50)/100,.12,.88);
-  const left=clamp(centerX-width/2,parentRect.left+2,parentRect.left+parentRect.width-width-2);
-  const top=clamp(centerY-height/2,parentRect.top+2,parentRect.top+parentRect.height-height-2);
+function targetSlot(parentRect,childRatio,transition){
+  const wFraction=clamp((Number(transition?.w)||9.2)/100,.075,.105);
+  let width=parentRect.width*wFraction;
+  let height=width/childRatio;
+  const maxHeight=parentRect.height*.19;
+  if(height>maxHeight){height=maxHeight;width=height*childRatio}
+  const cx=parentRect.left+parentRect.width*clamp((Number(transition?.x)||50)/100,.08,.92);
+  const cy=parentRect.top+parentRect.height*clamp((Number(transition?.y)||50)/100,.08,.92);
+  const left=clamp(cx-width/2,parentRect.left+1,parentRect.left+parentRect.width-width-1);
+  const top=clamp(cy-height/2,parentRect.top+1,parentRect.top+parentRect.height-height-1);
   return {left,top,width,height};
 }
-function fitInside(parentRect,slotRect){
-  const scale=Math.min(slotRect.width/parentRect.width,slotRect.height/parentRect.height);
-  const width=parentRect.width*scale;
-  const height=parentRect.height*scale;
-  return {
-    left:slotRect.left+(slotRect.width-width)/2,
-    top:slotRect.top+(slotRect.height-height)/2,
-    width,height
-  };
+
+function makeNestedFrame(parentArt,parentRect,slotRect){
+  const frame=document.createElement('div');
+  frame.className='nested-frame';
+  const left=(slotRect.left-parentRect.left)/parentRect.width*100;
+  const top=(slotRect.top-parentRect.top)/parentRect.height*100;
+  const width=slotRect.width/parentRect.width*100;
+  const height=slotRect.height/parentRect.height*100;
+  frame.style.left=left+'%';
+  frame.style.top=top+'%';
+  frame.style.width=width+'%';
+  frame.style.height=height+'%';
+  parentArt.appendChild(frame);
+  return frame;
 }
 
-function addRectStyles(el,rect){
-  el.style.left=rect.left+'px';
-  el.style.top=rect.top+'px';
-  el.style.width=rect.width+'px';
-  el.style.height=rect.height+'px';
+function mountInitial(img){
+  currentArt=makeArt(img,0);
+  currentRect=fitImage(img);
+  currentRatio=img.naturalWidth/img.naturalHeight;
+  currentDepth=1;
+  Object.assign(currentArt.style,{
+    left:currentRect.left+'px',
+    top:currentRect.top+'px',
+    width:currentRect.width+'px',
+    height:currentRect.height+'px',
+    zIndex:'2'
+  });
+  stage.replaceChildren(currentArt);
 }
 
-function makeScene(i,img,nextImg){
-  const holder=document.createElement('div');
-  holder.className='scene';
-  const parentRect=fitImage(img);
-  const photo=document.createElement('img');
-  photo.className='photo';
-  photo.alt='';
-  photo.draggable=false;
-  photo.src=imagePaths[mod(i,TOTAL)];
-  addRectStyles(photo,parentRect);
-  holder.appendChild(photo);
-
-  let slotRect=null;
-  if(nextImg){
-    slotRect=getPortalRect(img,nextImg,i,parentRect);
-    const portal=document.createElement('div');
-    portal.className='portal';
-    addRectStyles(portal,slotRect);
-    const inner=document.createElement('img');
-    inner.alt='';
-    inner.draggable=false;
-    inner.src=imagePaths[mod(i+1,TOTAL)];
-    portal.appendChild(inner);
-    holder.appendChild(portal);
-  }
-  return {node:holder,photo,portal:holder.querySelector('.portal'),parentRect,slotRect};
+function easing(t){
+  return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 }
 
-function transformBetween(baseRect,visualRect){
-  const scale=visualRect.width/baseRect.width;
-  const tx=visualRect.left-baseRect.left;
-  const ty=visualRect.top-baseRect.top;
-  return 'translate3d('+tx+'px,'+ty+'px,0) scale('+scale+')';
+function stepped(t,steps){
+  const v=easing(clamp(t,0,1));
+  return Math.floor(v*steps)/steps;
 }
 
-function stutterProgress(t,beats,hold){
-  if(t<=0)return 0;
-  if(t>=1)return 1;
-  const phase=t*beats;
-  const step=Math.floor(phase);
-  const local=phase-step;
-  const moving=1-hold;
-  const p=smooth(clamp(local/moving,0,1));
-  return (step+p)/beats;
-}
-
-function interpolateVisual(from,to,p,base,arc){
-  const dx=(to.left-from.left),dy=(to.top-from.top);
-  const distance=Math.hypot(dx,dy);
-  const wave=Math.sin(Math.PI*p)*arc;
-  const px=distance?(-dy/distance)*wave:0;
-  const py=distance?(dx/distance)*wave:0;
-  return {
-    left:lerp(from.left,to.left,p)+px,
-    top:lerp(from.top,to.top,p)+py,
-    width:lerp(from.width,to.width,p),
-    height:lerp(from.height,to.height,p)
-  };
-}
-
-function motionProfile(current,next,i){
-  const currentRatio=current.naturalWidth/current.naturalHeight;
-  const nextRatio=next.naturalWidth/next.naturalHeight;
-  const difference=clamp(Math.abs(Math.log(currentRatio/nextRatio))/1.8,0,1);
-  const duration=reduced?1:700+Math.round(difference*170)+((i%3)-1)*18;
-  const parentBeats=5+Math.round(difference*2);
-  return {
-    duration,
-    parentBeats,
-    childBeats:parentBeats+1,
-    lead:78+(i%3)*13,
-    polarity:i%2===0?1:-1
-  };
-}
-
-function animateVisual(el,baseRect,fromRect,toRect,duration,delay,beats,arc){
+function animateRetreat(art,from,to,duration){
   return new Promise(resolve=>{
-    const start=performance.now()+delay;
-    const frame=now=>{
-      if(now<start){requestAnimationFrame(frame);return}
-      const t=clamp((now-start)/duration,0,1);
-      const p=reduced?1:stutterProgress(t,beats,.13);
-      const visual=interpolateVisual(fromRect,toRect,p,baseRect,arc);
-      el.style.transform=transformBetween(baseRect,visual);
-      if(t<1)requestAnimationFrame(frame);
-      else{el.style.transform=transformBetween(baseRect,toRect);resolve()}
-    };
-    requestAnimationFrame(frame);
+    const start=performance.now();
+    const dx=to.left-from.left;
+    const dy=to.top-from.top;
+    const scale=to.width/from.width;
+    const steps=reduced?1:12;
+    function tick(now){
+      const t=reduced?1:clamp((now-start)/duration,0,1);
+      const p=t>=1?1:stepped(t,steps);
+      art.style.transform='translate3d('+(dx*p)+'px,'+(dy*p)+'px,0) scale('+(1+(scale-1)*p)+')';
+      if(t<1)requestAnimationFrame(tick);
+      else resolve();
+    }
+    requestAnimationFrame(tick);
   });
 }
 
-function commitScene(newIndex,img,nextImg){
-  const fresh=makeScene(newIndex,img,nextImg);
-  stage.replaceChildren(fresh.node);
-  scene=fresh.node;
-  index=newIndex;
-  trimCache();
-  getImage(index+1);
-  getImage(index+2);
+function pruneDeepest(art,depth){
+  if(depth>=MAX_DEPTH)return;
+  const frame=art.querySelector(':scope > .nested-frame');
+  if(!frame)return;
+  const child=frame.querySelector(':scope > .art');
+  if(child)pruneDeepest(child,depth+1);
 }
-
-async function transitionForward(){
-  const from=index,to=mod(index+1,TOTAL);
-  const current=await getImage(from,true);
-  const next=await getImage(to,true);
-  const followingPromise=getImage(to+1);
-  if(!current||!next)return;
-  if(!scene.querySelector('.portal')){
-    const ready=makeScene(from,current,next);
-    stage.replaceChildren(ready.node);scene=ready.node;
+function trimHistory(art,depth){
+  if(depth<MAX_DEPTH)return;
+  let node=art;
+  while(true){
+    const frame=node.querySelector(':scope > .nested-frame');
+    if(!frame)return;
+    const child=frame.querySelector(':scope > .art');
+    if(!child){frame.remove();return}
+    const next=child.querySelector(':scope > .nested-frame');
+    if(!next){frame.remove();return}
+    node=child;
   }
-  const photo=scene.querySelector('.photo');
-  const portal=scene.querySelector('.portal');
-  if(!photo||!portal)return;
-  const parentRect=fitImage(current);
-  const slotRect=getPortalRect(current,next,from,parentRect);
-  const nextRect=fitImage(next);
-  const motion=motionProfile(current,next,from);
-  const insideRect=fitInside(parentRect,slotRect);
-  const distance=Math.hypot(
-    (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
-    (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
-  );
-  await Promise.all([
-    animateVisual(photo,parentRect,parentRect,insideRect,motion.duration,0,motion.parentBeats,Math.min(10,distance*.018)*motion.polarity),
-    animateVisual(portal,slotRect,slotRect,nextRect,motion.duration*.91,motion.lead,motion.childBeats,Math.min(12,Math.hypot(slotRect.left-nextRect.left,slotRect.top-nextRect.top)*.012)*motion.polarity)
-  ]);
-  const following=await followingPromise;
-  commitScene(to,next,following);
 }
 
-async function transitionBackward(){
-  const from=index,to=mod(index-1,TOTAL),before=mod(to-1,TOTAL);
-  const previous=await getImage(to,true);
-  const current=await getImage(from,true);
-  const beforePreviousPromise=getImage(before);
-  if(!previous||!current)return;
+async function advance(){
+  const from=index;
+  const to=mod(index+1,TOTAL);
+  const [parentImg]=await Promise.all([imageAt(to,true)]);
+  if(!parentImg)return;
 
-  const reverseScene=makeScene(to,previous,current);
-  const parentRect=reverseScene.parentRect;
-  const slotRect=reverseScene.slotRect;
-  const currentRect=fitImage(current);
-  const insideRect=fitInside(parentRect,slotRect);
+  const parentRect=fitImage(parentImg);
+  const parentRatio=parentImg.naturalWidth/parentImg.naturalHeight;
+  const slot=targetSlot(parentRect,currentRatio,transitions[from]);
+  const nextArt=makeArt(parentImg,to);
+  Object.assign(nextArt.style,{
+    left:parentRect.left+'px',
+    top:parentRect.top+'px',
+    width:parentRect.width+'px',
+    height:parentRect.height+'px',
+    zIndex:'1'
+  });
 
-  reverseScene.photo.style.transform=transformBetween(parentRect,insideRect);
-  reverseScene.portal.style.transform=transformBetween(slotRect,currentRect);
-  stage.replaceChildren(reverseScene.node);
-  scene=reverseScene.node;
+  stage.appendChild(nextArt);
+  currentArt.style.zIndex='3';
+  currentArt.style.transform='none';
 
-  const motion=motionProfile(previous,current,to);
-  const distance=Math.hypot(
-    (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
-    (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
-  );
-  await Promise.all([
-    animateVisual(reverseScene.photo,parentRect,insideRect,parentRect,motion.duration,0,motion.parentBeats,-Math.min(10,distance*.018)*motion.polarity),
-    animateVisual(reverseScene.portal,slotRect,currentRect,slotRect,motion.duration*.91,motion.lead,motion.childBeats,-Math.min(12,Math.hypot(currentRect.left-slotRect.left,currentRect.top-slotRect.top)*.012)*motion.polarity)
-  ]);
-  const beforePrevious=await beforePreviousPromise;
-  commitScene(to,previous,beforePrevious);
+  const dx=slot.left-currentRect.left;
+  const dy=slot.top-currentRect.top;
+  const distance=Math.hypot(dx,dy);
+  const ratioChange=Math.abs(Math.log(parentRatio/currentRatio));
+  const duration=reduced?1:Math.round(820+Math.min(180,ratioChange*95)+(from%3)*22);
+
+  await animateRetreat(currentArt,currentRect,slot,duration);
+
+  const frame=makeNestedFrame(nextArt,parentRect,slot);
+  currentArt.style.transform='none';
+  Object.assign(currentArt.style,{
+    position:'relative',
+    left:'0',
+    top:'0',
+    width:'100%',
+    height:'100%',
+    zIndex:'auto'
+  });
+  frame.appendChild(currentArt);
+
+  stage.replaceChildren(nextArt);
+  currentArt=nextArt;
+  currentRect=parentRect;
+  currentRatio=parentRatio;
+  currentDepth++;
+  if(currentDepth>MAX_DEPTH){
+    trimHistory(currentArt,1);
+    currentDepth=MAX_DEPTH;
+  }
+  index=to;
+  for(const key of imageCache.keys())if(key!==index&&key!==mod(index+1,TOTAL))imageCache.delete(key);
+  imageAt(index+1);
 }
 
 async function pump(){
-  if(busy||queue===0)return;
+  if(busy||queued===0)return;
   busy=true;
-  const direction=Math.sign(queue);
-  queue-=direction;
-  try{
-    if(direction>0)await transitionForward();
-    else await transitionBackward();
-  }catch(error){}
+  queued--;
+  try{await advance()}catch(error){}
   busy=false;
-  trimCache();
-  if(queue!==0)pump();
+  if(queued>0)pump();
 }
-
-function requestStep(direction){
-  if(direction>0)queue=clamp(queue+1,0,2);
-  else queue=clamp(queue-1,-2,0);
+function requestAdvance(){
+  queued=clamp(queued+1,0,1);
   pump();
 }
 
-function onWheel(e){
+stage.addEventListener('wheel',e=>{
   e.preventDefault();
-  const raw=e.deltaMode===1?e.deltaY*16:(e.deltaMode===2?e.deltaY*stage.clientHeight:e.deltaY);
-  if(Math.abs(raw)<.1)return;
-  wheelBucket+=clamp(raw,-120,120);
-  if(wheelBucket>=64){wheelBucket=0;requestStep(1)}
-  else if(wheelBucket<=-64){wheelBucket=0;requestStep(-1)}
-}
+  let delta=e.deltaY;
+  if(e.deltaMode===1)delta*=16;
+  if(e.deltaMode===2)delta*=stage.clientHeight;
+  if(delta<=0)return;
+  wheelDebt+=Math.min(delta,120);
+  if(wheelDebt>=70){wheelDebt=0;requestAdvance()}
+},{passive:false});
 
-stage.addEventListener('wheel',onWheel,{passive:false});
 stage.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
 stage.addEventListener('touchend',e=>{
   const delta=touchStartY-e.changedTouches[0].clientY;
-  if(delta>34)requestStep(1);
-  else if(delta< -34)requestStep(-1);
+  if(delta>34)requestAdvance();
 },{passive:true});
 
 window.addEventListener('keydown',e=>{
-  if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();requestStep(1)}
-  else if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();requestStep(-1)}
+  if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();requestAdvance()}
 });
 
 async function init(){
@@ -330,31 +274,21 @@ async function init(){
       if(Array.isArray(data.transitions)&&data.transitions.length===TOTAL)transitions=data.transitions;
     }
   }catch(error){}
-  const first=await getImage(0,true);
-  const second=await getImage(1,true);
-  if(!first)return;
-  const initial=makeScene(0,first,second);
-  stage.replaceChildren(initial.node);
-  scene=initial.node;
-  getImage(2);
-  trimCache();
+  const first=await imageAt(0,true);
+  if(first)mountInitial(first);
 }
-
-let resizeTimer=0;
-function handleResize(){
-  clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(async()=>{
-    if(busy)return;
-    const current=await getImage(index);
-    const next=await getImage(index+1);
-    if(!current)return;
-    const fresh=makeScene(index,current,next);
-    stage.replaceChildren(fresh.node);
-    scene=fresh.node;
-  },120);
+function resize(){
+  if(busy||!currentArt)return;
+  const img=currentArt.querySelector(':scope > .art-base');
+  if(!img||!img.naturalWidth)return;
+  const r=fitImage(img);
+  currentRect=r;
+  Object.assign(currentArt.style,{
+    left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'
+  });
 }
-window.addEventListener('resize',handleResize,{passive:true});
-if(window.visualViewport)window.visualViewport.addEventListener('resize',handleResize,{passive:true});
+window.addEventListener('resize',resize,{passive:true});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',resize,{passive:true});
 
 init();
 })();
