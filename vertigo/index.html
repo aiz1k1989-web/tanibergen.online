@@ -6,14 +6,17 @@
 <meta name="theme-color" content="#050505">
 <title>VERTIGO / tanibergen.online</title>
 <style>
+:root{color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505}
-body{overscroll-behavior:none;touch-action:pan-y}
-#stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate}
-.scene{position:absolute;inset:0;overflow:hidden;background:#050505}
-.photo{position:absolute;display:block;object-fit:contain;max-width:none;max-height:none;user-select:none;-webkit-user-drag:none;pointer-events:none;will-change:left,top,width,height}
-.nested{position:absolute;overflow:hidden;background:#050505;will-change:left,top,width,height}
-.nested img{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#050505}
+body{overscroll-behavior:none;touch-action:none;-webkit-tap-highlight-color:transparent}
+#stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate;touch-action:none}
+.scene{position:absolute;inset:0;overflow:hidden;background:#050505;contain:layout paint style}
+.photo,.portal{position:absolute;display:block;transform-origin:0 0;will-change:transform;backface-visibility:hidden}
+.photo{object-fit:contain;max-width:none;max-height:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.portal{overflow:hidden;background:#050505}
+.portal img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+@media(prefers-reduced-motion:reduce){.photo,.portal{will-change:auto}}
 </style>
 </head>
 <body>
@@ -21,158 +24,396 @@ body{overscroll-behavior:none;touch-action:pan-y}
 <script>
 (() => {
 'use strict';
-const TOTAL=98,stage=document.getElementById('stage');
-let scene=document.getElementById('scene'),index=0,busy=false,wheelDebt=0,lastStep=0,touchY=0;
-let transitions=Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:12,auto:true}));
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const paths=[];
-[20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../photos/'+(g+1)+'/'+n+'.webp')});
-const cache=new Map(),analysisCache=new Map();
-function getImage(i){
- i=(i+TOTAL)%TOTAL;
- if(cache.has(i))return cache.get(i);
- const promise=new Promise(resolve=>{
-  const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=paths[i];
- });
- cache.set(i,promise);return promise;
+
+const TOTAL=98;
+const stage=document.getElementById('stage');
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const imagePaths=[];
+[20,20,20,20,18].forEach((count,group)=>{
+  for(let number=1;number<=count;number++) imagePaths.push('../photos/'+(group+1)+'/'+number+'.webp');
+});
+
+let scene=document.getElementById('scene');
+let index=0;
+let busy=false;
+let queue=0;
+let wheelBucket=0;
+let touchStartY=0;
+let transitions=Array.from({length:TOTAL},(_,i)=>({
+  from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:10
+}));
+
+const imageCache=new Map();
+const placementCache=new Map();
+
+const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=t=>t*t*(3-2*t);
+const mod=(n,m)=>(n%m+m)%m;
+
+function stageRect(){
+  const r=stage.getBoundingClientRect();
+  return {left:0,top:0,width:r.width,height:r.height};
 }
+
+function fitImage(img){
+  const sw=stage.clientWidth,sh=stage.clientHeight;
+  const margin=clamp(Math.min(sw,sh)*.018,8,22);
+  const maxW=Math.max(1,sw-margin*2),maxH=Math.max(1,sh-margin*2);
+  const ratio=img.naturalWidth/img.naturalHeight;
+  let width=maxW,height=width/ratio;
+  if(height>maxH){height=maxH;width=height*ratio}
+  return {left:(sw-width)/2,top:(sh-height)/2,width,height};
+}
+
+function getImage(i,priority){
+  const key=mod(i,TOTAL);
+  if(imageCache.has(key))return imageCache.get(key);
+  const promise=new Promise(resolve=>{
+    const img=new Image();
+    img.decoding='async';
+    if(priority)img.fetchPriority='high';
+    img.onload=()=>{if(img.decode)img.decode().catch(()=>{}).finally(()=>resolve(img));else resolve(img)};
+    img.onerror=()=>resolve(null);
+    img.src=imagePaths[key];
+  });
+  imageCache.set(key,promise);
+  return promise;
+}
+
 function trimCache(){
- const keep=new Set([index,(index+1)%TOTAL,(index+2)%TOTAL]);
- for(const key of cache.keys())if(!keep.has(key))cache.delete(key);
+  const keep=new Set([mod(index-1,TOTAL),index,mod(index+1,TOTAL),mod(index+2,TOTAL)]);
+  for(const key of imageCache.keys())if(!keep.has(key))imageCache.delete(key);
 }
-function fitRect(nw,nh){
- const sw=stage.clientWidth,sh=stage.clientHeight,pad=Math.max(8,Math.min(22,sw*.022,sh*.022));
- const ratio=nw/nh;let w=sw-pad*2,h=w/ratio;
- if(h>sh-pad*2){h=sh-pad*2;w=h*ratio}
- return {left:(sw-w)/2,top:(sh-h)/2,width:w,height:h};
-}
-function seed(i){const v=Math.sin((i+1)*127.1)*43758.5453;return v-Math.floor(v)}
-function analyze(img,i,nextRatio,photoRect){
- if(analysisCache.has(i))return analysisCache.get(i);
- let best=null;
- try{
-  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
-  canvas.width=100;canvas.height=100;ctx.drawImage(img,0,0,100,100);
-  const d=ctx.getImageData(0,0,100,100).data;
-  const lum=new Float32Array(10000),sat=new Float32Array(10000);
-  for(let p=0;p<10000;p++){const k=p*4,r=d[k],g=d[k+1],b=d[k+2];lum[p]=(r*.299+g*.587+b*.114)/255;sat[p]=(Math.max(r,g,b)-Math.min(r,g,b))/255}
-  const cfg=transitions[i]||{},seedX=(Number(cfg.x)||50)/100,seedY=(Number(cfg.y)||50)/100;
-  const sizes=[7.5,9,10.5,12,13.5,15,16.5];
-  for(const width of sizes){
-   const height=width/nextRatio/(img.naturalWidth/img.naturalHeight);
-   if(height>42)continue;
-   for(let cy=Math.max(height/2+2,8);cy<=Math.min(92,100-height/2-2);cy+=4)
-    for(let cx=Math.max(width/2+2,8);cx<=Math.min(92,100-width/2-2);cx+=4){
-     let sum=0,sum2=0,edge=0,color=0,count=0;
-     const x0=Math.floor(cx-width/2),x1=Math.ceil(cx+width/2),y0=Math.floor(cy-height/2),y1=Math.ceil(cy+height/2);
-     const stride=Math.max(1,Math.floor(Math.min(width,height)/8));
-     for(let y=y0;y<y1;y+=stride)for(let x=x0;x<x1;x+=stride){
-      const p=y*100+x,v=lum[p];sum+=v;sum2+=v*v;color+=sat[p];
-      edge+=Math.abs(v-lum[p+1])+Math.abs(v-lum[p+100]);count++;
-     }
-     const mean=sum/count,variance=Math.max(0,sum2/count-mean*mean);
-     const texture=edge/count, chroma=color/count;
-     const tonePenalty=Math.abs(mean-.43)*.16;
-     const seedPenalty=(Math.abs(cx/100-seedX)+Math.abs(cy/100-seedY))*.012;
-     const centerPenalty=(Math.abs(cx-50)+Math.abs(cy-50))*.00013;
-     const score=texture*.58+Math.sqrt(variance)*.5+chroma*.035+tonePenalty+seedPenalty+centerPenalty;
-     if(!best||score<best.score)best={x:cx/100,y:cy/100,w:width/100,score};
+
+function analyzePlacement(img,nextImg,i,frameWidthFraction,cfg){
+  const key=i+':'+Math.round((nextImg.naturalWidth/nextImg.naturalHeight)*1000)+':'+Math.round(frameWidthFraction*1000);
+  if(placementCache.has(key))return placementCache.get(key);
+
+  const fallback={
+    x:clamp((Number(cfg.x)||50)/100,.16,.84),
+    y:clamp((Number(cfg.y)||50)/100,.16,.84)
+  };
+  let best=null;
+
+  try{
+    const sourceRatio=img.naturalWidth/img.naturalHeight;
+    const scale=128/Math.max(img.naturalWidth,img.naturalHeight);
+    const cw=Math.max(48,Math.round(img.naturalWidth*scale));
+    const ch=Math.max(48,Math.round(img.naturalHeight*scale));
+    const canvas=document.createElement('canvas');
+    canvas.width=cw;canvas.height=ch;
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(img,0,0,cw,ch);
+    const pixels=ctx.getImageData(0,0,cw,ch).data;
+    const luma=new Float32Array(cw*ch);
+    const saturation=new Float32Array(cw*ch);
+
+    for(let p=0;p<cw*ch;p++){
+      const k=p*4,r=pixels[k],g=pixels[k+1],b=pixels[k+2];
+      luma[p]=(r*.299+g*.587+b*.114)/255;
+      saturation[p]=(Math.max(r,g,b)-Math.min(r,g,b))/255;
     }
+
+    const nextRatio=nextImg.naturalWidth/nextImg.naturalHeight;
+    const boxW=Math.max(5,Math.round(cw*frameWidthFraction));
+    const boxH=Math.max(5,Math.round(boxW*sourceRatio/nextRatio));
+    const halfW=boxW/2,halfH=boxH/2;
+    const stride=Math.max(1,Math.floor(Math.min(boxW,boxH)/8));
+    const seedX=fallback.x*cw,seedY=fallback.y*ch;
+
+    for(let cy=Math.ceil(halfH+4);cy<=Math.floor(ch-halfH-4);cy+=3){
+      for(let cx=Math.ceil(halfW+4);cx<=Math.floor(cw-halfW-4);cx+=3){
+        let sum=0,sum2=0,sat=0,edge=0,count=0;
+        for(let y=Math.floor(cy-halfH);y<Math.ceil(cy+halfH);y+=stride){
+          for(let x=Math.floor(cx-halfW);x<Math.ceil(cx+halfW);x+=stride){
+            const p=y*cw+x,v=luma[p];
+            sum+=v;sum2+=v*v;sat+=saturation[p];
+            if(x+1<cw&&y+1<ch)edge+=Math.abs(v-luma[p+1])+Math.abs(v-luma[p+cw]);
+            count++;
+          }
+        }
+        if(!count)continue;
+        const mean=sum/count;
+        const variance=Math.max(0,sum2/count-mean*mean);
+        const texture=edge/(count*2);
+        const chroma=sat/count;
+        const seedDistance=Math.hypot((cx-seedX)/cw,(cy-seedY)/ch);
+        const centerDistance=Math.hypot((cx/cw-.5)*1.25,(cy/ch-.5)*1.25);
+        const thirdsX=Math.min(Math.abs(cx/cw-1/3),Math.abs(cx/cw-2/3));
+        const thirdsY=Math.min(Math.abs(cy/ch-1/3),Math.abs(cy/ch-2/3));
+        const edgePenalty=(Math.abs(cx/cw-.5)<.09&&Math.abs(cy/ch-.5)<.12)?.035:0;
+        const tonePenalty=Math.abs(mean-.42)*.025;
+        const score=texture*.60+Math.sqrt(variance)*.29+chroma*.045+
+          seedDistance*.035+(1-centerDistance)*.012+
+          (thirdsX+thirdsY)*.012+edgePenalty+tonePenalty;
+        if(!best||score<best.score)best={x:cx/cw,y:cy/ch,score};
+      }
+    }
+  }catch(error){}
+
+  const result=best?{x:best.x,y:best.y}:fallback;
+  placementCache.set(key,result);
+  return result;
+}
+
+function getPortalRect(img,nextImg,i,parentRect){
+  const cfg=transitions[i]||{};
+  const requested=clamp((Number(cfg.w)||10)/100*.78,.065,.105);
+  const nextRatio=nextImg.naturalWidth/nextImg.naturalHeight;
+  let width=parentRect.width*requested;
+  let height=width/nextRatio;
+  const maxHeight=parentRect.height*.17;
+  if(height>maxHeight){height=maxHeight;width=height*nextRatio}
+  const actualFraction=width/parentRect.width;
+  const point=analyzePlacement(img,nextImg,i,actualFraction,cfg);
+  const centerX=parentRect.left+parentRect.width*point.x;
+  const centerY=parentRect.top+parentRect.height*point.y;
+  const left=clamp(centerX-width/2,parentRect.left+2,parentRect.left+parentRect.width-width-2);
+  const top=clamp(centerY-height/2,parentRect.top+2,parentRect.top+parentRect.height-height-2);
+  return {left,top,width,height};
+}
+
+function fitInside(parentRect,slotRect){
+  const scale=Math.min(slotRect.width/parentRect.width,slotRect.height/parentRect.height);
+  const width=parentRect.width*scale;
+  const height=parentRect.height*scale;
+  return {
+    left:slotRect.left+(slotRect.width-width)/2,
+    top:slotRect.top+(slotRect.height-height)/2,
+    width,height
+  };
+}
+
+function addRectStyles(el,rect){
+  el.style.left=rect.left+'px';
+  el.style.top=rect.top+'px';
+  el.style.width=rect.width+'px';
+  el.style.height=rect.height+'px';
+}
+
+function makeScene(i,img,nextImg){
+  const holder=document.createElement('div');
+  holder.className='scene';
+  const parentRect=fitImage(img);
+  const photo=document.createElement('img');
+  photo.className='photo';
+  photo.alt='';
+  photo.draggable=false;
+  photo.src=imagePaths[mod(i,TOTAL)];
+  addRectStyles(photo,parentRect);
+  holder.appendChild(photo);
+
+  let slotRect=null;
+  if(nextImg){
+    slotRect=getPortalRect(img,nextImg,i,parentRect);
+    const portal=document.createElement('div');
+    portal.className='portal';
+    addRectStyles(portal,slotRect);
+    const inner=document.createElement('img');
+    inner.alt='';
+    inner.draggable=false;
+    inner.src=imagePaths[mod(i+1,TOTAL)];
+    portal.appendChild(inner);
+    holder.appendChild(portal);
   }
- }catch(e){}
- if(!best){const cfg=transitions[i]||{};best={x:(Number(cfg.x)||50)/100,y:(Number(cfg.y)||50)/100,w:(Number(cfg.w)||12)/100}}
- analysisCache.set(i,best);return best;
+  return {node:holder,photo,portal:holder.querySelector('.portal'),parentRect,slotRect};
 }
-function placeNext(img,nextImg,i){
- const r=fitRect(img.naturalWidth,img.naturalHeight);
- const p=analyze(img,i,nextImg.naturalWidth/nextImg.naturalHeight,r);
- let w=r.width*p.w,h=w/(nextImg.naturalWidth/nextImg.naturalHeight);
- if(h>r.height*.42){h=r.height*.42;w=h*(nextImg.naturalWidth/nextImg.naturalHeight)}
- const cx=r.left+r.width*p.x,cy=r.top+r.height*p.y;
- w=Math.min(w,r.width*.34);h=w/(nextImg.naturalWidth/nextImg.naturalHeight);
- if(h>r.height*.42){h=r.height*.42;w=h*(nextImg.naturalWidth/nextImg.naturalHeight)}
- const left=Math.max(r.left+2,Math.min(r.left+r.width-w-2,cx-w/2));
- const top=Math.max(r.top+2,Math.min(r.top+r.height-h-2,cy-h/2));
- return {left,top,width:w,height:h};
+
+function transformBetween(baseRect,visualRect){
+  const scale=visualRect.width/baseRect.width;
+  const tx=visualRect.left-baseRect.left;
+  const ty=visualRect.top-baseRect.top;
+  return 'translate3d('+tx+'px,'+ty+'px,0) scale('+scale+')';
 }
-function buildScene(i,img,nextImg){
- const holder=document.createElement('div');holder.className='scene';
- const r=fitRect(img.naturalWidth,img.naturalHeight);
- const photo=document.createElement('img');photo.className='photo';photo.alt='';photo.draggable=false;photo.src=paths[i];
- Object.assign(photo.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
- holder.appendChild(photo);
- if(nextImg){
-  const box=placeNext(img,nextImg,i),portal=document.createElement('div');portal.className='nested';
-  Object.assign(portal.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});
-  const inner=document.createElement('img');inner.alt='';inner.draggable=false;inner.src=paths[(i+1)%TOTAL];portal.appendChild(inner);holder.appendChild(portal);
- }
- return holder;
+
+function stutterProgress(t,beats,hold){
+  if(t<=0)return 0;
+  if(t>=1)return 1;
+  const phase=t*beats;
+  const step=Math.floor(phase);
+  const local=phase-step;
+  const moving=1-hold;
+  const p=smooth(clamp(local/moving,0,1));
+  return (step+p)/beats;
 }
-function oldPhotoEndRect(photoRect,child){
- const ratio=photoRect.width/photoRect.height,cx=child.left+child.width/2,cy=child.top+child.height/2;
- let w=Math.max(child.width*1.22,child.height*1.22*ratio);
- w=Math.min(w,stage.clientWidth*.24,stage.clientHeight*.24*ratio);
- let h=w/ratio;
- if(w<child.width||h<child.height){w=Math.max(child.width*1.08,child.height*1.08*ratio);h=w/ratio}
- return {left:cx-w/2,top:cy-h/2,width:w,height:h};
+
+function interpolateVisual(from,to,p,base,arc){
+  const dx=(to.left-from.left),dy=(to.top-from.top);
+  const distance=Math.hypot(dx,dy);
+  const wave=Math.sin(Math.PI*p)*arc;
+  const px=distance?(-dy/distance)*wave:0;
+  const py=distance?(dx/distance)*wave:0;
+  return {
+    left:lerp(from.left,to.left,p)+px,
+    top:lerp(from.top,to.top,p)+py,
+    width:lerp(from.width,to.width,p),
+    height:lerp(from.height,to.height,p)
+  };
 }
-function animateRect(el,from,to,duration,delay=0){
- const frames=[0,.18,.38,.62,.82,1].map((t,i)=>({
-  left:(from.left+(to.left-from.left)*t)+'px',
-  top:(from.top+(to.top-from.top)*t)+'px',
-  width:(from.width+(to.width-from.width)*t)+'px',
-  height:(from.height+(to.height-from.height)*t)+'px',
-  offset:t
- }));
- return el.animate(frames,{duration,delay,easing:reduced?'linear':'steps(12,end)',fill:'forwards'});
+
+function animateVisual(el,baseRect,fromRect,toRect,duration,delay,beats,arc){
+  return new Promise(resolve=>{
+    const start=performance.now()+delay;
+    const frame=now=>{
+      if(now<start){requestAnimationFrame(frame);return}
+      const t=clamp((now-start)/duration,0,1);
+      const p=reduced?1:stutterProgress(t,beats,.13);
+      const visual=interpolateVisual(fromRect,toRect,p,baseRect,arc);
+      el.style.transform=transformBetween(baseRect,visual);
+      if(t<1)requestAnimationFrame(frame);
+      else{el.style.transform=transformBetween(baseRect,toRect);resolve()}
+    };
+    requestAnimationFrame(frame);
+  });
 }
-async function advance(){
- if(busy)return;
- busy=true;
- const from=index,to=(index+1)%TOTAL;
- const current=await getImage(from),next=await getImage(to),following=await getImage((to+1)%TOTAL);
- if(!current||!next){busy=false;return}
- const photo=scene.querySelector('.photo'),portal=scene.querySelector('.nested');
- if(!photo||!portal){busy=false;return}
- const photoRect=fitRect(current.naturalWidth,current.naturalHeight);
- const child={left:parseFloat(portal.style.left),top:parseFloat(portal.style.top),width:parseFloat(portal.style.width),height:parseFloat(portal.style.height)};
- const parentEnd=oldPhotoEndRect(photoRect,child);
- const nextEnd=fitRect(next.naturalWidth,next.naturalHeight);
- const duration=reduced?100:980;
- const oldAnim=animateRect(photo,photoRect,parentEnd,duration);
- const newAnim=animateRect(portal,child,nextEnd,duration-60,60);
- await Promise.all([oldAnim.finished.catch(()=>{}),newAnim.finished.catch(()=>{})]);
- oldAnim.cancel();newAnim.cancel();
- index=to;
- const fresh=buildScene(index,next,following);
- scene.replaceWith(fresh);scene=fresh;
- trimCache();
- wheelDebt=0;
- busy=false;
- getImage((index+2)%TOTAL);
+
+function commitScene(newIndex,img,nextImg){
+  const fresh=makeScene(newIndex,img,nextImg);
+  stage.replaceChildren(fresh.node);
+  scene=fresh.node;
+  index=newIndex;
+  trimCache();
+  getImage(index+1);
+  getImage(index+2);
 }
+
+async function transitionForward(){
+  const from=index,to=mod(index+1,TOTAL);
+  const current=await getImage(from,true);
+  const next=await getImage(to,true);
+  const followingPromise=getImage(to+1);
+  if(!current||!next)return;
+  if(!scene.querySelector('.portal')){
+    const ready=makeScene(from,current,next);
+    stage.replaceChildren(ready.node);scene=ready.node;
+  }
+  const photo=scene.querySelector('.photo');
+  const portal=scene.querySelector('.portal');
+  if(!photo||!portal)return;
+  const parentRect=fitImage(current);
+  const slotRect=getPortalRect(current,next,from,parentRect);
+  const nextRect=fitImage(next);
+  const reducedDuration=reduced?1:760;
+  const insideRect=fitInside(parentRect,slotRect);
+  const distance=Math.hypot(
+    (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
+    (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
+  );
+  await Promise.all([
+    animateVisual(photo,parentRect,parentRect,insideRect,reducedDuration,0,reduced?1:6,Math.min(10,distance*.018)),
+    animateVisual(portal,slotRect,slotRect,nextRect,reducedDuration*.91,reduced?0:95,reduced?1:7,Math.min(12,Math.hypot(slotRect.left-nextRect.left,slotRect.top-nextRect.top)*.012))
+  ]);
+  const following=await followingPromise;
+  commitScene(to,next,following);
+}
+
+async function transitionBackward(){
+  const from=index,to=mod(index-1,TOTAL),before=mod(to-1,TOTAL);
+  const previous=await getImage(to,true);
+  const current=await getImage(from,true);
+  const beforePreviousPromise=getImage(before);
+  if(!previous||!current)return;
+
+  const reverseScene=makeScene(to,previous,current);
+  const parentRect=reverseScene.parentRect;
+  const slotRect=reverseScene.slotRect;
+  const currentRect=fitImage(current);
+  const insideRect=fitInside(parentRect,slotRect);
+
+  reverseScene.photo.style.transform=transformBetween(parentRect,insideRect);
+  reverseScene.portal.style.transform=transformBetween(slotRect,currentRect);
+  stage.replaceChildren(reverseScene.node);
+  scene=reverseScene.node;
+
+  const distance=Math.hypot(
+    (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
+    (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
+  );
+  await Promise.all([
+    animateVisual(reverseScene.photo,parentRect,insideRect,parentRect,reduced?1:760,0,reduced?1:6,Math.min(10,distance*.018)),
+    animateVisual(reverseScene.portal,slotRect,currentRect,slotRect,reduced?1:690,reduced?0:70,reduced?1:7,Math.min(12,Math.hypot(currentRect.left-slotRect.left,currentRect.top-slotRect.top)*.012))
+  ]);
+  const beforePrevious=await beforePreviousPromise;
+  commitScene(to,previous,beforePrevious);
+}
+
+async function pump(){
+  if(busy||queue===0)return;
+  busy=true;
+  const direction=Math.sign(queue);
+  queue-=direction;
+  try{
+    if(direction>0)await transitionForward();
+    else await transitionBackward();
+  }catch(error){}
+  busy=false;
+  trimCache();
+  if(queue!==0)pump();
+}
+
+function requestStep(direction){
+  if(direction>0)queue=clamp(queue+1,0,2);
+  else queue=clamp(queue-1,-2,0);
+  pump();
+}
+
 function onWheel(e){
- if(e.deltaY<=0)return;
- e.preventDefault();
- wheelDebt+=Math.min(e.deltaY,120);
- const now=performance.now();
- if(wheelDebt>=28&&now-lastStep>420&&!busy){wheelDebt=0;lastStep=now;advance()}
+  e.preventDefault();
+  const raw=e.deltaMode===1?e.deltaY*16:(e.deltaMode===2?e.deltaY*stage.clientHeight:e.deltaY);
+  if(Math.abs(raw)<.1)return;
+  wheelBucket+=clamp(raw,-120,120);
+  if(wheelBucket>=64){wheelBucket=0;requestStep(1)}
+  else if(wheelBucket<=-64){wheelBucket=0;requestStep(-1)}
 }
+
 stage.addEventListener('wheel',onWheel,{passive:false});
-stage.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});
-stage.addEventListener('touchend',e=>{const dy=touchY-e.changedTouches[0].clientY;if(dy>22&&performance.now()-lastStep>350){lastStep=performance.now();advance()}},{passive:true});
-window.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();advance()}});
+stage.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
+stage.addEventListener('touchend',e=>{
+  const delta=touchStartY-e.changedTouches[0].clientY;
+  if(delta>34)requestStep(1);
+  else if(delta< -34)requestStep(-1);
+},{passive:true});
+
+window.addEventListener('keydown',e=>{
+  if(['ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();requestStep(1)}
+  else if(['ArrowUp','PageUp'].includes(e.key)){e.preventDefault();requestStep(-1)}
+});
+
 async function init(){
- try{
-  const res=await fetch('./positions.json',{cache:'no-store'});
-  if(res.ok){const data=await res.json();if(Array.isArray(data.transitions)&&data.transitions.length===TOTAL)transitions=data.transitions}
- }catch(e){}
- const first=await getImage(0),second=await getImage(1);
- if(!first)return;
- const initial=buildScene(0,first,second);scene.replaceWith(initial);scene=initial;
- getImage(2);trimCache();
+  try{
+    const response=await fetch('./positions.json',{cache:'no-store'});
+    if(response.ok){
+      const data=await response.json();
+      if(Array.isArray(data.transitions)&&data.transitions.length===TOTAL)transitions=data.transitions;
+    }
+  }catch(error){}
+  const first=await getImage(0,true);
+  const second=await getImage(1,true);
+  if(!first)return;
+  const initial=makeScene(0,first,second);
+  stage.replaceChildren(initial.node);
+  scene=initial.node;
+  getImage(2);
+  trimCache();
 }
-window.addEventListener('resize',()=>{if(!busy)location.reload()});
+
+let resizeTimer=0;
+function handleResize(){
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(async()=>{
+    if(busy)return;
+    const current=await getImage(index);
+    const next=await getImage(index+1);
+    if(!current)return;
+    const fresh=makeScene(index,current,next);
+    stage.replaceChildren(fresh.node);
+    scene=fresh.node;
+  },120);
+}
+window.addEventListener('resize',handleResize,{passive:true});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',handleResize,{passive:true});
+
 init();
 })();
 </script>
