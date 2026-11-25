@@ -178,6 +178,21 @@ function interpolateVisual(from,to,p,base,arc){
   };
 }
 
+function motionProfile(current,next,i){
+  const currentRatio=current.naturalWidth/current.naturalHeight;
+  const nextRatio=next.naturalWidth/next.naturalHeight;
+  const difference=clamp(Math.abs(Math.log(currentRatio/nextRatio))/1.8,0,1);
+  const duration=reduced?1:700+Math.round(difference*170)+((i%3)-1)*18;
+  const parentBeats=5+Math.round(difference*2);
+  return {
+    duration,
+    parentBeats,
+    childBeats:parentBeats+1,
+    lead:78+(i%3)*13,
+    polarity:i%2===0?1:-1
+  };
+}
+
 function animateVisual(el,baseRect,fromRect,toRect,duration,delay,beats,arc){
   return new Promise(resolve=>{
     const start=performance.now()+delay;
@@ -220,15 +235,15 @@ async function transitionForward(){
   const parentRect=fitImage(current);
   const slotRect=getPortalRect(current,next,from,parentRect);
   const nextRect=fitImage(next);
-  const reducedDuration=reduced?1:760;
+  const motion=motionProfile(current,next,from);
   const insideRect=fitInside(parentRect,slotRect);
   const distance=Math.hypot(
     (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
     (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
   );
   await Promise.all([
-    animateVisual(photo,parentRect,parentRect,insideRect,reducedDuration,0,reduced?1:6,Math.min(10,distance*.018)),
-    animateVisual(portal,slotRect,slotRect,nextRect,reducedDuration*.91,reduced?0:95,reduced?1:7,Math.min(12,Math.hypot(slotRect.left-nextRect.left,slotRect.top-nextRect.top)*.012))
+    animateVisual(photo,parentRect,parentRect,insideRect,motion.duration,0,motion.parentBeats,Math.min(10,distance*.018)*motion.polarity),
+    animateVisual(portal,slotRect,slotRect,nextRect,motion.duration*.91,motion.lead,motion.childBeats,Math.min(12,Math.hypot(slotRect.left-nextRect.left,slotRect.top-nextRect.top)*.012)*motion.polarity)
   ]);
   const following=await followingPromise;
   commitScene(to,next,following);
@@ -252,13 +267,14 @@ async function transitionBackward(){
   stage.replaceChildren(reverseScene.node);
   scene=reverseScene.node;
 
+  const motion=motionProfile(previous,current,to);
   const distance=Math.hypot(
     (parentRect.left+parentRect.width/2)-(insideRect.left+insideRect.width/2),
     (parentRect.top+parentRect.height/2)-(insideRect.top+insideRect.height/2)
   );
   await Promise.all([
-    animateVisual(reverseScene.photo,parentRect,insideRect,parentRect,reduced?1:760,0,reduced?1:6,Math.min(10,distance*.018)),
-    animateVisual(reverseScene.portal,slotRect,currentRect,slotRect,reduced?1:690,reduced?0:70,reduced?1:7,Math.min(12,Math.hypot(currentRect.left-slotRect.left,currentRect.top-slotRect.top)*.012))
+    animateVisual(reverseScene.photo,parentRect,insideRect,parentRect,motion.duration,0,motion.parentBeats,-Math.min(10,distance*.018)*motion.polarity),
+    animateVisual(reverseScene.portal,slotRect,currentRect,slotRect,motion.duration*.91,motion.lead,motion.childBeats,-Math.min(12,Math.hypot(currentRect.left-slotRect.left,currentRect.top-slotRect.top)*.012)*motion.polarity)
   ]);
   const beforePrevious=await beforePreviousPromise;
   commitScene(to,previous,beforePrevious);
