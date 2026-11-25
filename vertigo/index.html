@@ -26,7 +26,7 @@ let scene=document.getElementById('scene'),index=0,busy=false,wheelDebt=0,lastSt
 let transitions=Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:12,auto:true}));
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const paths=[];
-[20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../previews/photos/'+(g+1)+'/'+n+'.webp')});
+[20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../photos/'+(g+1)+'/'+n+'.webp')});
 const cache=new Map(),analysisCache=new Map();
 function getImage(i){
  i=(i+TOTAL)%TOTAL;
@@ -35,6 +35,10 @@ function getImage(i){
   const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=paths[i];
  });
  cache.set(i,promise);return promise;
+}
+function trimCache(){
+ const keep=new Set([index,(index+1)%TOTAL,(index+2)%TOTAL]);
+ for(const key of cache.keys())if(!keep.has(key))cache.delete(key);
 }
 function fitRect(nw,nh){
  const sw=stage.clientWidth,sh=stage.clientHeight,pad=Math.max(8,Math.min(22,sw*.022,sh*.022));
@@ -142,6 +146,7 @@ async function advance(){
  index=to;
  const fresh=buildScene(index,next,following);
  scene.replaceWith(fresh);scene=fresh;
+ trimCache();
  busy=false;
  getImage((index+2)%TOTAL);
 }
@@ -164,7 +169,7 @@ async function init(){
  const first=await getImage(0),second=await getImage(1);
  if(!first)return;
  const initial=buildScene(0,first,second);scene.replaceWith(initial);scene=initial;
- getImage(2);
+ getImage(2);trimCache();
 }
 window.addEventListener('resize',()=>{if(!busy)location.reload()});
 init();
