@@ -116,7 +116,7 @@ function oldPhotoEndRect(photoRect,child){
  if(w<child.width||h<child.height){w=Math.max(child.width*1.08,child.height*1.08*ratio);h=w/ratio}
  return {left:cx-w/2,top:cy-h/2,width:w,height:h};
 }
-function animateRect(el,from,to,duration){
+function animateRect(el,from,to,duration,delay=0){
  const frames=[0,.18,.38,.62,.82,1].map((t,i)=>({
   left:(from.left+(to.left-from.left)*t)+'px',
   top:(from.top+(to.top-from.top)*t)+'px',
@@ -124,7 +124,7 @@ function animateRect(el,from,to,duration){
   height:(from.height+(to.height-from.height)*t)+'px',
   offset:t
  }));
- return el.animate(frames,{duration,easing:reduced?'linear':'steps(12,end)',fill:'forwards'});
+ return el.animate(frames,{duration,delay,easing:reduced?'linear':'steps(12,end)',fill:'forwards'});
 }
 async function advance(){
  if(busy)return;
@@ -140,13 +140,14 @@ async function advance(){
  const nextEnd=fitRect(next.naturalWidth,next.naturalHeight);
  const duration=reduced?100:980;
  const oldAnim=animateRect(photo,photoRect,parentEnd,duration);
- const newAnim=animateRect(portal,child,nextEnd,duration);
+ const newAnim=animateRect(portal,child,nextEnd,duration-60,60);
  await Promise.all([oldAnim.finished.catch(()=>{}),newAnim.finished.catch(()=>{})]);
  oldAnim.cancel();newAnim.cancel();
  index=to;
  const fresh=buildScene(index,next,following);
  scene.replaceWith(fresh);scene=fresh;
  trimCache();
+ wheelDebt=0;
  busy=false;
  getImage((index+2)%TOTAL);
 }
