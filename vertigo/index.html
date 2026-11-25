@@ -51,7 +51,8 @@ function fitRect(nw,nh){
  return {left:(sw-w)/2,top:(sh-h)/2,width:w,height:h};
 }
 function frameRect(cfg,photoRect,nextRatio){
- const w=Math.max(0.055,Math.min(.19,(Number(cfg.w)||14)/100*.58))*photoRect.width;
+ const desired=Math.max(0.055,Math.min(.19,(Number(cfg.w)||14)/100*.58))*photoRect.width;
+ const w=Math.min(desired,photoRect.height*nextRatio*.86);
  const h=w/nextRatio;
  const x=photoRect.left+photoRect.width*(Number(cfg.x??50)/100);
  const y=photoRect.top+photoRect.height*(Number(cfg.y??50)/100);
