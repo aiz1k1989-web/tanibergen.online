@@ -44,7 +44,7 @@ let transitions=Array.from({length:TOTAL},(_,i)=>({
 }));
 
 const imageCache=new Map();
-const placementCache=new Map();
+
 
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const lerp=(a,b,t)=>a+(b-a)*t;
@@ -86,94 +86,20 @@ function trimCache(){
   for(const key of imageCache.keys())if(!keep.has(key))imageCache.delete(key);
 }
 
-function analyzePlacement(img,nextImg,i,frameWidthFraction,cfg){
-  const key=i+':'+Math.round((nextImg.naturalWidth/nextImg.naturalHeight)*1000)+':'+Math.round(frameWidthFraction*1000);
-  if(placementCache.has(key))return placementCache.get(key);
-
-  const fallback={
-    x:clamp((Number(cfg.x)||50)/100,.16,.84),
-    y:clamp((Number(cfg.y)||50)/100,.16,.84)
-  };
-  let best=null;
-
-  try{
-    const sourceRatio=img.naturalWidth/img.naturalHeight;
-    const scale=128/Math.max(img.naturalWidth,img.naturalHeight);
-    const cw=Math.max(48,Math.round(img.naturalWidth*scale));
-    const ch=Math.max(48,Math.round(img.naturalHeight*scale));
-    const canvas=document.createElement('canvas');
-    canvas.width=cw;canvas.height=ch;
-    const ctx=canvas.getContext('2d',{willReadFrequently:true});
-    ctx.drawImage(img,0,0,cw,ch);
-    const pixels=ctx.getImageData(0,0,cw,ch).data;
-    const luma=new Float32Array(cw*ch);
-    const saturation=new Float32Array(cw*ch);
-
-    for(let p=0;p<cw*ch;p++){
-      const k=p*4,r=pixels[k],g=pixels[k+1],b=pixels[k+2];
-      luma[p]=(r*.299+g*.587+b*.114)/255;
-      saturation[p]=(Math.max(r,g,b)-Math.min(r,g,b))/255;
-    }
-
-    const nextRatio=nextImg.naturalWidth/nextImg.naturalHeight;
-    const boxW=Math.max(5,Math.round(cw*frameWidthFraction));
-    const boxH=Math.max(5,Math.round(boxW*sourceRatio/nextRatio));
-    const halfW=boxW/2,halfH=boxH/2;
-    const stride=Math.max(1,Math.floor(Math.min(boxW,boxH)/8));
-    const seedX=fallback.x*cw,seedY=fallback.y*ch;
-
-    for(let cy=Math.ceil(halfH+4);cy<=Math.floor(ch-halfH-4);cy+=3){
-      for(let cx=Math.ceil(halfW+4);cx<=Math.floor(cw-halfW-4);cx+=3){
-        let sum=0,sum2=0,sat=0,edge=0,count=0;
-        for(let y=Math.floor(cy-halfH);y<Math.ceil(cy+halfH);y+=stride){
-          for(let x=Math.floor(cx-halfW);x<Math.ceil(cx+halfW);x+=stride){
-            const p=y*cw+x,v=luma[p];
-            sum+=v;sum2+=v*v;sat+=saturation[p];
-            if(x+1<cw&&y+1<ch)edge+=Math.abs(v-luma[p+1])+Math.abs(v-luma[p+cw]);
-            count++;
-          }
-        }
-        if(!count)continue;
-        const mean=sum/count;
-        const variance=Math.max(0,sum2/count-mean*mean);
-        const texture=edge/(count*2);
-        const chroma=sat/count;
-        const seedDistance=Math.hypot((cx-seedX)/cw,(cy-seedY)/ch);
-        const centerDistance=Math.hypot((cx/cw-.5)*1.25,(cy/ch-.5)*1.25);
-        const thirdsX=Math.min(Math.abs(cx/cw-1/3),Math.abs(cx/cw-2/3));
-        const thirdsY=Math.min(Math.abs(cy/ch-1/3),Math.abs(cy/ch-2/3));
-        const edgePenalty=(Math.abs(cx/cw-.5)<.09&&Math.abs(cy/ch-.5)<.12)?.035:0;
-        const tonePenalty=Math.abs(mean-.42)*.025;
-        const score=texture*.60+Math.sqrt(variance)*.29+chroma*.045+
-          seedDistance*.035+(1-centerDistance)*.012+
-          (thirdsX+thirdsY)*.012+edgePenalty+tonePenalty;
-        if(!best||score<best.score)best={x:cx/cw,y:cy/ch,score};
-      }
-    }
-  }catch(error){}
-
-  const result=best?{x:best.x,y:best.y}:fallback;
-  placementCache.set(key,result);
-  return result;
-}
-
 function getPortalRect(img,nextImg,i,parentRect){
   const cfg=transitions[i]||{};
-  const requested=clamp((Number(cfg.w)||10)/100*.78,.065,.105);
   const nextRatio=nextImg.naturalWidth/nextImg.naturalHeight;
+  const requested=clamp((Number(cfg.w)||9.2)/100,.078,.102);
   let width=parentRect.width*requested;
   let height=width/nextRatio;
   const maxHeight=parentRect.height*.17;
   if(height>maxHeight){height=maxHeight;width=height*nextRatio}
-  const actualFraction=width/parentRect.width;
-  const point=analyzePlacement(img,nextImg,i,actualFraction,cfg);
-  const centerX=parentRect.left+parentRect.width*point.x;
-  const centerY=parentRect.top+parentRect.height*point.y;
+  const centerX=parentRect.left+parentRect.width*clamp((Number(cfg.x)||50)/100,.12,.88);
+  const centerY=parentRect.top+parentRect.height*clamp((Number(cfg.y)||50)/100,.12,.88);
   const left=clamp(centerX-width/2,parentRect.left+2,parentRect.left+parentRect.width-width-2);
   const top=clamp(centerY-height/2,parentRect.top+2,parentRect.top+parentRect.height-height-2);
   return {left,top,width,height};
 }
-
 function fitInside(parentRect,slotRect){
   const scale=Math.min(slotRect.width/parentRect.width,slotRect.height/parentRect.height);
   const width=parentRect.width*scale;
