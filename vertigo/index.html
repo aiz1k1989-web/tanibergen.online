@@ -105,6 +105,7 @@ body{overscroll-behavior:none;touch-action:pan-y}
     const from=index,to=(index+1)%TOTAL;
     const point=await load(to);
     nextImage.src=paths[to];
+    try{await nextImage.decode()}catch(e){}
     next.style.left='0px';next.style.top='0px';next.style.width='100%';next.style.height='100%';
     next.style.opacity='1';current.style.left='0px';current.style.top='0px';current.style.width='100%';current.style.height='100%';
     current.classList.remove('is-shrinking');
@@ -120,6 +121,7 @@ body{overscroll-behavior:none;touch-action:pan-y}
     current.classList.add('is-shrinking');
     const animation=current.animate(frames,{duration,easing:reduced?'linear':'steps(9,end)',fill:'forwards'});
     await animation.finished.catch(()=>{});
+    animation.cancel();
     index=to;
     currentImage.src=paths[index];
     current.style.left='0px';current.style.top='0px';current.style.width='100%';current.style.height='100%';
