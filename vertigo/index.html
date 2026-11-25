@@ -4,145 +4,160 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#050505">
-<meta name="description" content="VERTIGO - a photographic zoom sequence by Aizat Tanibergen.">
 <title>VERTIGO / tanibergen.online</title>
 <style>
-:root{color-scheme:dark;--bg:#050505;--fg:#eee}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:Arial,Helvetica,sans-serif}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505}
 body{overscroll-behavior:none;touch-action:pan-y}
-.top{position:fixed;z-index:10;top:0;left:0;right:0;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
-.top a{color:inherit;text-decoration:none;pointer-events:auto}.top span{color:#999}
-.stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate}
-.frame{position:absolute;inset:0;overflow:hidden;will-change:left,top,width,height;transform:translateZ(0);background:#050505}
-.frame img{display:block;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
-.frame.current{z-index:2}.frame.next{z-index:1;opacity:1}
-.frame.current.is-shrinking{z-index:3}
-.hud{position:fixed;z-index:9;left:24px;right:24px;bottom:22px;display:flex;align-items:center;gap:16px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#aaa;pointer-events:none}
-.track{height:1px;background:#333;flex:1;overflow:hidden}.track i{display:block;height:100%;width:1%;background:#ddd;transition:width .25s linear}
-.counter{min-width:66px;text-align:right;color:#eee;font-variant-numeric:tabular-nums}
-.hint{position:fixed;z-index:9;left:50%;bottom:54px;transform:translateX(-50%);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#666;white-space:nowrap;pointer-events:none}
-.start{position:fixed;z-index:8;inset:0;display:grid;place-items:center;background:#050505;transition:opacity .45s ease,visibility .45s}
-.start.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.start button{appearance:none;border:1px solid #444;background:transparent;color:#eee;padding:15px 22px;font:inherit;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
-.start button:focus-visible{outline:1px solid white;outline-offset:5px}
-@media(max-width:600px){.top{padding:17px 16px}.hud{left:16px;right:16px;bottom:17px}.hint{bottom:47px}}
-@media(prefers-reduced-motion:reduce){.hint{display:none}}
+#stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate}
+.scene,.reveal{position:absolute;inset:0;overflow:hidden;will-change:transform;transform-origin:0 0;background:#050505}
+.photo{position:absolute;display:block;object-fit:contain;max-width:none;max-height:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.nested{position:absolute;overflow:hidden;background:#050505;pointer-events:none}
+.nested img{width:100%;height:100%;display:block;object-fit:contain}
+.reveal{z-index:5;overflow:hidden}
+.reveal img{position:absolute;display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.scene,.reveal{transition:none}}
 </style>
 </head>
 <body>
-<header class="top"><a href="../">tanibergen.online</a><span>VERTIGO / 01-98</span></header>
-<main class="stage" id="stage" aria-label="Vertigo photographic sequence">
-  <div class="frame next" id="next"><img id="nextImage" alt="" decoding="async"></div>
-  <div class="frame current" id="current"><img id="currentImage" alt="Photograph in the Vertigo sequence" fetchpriority="high"></div>
+<main id="stage" aria-label="VERTIGO photographic sequence">
+ <div class="scene" id="scene"></div>
+ <div class="reveal" id="reveal" hidden><img id="revealImage" alt=""></div>
 </main>
-<div class="start" id="start"><button id="begin" type="button">Enter Vertigo</button></div>
-<div class="hint" id="hint">Scroll to descend / swipe up</div>
-<footer class="hud"><span>FRAME</span><div class="track"><i id="progress"></i></div><span class="counter" id="counter">01 / 98</span></footer>
 <script>
 (() => {
-  'use strict';
-  const TOTAL=98, paths=[];
-  [20,20,20,20,18].forEach((count,group)=>{for(let n=1;n<=count;n++)paths.push('../previews/photos/'+(group+1)+'/'+n+'.webp')});
-  const current=document.getElementById('current'), next=document.getElementById('next');
-  const currentImage=document.getElementById('currentImage'), nextImage=document.getElementById('nextImage');
-  const start=document.getElementById('start'), counter=document.getElementById('counter');
-  const progress=document.getElementById('progress'), topLabel=document.querySelector('.top span');
-  let index=0,busy=false,started=false,lastWheel=0,touchY=0;
-  const analyses=new Array(TOTAL), reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function inspect(img){
-    try{
-      const c=document.createElement('canvas'),ctx=c.getContext('2d',{willReadFrequently:true});
-      c.width=96;c.height=96;ctx.drawImage(img,0,0,96,96);
-      const d=ctx.getImageData(0,0,96,96).data, lum=new Float32Array(96*96), sat=new Float32Array(96*96);
-      for(let y=0;y<96;y++)for(let x=0;x<96;x++){
-        const p=(y*96+x)*4,r=d[p],g=d[p+1],b=d[p+2],i=y*96+x;
-        lum[i]=(r*.299+g*.587+b*.114)/255;
-        sat[i]=(Math.max(r,g,b)-Math.min(r,g,b))/255;
-      }
-      const candidates=[];
-      const rw=23,rh=25;
-      for(let cy=17;cy<=79;cy+=10)for(let cx=17;cx<=79;cx+=10){
-        let edge=0,color=0,count=0;
-        for(let y=cy-Math.floor(rh/2);y<cy+Math.ceil(rh/2);y+=2)
-          for(let x=cx-Math.floor(rw/2);x<cx+Math.ceil(rw/2);x+=2){
-            const i=y*96+x;
-            edge+=Math.abs(lum[i]-lum[i+1])+Math.abs(lum[i]-lum[i+96]);
-            color+=sat[i];count++;
-          }
-        candidates.push({x:cx/96,y:cy/96,score:edge/count*.78+color/count*.08});
-      }
-      candidates.sort((a,b)=>a.score-b.score);
-      const best=candidates[0]||{x:.5,y:.5};
-      return {x:Math.max(.14,Math.min(.86,best.x)),y:Math.max(.16,Math.min(.84,best.y))};
-    }catch(e){return{x:.5,y:.5}}
-  }
-  function load(i){
-    if(analyses[i])return Promise.resolve(analyses[i]);
-    return new Promise(resolve=>{
-      const img=new Image();img.decoding='async';img.onload=()=>{analyses[i]=inspect(img);resolve(analyses[i])};
-      img.onerror=()=>{analyses[i]={x:.5,y:.5};resolve(analyses[i])};img.src=paths[i];
-    });
-  }
-  function update(){
-    counter.textContent=String(index+1).padStart(2,'0')+' / '+TOTAL;
-    progress.style.width=((index+1)/TOTAL*100)+'%';
-    topLabel.textContent='VERTIGO / '+String(index+1).padStart(2,'0')+'-98';
-  }
-  function chooseRect(point){
-    const vw=innerWidth,vh=innerHeight;
-    const w=Math.min(vw*.27,Math.max(116,vw*.245));
-    const h=Math.min(vh*.27,Math.max(112,vh*.245));
-    let left=point.x*vw-w/2,top=point.y*vh-h/2;
-    left=Math.max(10,Math.min(vw-w-10,left));
-    top=Math.max(10,Math.min(vh-h-10,top));
-    return {left,top,width:w,height:h};
-  }
-  async function advance(){
-    if(busy||!started)return;
-    busy=true;
-    const from=index,to=(index+1)%TOTAL;
-    const point=await load(to);
-    nextImage.src=paths[to];
-    try{await nextImage.decode()}catch(e){}
-    next.style.left='0px';next.style.top='0px';next.style.width='100%';next.style.height='100%';
-    next.style.opacity='1';current.style.left='0px';current.style.top='0px';current.style.width='100%';current.style.height='100%';
-    current.classList.remove('is-shrinking');
-    void current.offsetWidth;
-    const rect=chooseRect(point);
-    const duration=reduced?80:880;
-    const frames=[
-      {left:'0px',top:'0px',width:innerWidth+'px',height:innerHeight+'px',offset:0},
-      {left:(rect.left-2)+'px',top:(rect.top+1)+'px',width:(rect.width+4)+'px',height:(rect.height-2)+'px',offset:.22},
-      {left:(rect.left+1)+'px',top:(rect.top-1)+'px',width:(rect.width-2)+'px',height:(rect.height+2)+'px',offset:.43},
-      {left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',offset:1}
-    ];
-    current.classList.add('is-shrinking');
-    const animation=current.animate(frames,{duration,easing:reduced?'linear':'steps(9,end)',fill:'forwards'});
-    await animation.finished.catch(()=>{});
-    animation.cancel();
-    index=to;
-    currentImage.src=paths[index];
-    current.style.left='0px';current.style.top='0px';current.style.width='100%';current.style.height='100%';
-    current.classList.remove('is-shrinking');
-    nextImage.removeAttribute('src');
-    update();busy=false;
-    load((index+1)%TOTAL);
-  }
-  function begin(){
-    if(started)return;started=true;start.classList.add('hidden');
-    currentImage.src=paths[0];load(0);load(1);
-  }
-  document.getElementById('begin').addEventListener('click',begin);
-  window.addEventListener('wheel',e=>{
-    if(!started||e.deltaY<=8)return;
-    e.preventDefault();const now=Date.now();if(now-lastWheel>650){lastWheel=now;advance()}
-  },{passive:false});
-  document.getElementById('stage').addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});
-  document.getElementById('stage').addEventListener('touchend',e=>{if(touchY-e.changedTouches[0].clientY>32)advance()},{passive:true});
-  window.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();if(!started)begin();else advance()}});
-  update();
+'use strict';
+const TOTAL=98, stage=document.getElementById('stage'), scene=document.getElementById('scene');
+const reveal=document.getElementById('reveal'), revealImage=document.getElementById('revealImage');
+const paths=[];
+[20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../previews/photos/'+(g+1)+'/'+n+'.webp')});
+const fallback=Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:14}));
+let transitions=fallback,index=0,busy=false,lastWheel=0,touchY=0;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const imageCache=new Map();
+function getImage(i){
+ const key=((i%TOTAL)+TOTAL)%TOTAL;
+ if(imageCache.has(key))return imageCache.get(key);
+ const p=new Promise(resolve=>{
+  const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=paths[key];
+ });
+ imageCache.set(key,p);return p;
+}
+function fitRect(nw,nh){
+ const sw=stage.clientWidth,sh=stage.clientHeight,pad=Math.min(24,sw*.025,sh*.025);
+ const ratio=nw/nh,availableW=sw-pad*2,availableH=sh-pad*2;
+ let w=availableW,h=w/ratio;
+ if(h>availableH){h=availableH;w=h*ratio}
+ return {left:(sw-w)/2,top:(sh-h)/2,width:w,height:h};
+}
+function frameRect(cfg,photoRect,nextRatio){
+ const w=Math.max(0.055,Math.min(.19,(Number(cfg.w)||14)/100*.58))*photoRect.width;
+ const h=w/nextRatio;
+ const x=photoRect.left+photoRect.width*(Number(cfg.x??50)/100);
+ const y=photoRect.top+photoRect.height*(Number(cfg.y??50)/100);
+ return {left:Math.max(photoRect.left,Math.min(photoRect.left+photoRect.width-w,x-w/2)),
+ top:Math.max(photoRect.top,Math.min(photoRect.top+photoRect.height-h,y-h/2)),width:w,height:h};
+}
+function makeScene(i,nextImg){
+ const img=document.createElement('img');img.className='photo';img.alt='';img.draggable=false;img.src=paths[i];
+ const holder=document.createElement('div');holder.className='scene';holder.appendChild(img);
+ const r=fitRect(loadedCurrent.naturalWidth,loadedCurrent.naturalHeight);
+ Object.assign(img.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});
+ if(nextImg){
+  const nr=nextImg.naturalWidth/nextImg.naturalHeight;
+  const cfg=transitions[i]||fallback[i],box=frameRect(cfg,r,nr);
+  const nested=document.createElement('div');nested.className='nested';
+  Object.assign(nested.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});
+  const nimg=document.createElement('img');nimg.alt='';nimg.draggable=false;nimg.src=paths[(i+1)%TOTAL];nested.appendChild(nimg);holder.appendChild(nested);
+  holder._box=box;
+ }
+ return holder;
+}
+let loadedCurrent=null;
+async function prepareScene(){
+ const cur=await getImage(index),next=await getImage((index+1)%TOTAL);
+ if(!cur)return;
+ loadedCurrent=cur;
+ const fresh=makeScene(index,next);
+ scene.replaceWith(fresh);fresh.id='scene';
+ // Keep a stable reference after replacing the initial scene node.
+ window.__vertigoScene=fresh;
+}
+function activeScene(){return window.__vertigoScene||scene}
+function setTransform(el,rect){
+ const sx=rect.width/stage.clientWidth,sy=rect.height/stage.clientHeight;
+ el.style.transformOrigin='0 0';
+ el.style.transform='translate('+rect.left+'px,'+rect.top+'px) scale('+sx+','+sy+')';
+}
+async function advance(){
+ if(busy)return;busy=true;
+ const oldIndex=index,newIndex=(index+1)%TOTAL;
+ const oldScene=activeScene(),oldImg=oldScene.querySelector('.photo');
+ const currentRect=fitRect(loadedCurrent.naturalWidth,loadedCurrent.naturalHeight);
+ const next=await getImage(newIndex),following=await getImage((newIndex+1)%TOTAL);
+ if(!next){busy=false;return}
+ const cfg=transitions[oldIndex]||fallback[oldIndex];
+ const target=frameRect(cfg,currentRect,next.naturalWidth/next.naturalHeight);
+ reveal.hidden=false;revealImage.src=paths[newIndex];
+ Object.assign(reveal.style,{left:target.left+'px',top:target.top+'px',width:target.width+'px',height:target.height+'px',transform:'translateZ(0)'});
+ Object.assign(revealImage.style,{left:'0',top:'0',width:'100%',height:'100%'});
+ // The incoming photograph grows from the exact embedded frame while the old composition folds away.
+ const end=fitRect(next.naturalWidth,next.naturalHeight);
+ const sx=end.width/target.width,sy=end.height/target.height;
+ const tx=end.left-target.left,ty=end.top-target.top;
+ const duration=reduced?120:920;
+ const steps=reduced?1:12;
+ const easing=reduced?'linear':'steps(12,end)';
+ const revealAnim=reveal.animate([
+  {left:target.left+'px',top:target.top+'px',width:target.width+'px',height:target.height+'px',offset:0},
+  {left:(target.left+tx*.34)+'px',top:(target.top+ty*.34)+'px',width:(target.width+(end.width-target.width)*.34)+'px',height:(target.height+(end.height-target.height)*.34)+'px',offset:.34},
+  {left:(target.left+tx*.72)+'px',top:(target.top+ty*.72)+'px',width:(target.width+(end.width-target.width)*.72)+'px',height:(target.height+(end.height-target.height)*.72)+'px',offset:.72},
+  {left:end.left+'px',top:end.top+'px',width:end.width+'px',height:end.height+'px',offset:1}
+ ],{duration,easing,fill:'forwards'});
+ const oldAnim=oldScene.animate([
+  {transform:'translate(0px,0px) scale(1,1)',offset:0},
+  {transform:'translate('+target.left+'px,'+target.top+'px) scale('+(target.width/stage.clientWidth)+','+(target.height/stage.clientHeight)+')',offset:1}
+ ],{duration,easing,fill:'forwards'});
+ await Promise.all([revealAnim.finished.catch(()=>{}),oldAnim.finished.catch(()=>{})]);
+ oldAnim.cancel();revealAnim.cancel();
+ index=newIndex;loadedCurrent=next;
+ const fresh=makeScene(index,following);
+ oldScene.remove();reveal.replaceWith(fresh);fresh.id='scene';
+ // Restore the reveal node for the next transition.
+ const newReveal=document.createElement('div');newReveal.className='reveal';newReveal.id='reveal';newReveal.hidden=true;
+ const newRevealImg=document.createElement('img');newRevealImg.id='revealImage';newRevealImg.alt='';newReveal.appendChild(newRevealImg);
+ fresh.after(newReveal);
+ window.__vertigoScene=fresh;
+ // Refresh references used by the next scroll.
+ revealRef=newReveal;revealImageRef=newRevealImg;
+ busy=false;
+ getImage((index+2)%TOTAL);
+}
+let revealRef=reveal,revealImageRef=revealImage;
+// Keep transition references current after each completed frame.
+const originalAdvance=advance;
+async function step(){if(busy)return;await originalAdvance()}
+function onWheel(e){
+ if(e.deltaY<=2)return;e.preventDefault();
+ const now=performance.now();if(now-lastWheel<520)return;lastWheel=now;step();
+}
+stage.addEventListener('wheel',onWheel,{passive:false});
+stage.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});
+stage.addEventListener('touchend',e=>{if(touchY-e.changedTouches[0].clientY>24)step()},{passive:true});
+window.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();step()}});
+async function init(){
+ try{
+  const response=await fetch('./positions.json',{cache:'no-store'});
+  if(response.ok){const data=await response.json();if(Array.isArray(data.transitions)&&data.transitions.length===TOTAL)transitions=data.transitions}
+ }catch(e){}
+ loadedCurrent=await getImage(0);
+ if(!loadedCurrent)return;
+ const following=await getImage(1);
+ const first=makeScene(0,following);scene.replaceWith(first);first.id='scene';window.__vertigoScene=first;
+ getImage(2);
+}
+window.addEventListener('resize',()=>{if(!busy)location.reload()});
+init();
 })();
 </script>
 </body>
