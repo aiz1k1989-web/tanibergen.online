@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>VERTIGO LAB / tanibergen.online</title>
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#111;--line:#303030;--muted:#858585;--fg:#eee}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font:13px/1.45 Arial,Helvetica,sans-serif}
+button,input{font:inherit}
+button{color:var(--fg);background:#191919;border:1px solid #3b3b3b;padding:10px 13px;cursor:pointer}
+button:hover{background:#252525}button:disabled{opacity:.35;cursor:default}
+a{color:inherit;text-decoration:none}
+header{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;letter-spacing:.13em;text-transform:uppercase;font-size:10px}
+header span:last-child{color:var(--muted)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:calc(100vh - 58px)}
+.workspace{padding:18px;display:flex;flex-direction:column;min-width:0}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sequence{display:flex;align-items:center;gap:8px}
+.sequence strong{font-size:12px;font-weight:500;letter-spacing:.08em}
+.sequence small{color:var(--muted);font-size:10px}
+.canvas-wrap{position:relative;flex:1;min-height:360px;display:grid;place-items:center;background:#050505;border:1px solid #222;overflow:hidden}
+.canvas{position:relative;width:min(100%,calc((100vh - 180px)*1.55));height:min(100%,calc(100vh - 180px));max-height:calc(100vh - 180px);aspect-ratio:1.5;overflow:hidden;background:#090909;touch-action:none;user-select:none}
+.base-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.portal{position:absolute;border:1px solid #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.12);cursor:move;touch-action:none;overflow:hidden;background:#111}
+.portal img{width:100%;height:100%;display:block;object-fit:cover;pointer-events:none}
+.portal:after{content:"";position:absolute;inset:0;border:1px solid rgba(0,0,0,.45);pointer-events:none}
+.handle{position:absolute;right:0;bottom:0;width:18px;height:18px;background:#fff;cursor:nwse-resize;z-index:2;touch-action:none}
+.canvas-label{position:absolute;left:9px;top:9px;background:rgba(0,0,0,.7);padding:5px 7px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+.legend{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px;padding-top:10px}
+.side{border-left:1px solid var(--line);padding:20px;background:var(--panel);display:flex;flex-direction:column;gap:18px}
+.section-title{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#aaa}
+.field{display:grid;gap:8px}
+.field label{display:flex;justify-content:space-between;color:#aaa;font-size:11px}
+.field output{color:#fff;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#eee}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nav button{width:100%}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.status{font-size:10px;color:#aaa;min-height:28px;border-top:1px solid var(--line);padding-top:12px;line-height:1.5}
+.status.good{color:#b8d6b8}.status.bad{color:#e3a3a3}
+.token{width:100%;background:#090909;color:#eee;border:1px solid #3b3b3b;padding:10px}
+.note{font-size:10px;color:var(--muted);line-height:1.55}
+.file-actions{display:flex;gap:8px;flex-wrap:wrap}
+.file-actions button{flex:1}
+@media(max-width:850px){main{grid-template-columns:1fr}.side{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr}.side .wide{grid-column:1/-1}.workspace{min-height:62vh}.canvas-wrap{min-height:320px}.canvas{width:100%;height:auto;max-height:65vh;aspect-ratio:1.1}}
+@media(max-width:520px){header{padding:0 14px}.workspace{padding:12px}.side{padding:15px;grid-template-columns:1fr}.side .wide{grid-column:auto}.canvas-wrap{min-height:280px}.canvas{aspect-ratio:1/1.2}.toolbar{align-items:flex-start}.legend{font-size:9px}}
+</style>
+</head>
+<body>
+<header><a href="./index.html">tanibergen.online / VERTIGO LAB</a><span>98 FRAME COMPOSITION EDITOR</span></header>
+<main>
+<section class="workspace">
+  <div class="toolbar">
+    <div class="sequence"><strong id="transitionTitle">01 → 02</strong><small id="transitionMeta">transition 1 of 98</small></div>
+    <div class="nav"><button id="prev">Previous</button><button id="next">Next</button></div>
+  </div>
+  <div class="canvas-wrap">
+    <div class="canvas" id="canvas">
+      <img class="base-photo" id="basePhoto" alt="">
+      <div class="portal" id="portal"><img id="portalPhoto" alt=""><span class="handle" id="handle"></span></div>
+      <div class="canvas-label">Drag the inner frame to position it</div>
+    </div>
+  </div>
+  <div class="legend"><span>BACKGROUND: CURRENT PHOTO</span><span>INNER FRAME: NEXT PHOTO</span></div>
+</section>
+<aside class="side">
+  <div class="section-title wide">Composition / transition</div>
+  <div class="field"><label for="xRange">Horizontal position <output id="xOut">50%</output></label><input id="xRange" type="range" min="5" max="95" step=".5" value="50"></div>
+  <div class="field"><label for="yRange">Vertical position <output id="yOut">50%</output></label><input id="yRange" type="range" min="5" max="95" step=".5" value="50"></div>
+  <div class="field"><label for="wRange">Inner frame width <output id="wOut">24%</output></label><input id="wRange" type="range" min="8" max="65" step=".5" value="24"></div>
+  <div class="field wide"><label>Current transition</label><div class="actions"><button id="center">Center frame</button><button id="preview">Preview zoom</button></div></div>
+  <div class="section-title wide">Save your work</div>
+  <div class="file-actions wide"><button id="export">Export JSON</button><button id="import">Import JSON</button><input id="fileInput" type="file" accept="application/json" hidden></div>
+  <div class="field wide"><label for="token">GitHub token <span>optional</span></label><input class="token" id="token" type="password" autocomplete="off" placeholder="Fine-grained token"></div>
+  <div class="field wide"><button id="saveGithub">Save positions to GitHub</button><p class="note">Use a fine-grained GitHub token restricted to this repository with Contents: Read and write. The token stays only in this page's memory and is not saved. Your composition is also auto-saved in this browser.</p></div>
+  <div class="status wide" id="status">Loading the 98 photographs...</div>
+  <p class="note wide">Each transition controls where the next photograph sits inside the current one. Work through the sequence in order. The last frame loops back to frame 01.</p>
+</aside>
+</main>
+<script>
+(() => {
+  const TOTAL=98, REPO='aiz1k1989-web/tanibergen.online', BRANCH='vertigo', CONFIG='vertigo/positions.json';
+  const paths=[];
+  [20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../previews/photos/'+(g+1)+'/'+n+'.webp')});
+  const $=id=>document.getElementById(id);
+  const canvas=$('canvas'),portal=$('portal'),base=$('basePhoto'),inner=$('portalPhoto');
+  let index=0,drag=null,config={version:1,project:'VERTIGO',transitions:[]},sha=null;
+  const defaults=()=>Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:24}));
+  function say(message,type=''){ $('status').textContent=message;$('status').className='status wide '+type; }
+  function current(){return config.transitions[index]}
+  function render(){
+    const t=current(),next=(index+1)%TOTAL;
+    $('transitionTitle').textContent=String(index+1).padStart(2,'0')+' → '+String(next+1).padStart(2,'0');
+    $('transitionMeta').textContent='transition '+(index+1)+' of '+TOTAL;
+    base.src=paths[index];inner.src=paths[next];
+    $('xRange').value=t.x;$('yRange').value=t.y;$('wRange').value=t.w;
+    $('xOut').textContent=t.x+'%';$('yOut').textContent=t.y+'%';$('wOut').textContent=t.w+'%';
+    place();$('prev').disabled=index===0;$('next').disabled=index===TOTAL-1;
+    localStorage.setItem('vertigo-lab-v1',JSON.stringify(config));
+  }
+  function place(){
+    const t=current(),cw=canvas.clientWidth,ch=canvas.clientHeight;
+    const width=cw*t.w/100;
+    const natural=inner.naturalWidth&&inner.naturalHeight?inner.naturalWidth/inner.naturalHeight:1;
+    const height=Math.min(ch*.72,width/natural);
+    portal.style.width=width+'px';portal.style.height=height+'px';
+    portal.style.left=(cw*t.x/100-width/2)+'px';portal.style.top=(ch*t.y/100-height/2)+'px';
+  }
+  function set(key,value){
+    current()[key]=Math.round(value*2)/2;
+    $('xOut').textContent=current().x+'%';$('yOut').textContent=current().y+'%';$('wOut').textContent=current().w+'%';
+    place();localStorage.setItem('vertigo-lab-v1',JSON.stringify(config));
+  }
+  ['x','y','w'].forEach(k=>$ (k+'Range').addEventListener('input',e=>set(k,Number(e.target.value))));
+  $('prev').onclick=()=>{if(index>0){index--;render()}};
+  $('next').onclick=()=>{if(index<TOTAL-1){index++;render()}};
+  $('center').onclick=()=>{current().x=50;current().y=50;current().w=24;render()};
+  function pointerDown(e,resize=false){e.preventDefault();drag={resize,startX:e.clientX,startY:e.clientY,x:current().x,y:current().y,w:current().w};(resize? $('handle'):portal).setPointerCapture?.(e.pointerId);portal.setPointerCapture(e.pointerId)}
+  portal.addEventListener('pointerdown',e=>{if(e.target===$('handle'))return;pointerDown(e,false)});
+  $('handle').addEventListener('pointerdown',e=>{e.stopPropagation();pointerDown(e,true)});
+  portal.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const dx=(e.clientX-drag.startX)/canvas.clientWidth*100,dy=(e.clientY-drag.startY)/canvas.clientHeight*100;
+    if(drag.resize)set('w',Math.max(8,Math.min(65,drag.w+dx*1.7)));
+    else {set('x',Math.max(5,Math.min(95,drag.x+dx)));set('y',Math.max(5,Math.min(95,drag.y+dy)))}
+    $('xRange').value=current().x;$('yRange').value=current().y;$('wRange').value=current().w;
+  });
+  portal.addEventListener('pointerup',()=>drag=null);portal.addEventListener('pointercancel',()=>drag=null);
+  $('preview').onclick=()=>{
+    const t=current(),cw=canvas.clientWidth,ch=canvas.clientHeight;
+    const x=t.x/100*cw,y=t.y/100*ch;
+    const a=base.animate([{transform:'scale(1)',transformOrigin:x+'px '+y+'px'},{transform:'scale(.2)',transformOrigin:x+'px '+y+'px'}],{duration:900,easing:'steps(10,end)'});
+    portal.animate([{transform:'scale(1)'},{transform:'scale(1.5)'}],{duration:900,easing:'steps(10,end)'});
+    a.onfinish=()=>{base.style.transform='';};
+  };
+  function exportFile(){
+    const blob=new Blob([JSON.stringify(config,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='vertigo-positions.json';a.click();URL.revokeObjectURL(url);
+    say('JSON exported. Keep this file as a backup or send it to me.','good');
+  }
+  $('export').onclick=exportFile;
+  $('import').onclick=()=>$('fileInput').click();
+  $('fileInput').onchange=async e=>{
+    const f=e.target.files[0];if(!f)return;
+    try{const parsed=JSON.parse(await f.text());if(!Array.isArray(parsed.transitions)||parsed.transitions.length!==TOTAL)throw Error('Expected exactly 98 transitions');config=parsed;index=0;render();say('Imported 98 transition settings.','good')}
+    catch(err){say('Could not import: '+err.message,'bad')}
+    e.target.value='';
+  };
+  function b64(s){return btoa(unescape(encodeURIComponent(s)))}
+  $('saveGithub').onclick=async()=>{
+    const token=$('token').value.trim();if(!token){say('Enter a fine-grained GitHub token first.','bad');return}
+    $('saveGithub').disabled=true;say('Connecting to GitHub...');
+    try{
+      const headers={Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+      const url='https://api.github.com/repos/'+REPO+'/contents/'+CONFIG+'?ref='+BRANCH;
+      const get=await fetch(url,{headers});
+      let body={message:'Save VERTIGO composition positions',content:b64(JSON.stringify(config,null,2)),branch:BRANCH};
+      if(get.ok){const data=await get.json();body.sha=data.sha}
+      else if(get.status!==404)throw Error('GitHub read failed: '+get.status+' '+(await get.text()).slice(0,180));
+      const put=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG,{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!put.ok)throw Error('GitHub save failed: '+put.status+' '+(await put.text()).slice(0,240));
+      const result=await put.json();sha=result.content.sha;$('token').value='';say('Saved to vertigo/positions.json in the vertigo branch. Commit: '+result.commit.sha.slice(0,7),'good');
+    }catch(err){say(err.message,'bad')}
+    finally{$('saveGithub').disabled=false}
+  };
+  async function init(){
+    config.transitions=defaults();
+    try{
+      const saved=localStorage.getItem('vertigo-lab-v1');
+      if(saved){const parsed=JSON.parse(saved);if(parsed.transitions?.length===TOTAL)config=parsed}
+      else{
+        const res=await fetch('./positions.json',{cache:'no-store'});
+        if(res.ok){const parsed=await res.json();if(parsed.transitions?.length===TOTAL)config=parsed}
+      }
+    }catch(e){}
+    render();say('Ready. Drag the next photo inside the current frame, or use the sliders. Changes auto-save in this browser.','good');
+  }
+  window.addEventListener('resize',place);
+  inner.addEventListener('load',place);
+  init();
+})();
+</script>
+</body>
+</html>
