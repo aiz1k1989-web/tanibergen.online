@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="VERTIGO - a continuous photographic zoom by Aizat Tanibergen.">
+<title>VERTIGO / tanibergen.online</title>
+<style>
+:root{color-scheme:dark;--bg:#050505;--fg:#eee;--muted:#777}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:Arial,Helvetica,sans-serif}
+body{overscroll-behavior:none;touch-action:pan-y}
+.top{position:fixed;z-index:10;top:0;left:0;right:0;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.top a{color:inherit;text-decoration:none;pointer-events:auto}
+.top span{color:#999}
+.stage{position:fixed;inset:0;overflow:hidden;background:#050505;isolation:isolate}
+.frame{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;will-change:transform,opacity;transform:translateZ(0)}
+.frame img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;pointer-events:none;will-change:transform}
+.frame.current{z-index:2}
+.frame.next{z-index:1;opacity:0}
+.frame.leaving{z-index:3;animation:zoomAway .72s cubic-bezier(.62,.02,.82,.48) both}
+.frame.arriving{z-index:2;animation:zoomIn .72s cubic-bezier(.16,.72,.22,1) both}
+@keyframes zoomAway{0%{transform:scale(1);opacity:1}18%{transform:scale(.88) translate3d(-.4%,.3%,0)}31%{transform:scale(.73) translate3d(.5%,-.3%,0)}48%{transform:scale(.51) translate3d(-.25%,.25%,0)}66%{transform:scale(.29) translate3d(.3%,-.2%,0);opacity:.94}82%{transform:scale(.14);opacity:.56}100%{transform:scale(.055);opacity:0}}
+@keyframes zoomIn{0%{transform:scale(2.3);opacity:0}18%{transform:scale(1.92);opacity:.55}32%{transform:scale(1.57);opacity:.82}49%{transform:scale(1.27);opacity:1}67%{transform:scale(1.1)}82%{transform:scale(1.035)}100%{transform:scale(1);opacity:1}}
+.frame img{animation:microJitter .72s steps(1,end) both}
+@keyframes microJitter{0%,100%{translate:0 0}16%{translate:-1px 1px}32%{translate:1px -1px}48%{translate:-1px 0}64%{translate:1px 1px}80%{translate:0 -1px}}
+.hud{position:fixed;z-index:9;left:24px;right:24px;bottom:22px;display:flex;align-items:center;gap:16px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#aaa;pointer-events:none}
+.track{height:1px;background:#333;flex:1;overflow:hidden}
+.track i{display:block;height:100%;width:1%;background:#ddd;transition:width .3s ease}
+.counter{min-width:66px;text-align:right;color:#eee;font-variant-numeric:tabular-nums}
+.hint{position:fixed;z-index:9;left:50%;bottom:54px;transform:translateX(-50%);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:#666;white-space:nowrap;pointer-events:none}
+.start{position:fixed;z-index:8;inset:0;display:grid;place-items:center;background:#050505;transition:opacity .5s ease,visibility .5s}
+.start.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.start button{appearance:none;border:1px solid #444;background:transparent;color:#eee;padding:15px 22px;font:inherit;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+.start button:focus-visible{outline:1px solid white;outline-offset:5px}
+@media(max-width:600px){.top{padding:17px 16px}.hud{left:16px;right:16px;bottom:17px}.hint{bottom:47px}.frame img{object-fit:contain}}
+@media(prefers-reduced-motion:reduce){.frame.leaving,.frame.arriving,.frame img{animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header class="top"><a href="../">tanibergen.online</a><span>VERTIGO / 01—98</span></header>
+<main class="stage" id="stage" aria-label="Vertigo photographic sequence">
+<div class="frame current" id="current"><img id="currentImage" alt="Photograph in the Vertigo sequence" fetchpriority="high"></div>
+<div class="frame next" id="next"><img id="nextImage" alt="" decoding="async"></div>
+</main>
+<div class="start" id="start"><button id="begin" type="button">Enter Vertigo</button></div>
+<div class="hint" id="hint">Scroll to descend / swipe up</div>
+<footer class="hud"><span>FRAME</span><div class="track"><i id="progress"></i></div><span class="counter" id="counter">01 / 98</span></footer>
+<script>
+(() => {
+  'use strict';
+  const TOTAL = 98;
+  const paths = [];
+  [20,20,20,20,18].forEach((count, group) => {
+    for(let n=1;n<=count;n++) paths.push('../previews/photos/'+(group+1)+'/'+n+'.webp');
+  });
+  const stage=document.getElementById('stage');
+  const current=document.getElementById('current');
+  const next=document.getElementById('next');
+  const currentImage=document.getElementById('currentImage');
+  const nextImage=document.getElementById('nextImage');
+  const counter=document.getElementById('counter');
+  const progress=document.getElementById('progress');
+  const start=document.getElementById('start');
+  const hint=document.getElementById('hint');
+  let index=0, busy=false, started=false, lastWheel=0, touchY=0;
+  const focal=[];
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function analyse(img){
+    try{
+      const c=document.createElement('canvas'),ctx=c.getContext('2d',{willReadFrequently:true});
+      c.width=64;c.height=64;ctx.drawImage(img,0,0,64,64);
+      const d=ctx.getImageData(0,0,64,64).data, cells=[];
+      for(let gy=1;gy<7;gy++) for(let gx=1;gx<7;gx++){
+        let sum=0,sat=0,edge=0,count=0;
+        for(let y=gy*8;y<(gy+1)*8;y++) for(let x=gx*8;x<(gx+1)*8;x++){
+          const p=(y*64+x)*4,r=d[p],g=d[p+1],b=d[p+2];
+          const lum=(r*.299+g*.587+b*.114)/255;
+          const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+          sum+=lum;sat+=(mx-mn)/255;
+          const q=(y*64+x+1)*4, v=((y+1)*64+x)*4;
+          edge+=Math.abs(lum-(d[q]*.299+d[q+1]*.587+d[q+2]*.114)/255)+Math.abs(lum-(d[v]*.299+d[v+1]*.587+d[v+2]*.114)/255);
+          count++;
+        }
+        const mean=sum/count, contrast=Math.abs(mean-.48);
+        cells.push({x:(gx+.5)/8,y:(gy+.5)/8,score:edge/count*.58+sat/count*.22+contrast*.20});
+      }
+      cells.sort((a,b)=>b.score-a.score);
+      return cells[0]||{x:.5,y:.5};
+    }catch(e){return{x:.5,y:.5}}
+  }
+  function preload(i){
+    const im=new Image();im.decoding='async';im.src=paths[i];
+    return im.decode().then(()=>{focal[i]=analyse(im);return im;}).catch(()=>im);
+  }
+  function update(){
+    counter.textContent=String(index+1).padStart(2,'0')+' / '+TOTAL;
+    progress.style.width=((index+1)/TOTAL*100)+'%';
+    document.querySelector('.top span').textContent='VERTIGO / '+String(index+1).padStart(2,'0')+'—'+TOTAL;
+  }
+  async function advance(){
+    if(busy||!started)return;
+    if(index>=TOTAL-1){index=0;update();currentImage.src=paths[0];return;}
+    busy=true;
+    const from=index,to=index+1;
+    const nextLoaded=await preload(to);
+    const point=focal[from]||{x:.5,y:.5};
+    current.style.transformOrigin=(point.x*100)+'% '+(point.y*100)+'%';
+    next.style.transformOrigin=(point.x*100)+'% '+(point.y*100)+'%';
+    nextImage.src=paths[to];
+    next.style.opacity='1';
+    current.classList.remove('leaving');next.classList.remove('arriving');
+    void current.offsetWidth;
+    current.classList.add('leaving');next.classList.add('arriving');
+    window.setTimeout(()=>{
+      index=to;
+      currentImage.src=paths[index];
+      current.className='frame current';
+      current.style.transformOrigin='50% 50%';
+      next.className='frame next';
+      next.style.opacity='0';next.style.transformOrigin='50% 50%';
+      update();busy=false;
+      if(index<TOTAL-1) preload(index+1);
+    },reduced?30:740);
+  }
+  function begin(){
+    if(started)return;started=true;start.classList.add('hidden');
+    currentImage.src=paths[0];preload(0).then(()=>preload(1));preload(1);
+  }
+  document.getElementById('begin').addEventListener('click',begin);
+  window.addEventListener('wheel',e=>{
+    if(!started){return}
+    if(e.deltaY>8){e.preventDefault();const now=Date.now();if(now-lastWheel>520){lastWheel=now;advance();}}
+  },{passive:false});
+  stage.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY;},{passive:true});
+  stage.addEventListener('touchend',e=>{if(touchY-e.changedTouches[0].clientY>30)advance();},{passive:true});
+  window.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();if(!started)begin();else advance();}});
+  update();
+})();
+</script>
+</body>
+</html>
