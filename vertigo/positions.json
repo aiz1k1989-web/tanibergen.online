@@ -1,791 +1,693 @@
 {
   "version": 1,
   "project": "VERTIGO",
-  "description": "Hand-art-directed portal positions for the 98-frame VERTIGO sequence. Coordinates are normalized to each original photograph; each nested image keeps its original aspect ratio.",
+  "description": "Placement anchors for the recursive VERTIGO sequence. Each transition embeds the complete previous scene inside the next photograph. Coordinates are normalized to the next photograph; width is a percentage of its displayed width. All source images retain their original aspect ratios.",
   "transitions": [
     {
       "from": 1,
       "to": 2,
       "x": 78,
       "y": 23,
-      "w": 9.6,
-      "manual": true
+      "w": 9.6
     },
     {
       "from": 2,
       "to": 3,
       "x": 74,
       "y": 20,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 3,
       "to": 4,
       "x": 20,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 4,
       "to": 5,
       "x": 84,
       "y": 20,
-      "w": 9.7,
-      "manual": true
+      "w": 9.7
     },
     {
       "from": 5,
       "to": 6,
       "x": 80,
       "y": 86,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 6,
       "to": 7,
       "x": 82,
       "y": 80,
-      "w": 8.8,
-      "manual": true
+      "w": 8.8
     },
     {
       "from": 7,
       "to": 8,
       "x": 20,
       "y": 80,
-      "w": 9.5,
-      "manual": true
+      "w": 9.5
     },
     {
       "from": 8,
       "to": 9,
       "x": 83,
       "y": 80,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 9,
       "to": 10,
       "x": 84,
       "y": 17,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 10,
       "to": 11,
       "x": 18,
       "y": 22,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 11,
       "to": 12,
       "x": 82,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 12,
       "to": 13,
       "x": 18,
       "y": 84,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 13,
       "to": 14,
       "x": 24,
       "y": 18,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 14,
       "to": 15,
       "x": 84,
       "y": 82,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 15,
       "to": 16,
       "x": 20,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 16,
       "to": 17,
       "x": 80,
       "y": 22,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 17,
       "to": 18,
       "x": 17,
       "y": 28,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 18,
       "to": 19,
       "x": 82,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 19,
       "to": 20,
       "x": 18,
       "y": 20,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 20,
       "to": 21,
       "x": 80,
       "y": 22,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 21,
       "to": 22,
       "x": 80,
       "y": 20,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 22,
       "to": 23,
       "x": 82,
       "y": 80,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 23,
       "to": 24,
       "x": 82,
       "y": 20,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 24,
       "to": 25,
       "x": 80,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 25,
       "to": 26,
       "x": 84,
       "y": 20,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 26,
       "to": 27,
       "x": 82,
       "y": 82,
-      "w": 9.5,
-      "manual": true
+      "w": 9.5
     },
     {
       "from": 27,
       "to": 28,
       "x": 82,
       "y": 82,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 28,
       "to": 29,
       "x": 20,
       "y": 21,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 29,
       "to": 30,
       "x": 80,
       "y": 22,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 30,
       "to": 31,
       "x": 82,
       "y": 20,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 31,
       "to": 32,
       "x": 80,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 32,
       "to": 33,
       "x": 80,
       "y": 20,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 33,
       "to": 34,
       "x": 18,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 34,
       "to": 35,
       "x": 80,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 35,
       "to": 36,
       "x": 18,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 36,
       "to": 37,
       "x": 80,
       "y": 82,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 37,
       "to": 38,
       "x": 82,
       "y": 17,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 38,
       "to": 39,
       "x": 82,
       "y": 17,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 39,
       "to": 40,
       "x": 80,
       "y": 16,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 40,
       "to": 41,
       "x": 82,
       "y": 19,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 41,
       "to": 42,
       "x": 82,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 42,
       "to": 43,
       "x": 72,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 43,
       "to": 44,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 44,
       "to": 45,
       "x": 18,
       "y": 20,
-      "w": 9.5,
-      "manual": true
+      "w": 9.5
     },
     {
       "from": 45,
       "to": 46,
       "x": 18,
       "y": 20,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 46,
       "to": 47,
       "x": 80,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 47,
       "to": 48,
       "x": 82,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 48,
       "to": 49,
       "x": 80,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 49,
       "to": 50,
       "x": 80,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 50,
       "to": 51,
       "x": 80,
       "y": 19,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 51,
       "to": 52,
       "x": 20,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 52,
       "to": 53,
       "x": 80,
       "y": 18,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 53,
       "to": 54,
       "x": 84,
       "y": 20,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 54,
       "to": 55,
       "x": 82,
       "y": 82,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 55,
       "to": 56,
       "x": 82,
       "y": 24,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 56,
       "to": 57,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 57,
       "to": 58,
       "x": 82,
       "y": 82,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 58,
       "to": 59,
       "x": 82,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 59,
       "to": 60,
       "x": 20,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 60,
       "to": 61,
       "x": 82,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 61,
       "to": 62,
       "x": 82,
       "y": 17,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 62,
       "to": 63,
       "x": 82,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 63,
       "to": 64,
       "x": 20,
       "y": 18,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 64,
       "to": 65,
       "x": 82,
       "y": 82,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 65,
       "to": 66,
       "x": 82,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 66,
       "to": 67,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 67,
       "to": 68,
       "x": 80,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 68,
       "to": 69,
       "x": 82,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 69,
       "to": 70,
       "x": 18,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 70,
       "to": 71,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 71,
       "to": 72,
       "x": 84,
       "y": 18,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 72,
       "to": 73,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 73,
       "to": 74,
       "x": 18,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 74,
       "to": 75,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 75,
       "to": 76,
       "x": 80,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 76,
       "to": 77,
       "x": 18,
       "y": 20,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 77,
       "to": 78,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 78,
       "to": 79,
       "x": 20,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 79,
       "to": 80,
       "x": 18,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 80,
       "to": 81,
       "x": 20,
       "y": 82,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 81,
       "to": 82,
       "x": 80,
       "y": 20,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 82,
       "to": 83,
       "x": 18,
       "y": 18,
-      "w": 9,
-      "manual": true
+      "w": 9
     },
     {
       "from": 83,
       "to": 84,
       "x": 82,
       "y": 82,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 84,
       "to": 85,
       "x": 82,
       "y": 18,
-      "w": 9.4,
-      "manual": true
+      "w": 9.4
     },
     {
       "from": 85,
       "to": 86,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 86,
       "to": 87,
       "x": 18,
       "y": 82,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 87,
       "to": 88,
       "x": 20,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 88,
       "to": 89,
       "x": 18,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 89,
       "to": 90,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 90,
       "to": 91,
       "x": 18,
       "y": 50,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 91,
       "to": 92,
       "x": 18,
       "y": 18,
-      "w": 9.1,
-      "manual": true
+      "w": 9.1
     },
     {
       "from": 92,
       "to": 93,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 93,
       "to": 94,
       "x": 18,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 94,
       "to": 95,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 95,
       "to": 96,
       "x": 82,
       "y": 18,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 96,
       "to": 97,
       "x": 82,
       "y": 18,
-      "w": 9.3,
-      "manual": true
+      "w": 9.3
     },
     {
       "from": 97,
       "to": 98,
       "x": 82,
       "y": 80,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     },
     {
       "from": 98,
       "to": 1,
       "x": 82,
       "y": 82,
-      "w": 9.2,
-      "manual": true
+      "w": 9.2
     }
   ]
 }
