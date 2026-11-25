@@ -1,791 +1,791 @@
 {
   "version": 1,
   "project": "VERTIGO",
-  "description": "Automatic framing seeds for all 98 transitions. The runtime analyzes each original preview and refines the frame placement to a low-detail region. x/y/w are fallback values in percent.",
+  "description": "Hand-art-directed portal positions for the 98-frame VERTIGO sequence. Coordinates are normalized to each original photograph; each nested image keeps its original aspect ratio.",
   "transitions": [
     {
       "from": 1,
       "to": 2,
-      "x": 36.7,
-      "y": 41.1,
-      "w": 8.9,
-      "auto": true
+      "x": 78,
+      "y": 23,
+      "w": 9.6,
+      "manual": true
     },
     {
       "from": 2,
       "to": 3,
-      "x": 73.5,
-      "y": 18.9,
-      "w": 13.3,
-      "auto": true
+      "x": 74,
+      "y": 20,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 3,
       "to": 4,
-      "x": 67.2,
-      "y": 83.9,
-      "w": 12.1,
-      "auto": true
+      "x": 20,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 4,
       "to": 5,
-      "x": 80,
-      "y": 25.5,
-      "w": 12.1,
-      "auto": true
+      "x": 84,
+      "y": 20,
+      "w": 9.7,
+      "manual": true
     },
     {
       "from": 5,
       "to": 6,
-      "x": 51.4,
-      "y": 76.8,
+      "x": 80,
+      "y": 86,
       "w": 9,
-      "auto": true
+      "manual": true
     },
     {
       "from": 6,
       "to": 7,
-      "x": 53.4,
-      "y": 77.8,
-      "w": 11.3,
-      "auto": true
+      "x": 82,
+      "y": 80,
+      "w": 8.8,
+      "manual": true
     },
     {
       "from": 7,
       "to": 8,
-      "x": 41,
-      "y": 39.5,
-      "w": 10.3,
-      "auto": true
+      "x": 20,
+      "y": 80,
+      "w": 9.5,
+      "manual": true
     },
     {
       "from": 8,
       "to": 9,
-      "x": 27.6,
-      "y": 80.6,
-      "w": 13.9,
-      "auto": true
+      "x": 83,
+      "y": 80,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 9,
       "to": 10,
-      "x": 29.7,
-      "y": 29.7,
-      "w": 12,
-      "auto": true
+      "x": 84,
+      "y": 17,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 10,
       "to": 11,
-      "x": 14,
-      "y": 43.1,
-      "w": 9.2,
-      "auto": true
+      "x": 18,
+      "y": 22,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 11,
       "to": 12,
-      "x": 68,
-      "y": 32.3,
-      "w": 8.9,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 12,
       "to": 13,
-      "x": 38.1,
-      "y": 66.4,
-      "w": 13.2,
-      "auto": true
+      "x": 18,
+      "y": 84,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 13,
       "to": 14,
-      "x": 44.2,
-      "y": 81,
-      "w": 10.6,
-      "auto": true
+      "x": 24,
+      "y": 18,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 14,
       "to": 15,
-      "x": 68.9,
-      "y": 25.2,
-      "w": 13,
-      "auto": true
+      "x": 84,
+      "y": 82,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 15,
       "to": 16,
-      "x": 83.1,
-      "y": 70.3,
-      "w": 12.3,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 16,
       "to": 17,
-      "x": 46.4,
-      "y": 79.9,
-      "w": 11.3,
-      "auto": true
+      "x": 80,
+      "y": 22,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 17,
       "to": 18,
-      "x": 50.4,
-      "y": 27.2,
-      "w": 8.8,
-      "auto": true
+      "x": 17,
+      "y": 28,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 18,
       "to": 19,
-      "x": 68.5,
-      "y": 21.2,
-      "w": 10,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 19,
       "to": 20,
-      "x": 68.2,
-      "y": 62.4,
-      "w": 9.6,
-      "auto": true
+      "x": 18,
+      "y": 20,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 20,
       "to": 21,
-      "x": 69.5,
-      "y": 67.5,
-      "w": 10.1,
-      "auto": true
+      "x": 80,
+      "y": 22,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 21,
       "to": 22,
-      "x": 33.8,
-      "y": 61.4,
-      "w": 8.7,
-      "auto": true
+      "x": 80,
+      "y": 20,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 22,
       "to": 23,
-      "x": 36.8,
-      "y": 85.3,
-      "w": 9.2,
-      "auto": true
+      "x": 82,
+      "y": 80,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 23,
       "to": 24,
-      "x": 17.3,
-      "y": 42.7,
-      "w": 11.5,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 24,
       "to": 25,
-      "x": 83.5,
-      "y": 84.5,
-      "w": 13.2,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 25,
       "to": 26,
-      "x": 44,
-      "y": 69.4,
-      "w": 12.3,
-      "auto": true
+      "x": 84,
+      "y": 20,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 26,
       "to": 27,
-      "x": 57.9,
-      "y": 31.8,
-      "w": 9,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.5,
+      "manual": true
     },
     {
       "from": 27,
       "to": 28,
-      "x": 22.4,
-      "y": 81.4,
-      "w": 13.5,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 28,
       "to": 29,
-      "x": 44.3,
-      "y": 48.1,
-      "w": 10.1,
-      "auto": true
+      "x": 20,
+      "y": 21,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 29,
       "to": 30,
-      "x": 47.5,
-      "y": 23.9,
-      "w": 11.3,
-      "auto": true
+      "x": 80,
+      "y": 22,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 30,
       "to": 31,
-      "x": 72.1,
-      "y": 50.1,
-      "w": 9.9,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 31,
       "to": 32,
-      "x": 35.5,
-      "y": 42.8,
-      "w": 13.3,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 32,
       "to": 33,
-      "x": 34.4,
-      "y": 76.2,
-      "w": 10,
-      "auto": true
+      "x": 80,
+      "y": 20,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 33,
       "to": 34,
-      "x": 67.7,
-      "y": 21.1,
-      "w": 8.6,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 34,
       "to": 35,
-      "x": 39,
-      "y": 18.4,
-      "w": 13.3,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 35,
       "to": 36,
-      "x": 23.4,
-      "y": 75.8,
+      "x": 18,
+      "y": 18,
       "w": 9.3,
-      "auto": true
+      "manual": true
     },
     {
       "from": 36,
       "to": 37,
-      "x": 12.5,
-      "y": 83.6,
-      "w": 11.5,
-      "auto": true
+      "x": 80,
+      "y": 82,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 37,
       "to": 38,
-      "x": 18.3,
-      "y": 27.2,
-      "w": 10.5,
-      "auto": true
+      "x": 82,
+      "y": 17,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 38,
       "to": 39,
-      "x": 63.3,
-      "y": 69.5,
-      "w": 12.6,
-      "auto": true
+      "x": 82,
+      "y": 17,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 39,
       "to": 40,
-      "x": 58.8,
-      "y": 35.8,
-      "w": 11,
-      "auto": true
+      "x": 80,
+      "y": 16,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 40,
       "to": 41,
-      "x": 14.9,
-      "y": 16,
-      "w": 11.9,
-      "auto": true
+      "x": 82,
+      "y": 19,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 41,
       "to": 42,
-      "x": 75,
-      "y": 50.8,
-      "w": 8.5,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 42,
       "to": 43,
-      "x": 71.4,
-      "y": 49.6,
+      "x": 72,
+      "y": 18,
       "w": 9.4,
-      "auto": true
+      "manual": true
     },
     {
       "from": 43,
       "to": 44,
-      "x": 45.2,
-      "y": 80.9,
-      "w": 8.7,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 44,
       "to": 45,
-      "x": 66.2,
-      "y": 44.5,
+      "x": 18,
+      "y": 20,
       "w": 9.5,
-      "auto": true
+      "manual": true
     },
     {
       "from": 45,
       "to": 46,
-      "x": 49.3,
-      "y": 18.4,
-      "w": 9.6,
-      "auto": true
+      "x": 18,
+      "y": 20,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 46,
       "to": 47,
-      "x": 50.6,
-      "y": 76.8,
-      "w": 11,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 47,
       "to": 48,
-      "x": 70.1,
-      "y": 68.8,
-      "w": 13.9,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 48,
       "to": 49,
-      "x": 38.8,
-      "y": 47.3,
-      "w": 12.2,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 49,
       "to": 50,
-      "x": 74.7,
-      "y": 22.6,
-      "w": 10.6,
-      "auto": true
+      "x": 80,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 50,
       "to": 51,
-      "x": 26.5,
-      "y": 56.3,
-      "w": 12.5,
-      "auto": true
+      "x": 80,
+      "y": 19,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 51,
       "to": 52,
-      "x": 49.1,
-      "y": 70,
-      "w": 10.2,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 52,
       "to": 53,
-      "x": 43.7,
-      "y": 52.1,
-      "w": 9.6,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 53,
       "to": 54,
-      "x": 36.9,
-      "y": 51.5,
-      "w": 9.7,
-      "auto": true
+      "x": 84,
+      "y": 20,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 54,
       "to": 55,
-      "x": 19,
-      "y": 64.1,
-      "w": 13.1,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 55,
       "to": 56,
-      "x": 79.5,
-      "y": 65,
-      "w": 11.5,
-      "auto": true
+      "x": 82,
+      "y": 24,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 56,
       "to": 57,
-      "x": 33.5,
-      "y": 29.6,
-      "w": 9.8,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 57,
       "to": 58,
-      "x": 79.9,
-      "y": 62,
-      "w": 13.4,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 58,
       "to": 59,
-      "x": 48.1,
-      "y": 22.4,
-      "w": 9.2,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 59,
       "to": 60,
-      "x": 52.5,
-      "y": 69.4,
-      "w": 11,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 60,
       "to": 61,
-      "x": 76.9,
-      "y": 71,
-      "w": 10.9,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 61,
       "to": 62,
-      "x": 72.2,
-      "y": 20.7,
-      "w": 10.4,
-      "auto": true
+      "x": 82,
+      "y": 17,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 62,
       "to": 63,
-      "x": 56.8,
-      "y": 71.7,
-      "w": 9.8,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 63,
       "to": 64,
-      "x": 60.8,
-      "y": 57.5,
-      "w": 11.1,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 64,
       "to": 65,
-      "x": 28.1,
-      "y": 45.3,
-      "w": 12.1,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 65,
       "to": 66,
-      "x": 79.3,
-      "y": 31,
-      "w": 11.2,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 66,
       "to": 67,
-      "x": 87.4,
-      "y": 58.9,
+      "x": 82,
+      "y": 18,
       "w": 9.2,
-      "auto": true
+      "manual": true
     },
     {
       "from": 67,
       "to": 68,
-      "x": 41.6,
-      "y": 31.4,
-      "w": 13.4,
-      "auto": true
+      "x": 80,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 68,
       "to": 69,
-      "x": 53.6,
-      "y": 70.3,
-      "w": 9.4,
-      "auto": true
+      "x": 82,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 69,
       "to": 70,
-      "x": 14.7,
-      "y": 49.6,
-      "w": 11.6,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 70,
       "to": 71,
-      "x": 34.5,
-      "y": 61.8,
-      "w": 11.1,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 71,
       "to": 72,
-      "x": 64.1,
-      "y": 25.7,
-      "w": 9.9,
-      "auto": true
+      "x": 84,
+      "y": 18,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 72,
       "to": 73,
-      "x": 19,
-      "y": 58.7,
-      "w": 9.1,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 73,
       "to": 74,
-      "x": 54.2,
-      "y": 17.3,
-      "w": 12.6,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 74,
       "to": 75,
-      "x": 76.6,
-      "y": 75.6,
-      "w": 12.7,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 75,
       "to": 76,
-      "x": 70.1,
-      "y": 15,
-      "w": 10.5,
-      "auto": true
+      "x": 80,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 76,
       "to": 77,
-      "x": 41.4,
-      "y": 43.5,
-      "w": 12,
-      "auto": true
+      "x": 18,
+      "y": 20,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 77,
       "to": 78,
-      "x": 71.3,
-      "y": 75.9,
-      "w": 13.3,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 78,
       "to": 79,
-      "x": 54.1,
-      "y": 62.9,
-      "w": 12.3,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 79,
       "to": 80,
-      "x": 75.4,
-      "y": 73.3,
-      "w": 11.9,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 80,
       "to": 81,
-      "x": 85.9,
-      "y": 17.2,
-      "w": 10,
-      "auto": true
+      "x": 20,
+      "y": 82,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 81,
       "to": 82,
-      "x": 40.5,
-      "y": 48.5,
-      "w": 12.6,
-      "auto": true
+      "x": 80,
+      "y": 20,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 82,
       "to": 83,
-      "x": 26.8,
-      "y": 42.8,
-      "w": 13.2,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9,
+      "manual": true
     },
     {
       "from": 83,
       "to": 84,
-      "x": 46.6,
-      "y": 79.3,
-      "w": 8.7,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 84,
       "to": 85,
-      "x": 83.3,
-      "y": 71.5,
-      "w": 11.9,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.4,
+      "manual": true
     },
     {
       "from": 85,
       "to": 86,
-      "x": 13.2,
-      "y": 43.1,
-      "w": 10.7,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 86,
       "to": 87,
-      "x": 40.1,
-      "y": 77,
-      "w": 11.7,
-      "auto": true
+      "x": 18,
+      "y": 82,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 87,
       "to": 88,
-      "x": 87,
-      "y": 81.8,
-      "w": 12.9,
-      "auto": true
+      "x": 20,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 88,
       "to": 89,
-      "x": 30.3,
-      "y": 73.7,
-      "w": 12.5,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 89,
       "to": 90,
-      "x": 58,
-      "y": 76,
-      "w": 10.1,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 90,
       "to": 91,
-      "x": 47.4,
-      "y": 23.1,
-      "w": 10.6,
-      "auto": true
+      "x": 18,
+      "y": 50,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 91,
       "to": 92,
-      "x": 29.9,
-      "y": 20.9,
-      "w": 13.9,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.1,
+      "manual": true
     },
     {
       "from": 92,
       "to": 93,
-      "x": 32.8,
-      "y": 38.3,
-      "w": 10.3,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 93,
       "to": 94,
-      "x": 78.3,
-      "y": 59.2,
-      "w": 13.3,
-      "auto": true
+      "x": 18,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 94,
       "to": 95,
-      "x": 15.1,
-      "y": 78,
-      "w": 9.4,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 95,
       "to": 96,
-      "x": 32.7,
-      "y": 70.2,
-      "w": 10.1,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 96,
       "to": 97,
-      "x": 36.8,
-      "y": 31.8,
-      "w": 13.5,
-      "auto": true
+      "x": 82,
+      "y": 18,
+      "w": 9.3,
+      "manual": true
     },
     {
       "from": 97,
       "to": 98,
-      "x": 23.3,
-      "y": 70.1,
-      "w": 13.2,
-      "auto": true
+      "x": 82,
+      "y": 80,
+      "w": 9.2,
+      "manual": true
     },
     {
       "from": 98,
       "to": 1,
-      "x": 32.7,
-      "y": 53.6,
-      "w": 10.1,
-      "auto": true
+      "x": 82,
+      "y": 82,
+      "w": 9.2,
+      "manual": true
     }
   ]
 }
