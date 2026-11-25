@@ -102,9 +102,8 @@ body{overscroll-behavior:none;touch-action:pan-y}
   }
   async function advance(){
     if(busy||!started)return;
-    if(index>=TOTAL-1){index=0;update();currentImage.src=paths[0];return;}
     busy=true;
-    const from=index,to=index+1;
+    const from=index,to=(index+1)%TOTAL;
     const nextLoaded=await preload(to);
     const point=focal[from]||{x:.5,y:.5};
     current.style.transformOrigin=(point.x*100)+'% '+(point.y*100)+'%';
