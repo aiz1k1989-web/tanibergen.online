@@ -28,7 +28,7 @@ body{overscroll-behavior:none;touch-action:pan-y}
 (() => {
 'use strict';
 const TOTAL=98, stage=document.getElementById('stage'), scene=document.getElementById('scene');
-const reveal=document.getElementById('reveal'), revealImage=document.getElementById('revealImage');
+let reveal=document.getElementById('reveal'), revealImage=document.getElementById('revealImage');
 const paths=[];
 [20,20,20,20,18].forEach((count,g)=>{for(let n=1;n<=count;n++)paths.push('../previews/photos/'+(g+1)+'/'+n+'.webp')});
 const fallback=Array.from({length:TOTAL},(_,i)=>({from:i+1,to:(i+1)%TOTAL+1,x:50,y:50,w:14}));
@@ -128,13 +128,10 @@ async function advance(){
  const newRevealImg=document.createElement('img');newRevealImg.id='revealImage';newRevealImg.alt='';newReveal.appendChild(newRevealImg);
  fresh.after(newReveal);
  window.__vertigoScene=fresh;
- // Refresh references used by the next scroll.
- revealRef=newReveal;revealImageRef=newRevealImg;
+ reveal=newReveal;revealImage=newRevealImg;
  busy=false;
  getImage((index+2)%TOTAL);
 }
-let revealRef=reveal,revealImageRef=revealImage;
-// Keep transition references current after each completed frame.
 const originalAdvance=advance;
 async function step(){if(busy)return;await originalAdvance()}
 function onWheel(e){
