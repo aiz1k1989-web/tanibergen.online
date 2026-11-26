@@ -1,0 +1,114 @@
+/* Alternate: warm photo-book typography for the existing archive. */
+:root {
+  color-scheme: light;
+  --black: #E9E2D8;
+  --white: #241F1B;
+  --muted: #665C53;
+  --red: #9B493C;
+}
+
+body,
+.site-header {
+  background: var(--black);
+}
+
+.contact-link {
+  color: rgba(36,31,27,.72);
+}
+
+.contact-link:hover {
+  color: var(--white);
+}
+
+.contact-link img {
+  filter: none;
+  mix-blend-mode: multiply;
+  opacity: .72;
+}
+
+.opening h1 {
+  margin-top: 1vh;
+  margin-bottom: 2vh;
+  font-family: "Instrument Serif", "Bodoni 72", "Didot", Georgia, serif;
+  font-size: clamp(112px, 17.2vw, 258px);
+  font-weight: 400;
+  line-height: .72;
+  letter-spacing: -.055em;
+  color: var(--white);
+}
+
+.opening h1 span {
+  display: inline-block;
+  color: inherit;
+}
+
+.photo-opening:focus-visible,
+.photo:focus-visible {
+  outline-color: rgba(36,31,27,.72);
+}
+
+@media (max-width: 760px) {
+  .opening h1 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: clamp(66px, 19.4vw, 100px);
+    line-height: .78;
+    letter-spacing: -.045em;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .opening h1 span {
+    animation: photobook-word-reveal 1120ms cubic-bezier(.22,1,.36,1) both;
+  }
+
+  .hero-photo {
+    animation-duration: 1050ms;
+    animation-delay: 220ms;
+  }
+
+  .opening-side .photo-opening:nth-child(1) {
+    animation-duration: 820ms;
+    animation-delay: 310ms;
+  }
+
+  .opening-side .photo-opening:nth-child(2) {
+    animation-duration: 880ms;
+    animation-delay: 390ms;
+  }
+
+  .opening h1 span {
+    transition: letter-spacing 520ms cubic-bezier(.2,.7,.2,1);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .opening h1:hover span {
+    letter-spacing: -.035em;
+  }
+}
+
+@keyframes photobook-word-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: .78;
+    transform: translate3d(-.018em,.025em,0);
+    letter-spacing: .012em;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translate3d(0,0,0);
+    letter-spacing: -.055em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening h1 span {
+    animation: none !important;
+    transition: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
