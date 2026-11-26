@@ -6,7 +6,7 @@ var works=source.filter(function(work){if(!work||!work.file||seen[work.file])ret
 var hero=document.getElementById("hero-image"),heroButton=document.getElementById("hero-photo");
 var side=document.getElementById("opening-side"),montage=document.getElementById("montage");
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
-var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false;
+var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false,heroIndex=0;
 function pad(n){return String(n).padStart(3,"0");}
 function preview(file){return "cut-previews/"+file;}
 function original(file){return file;}
@@ -43,12 +43,18 @@ function setupArchiveMotion(){
 }
 function render(){
  if(!works.length)return;
- // The first archive image is the author's self-portrait and must remain the opening image.
- var first=works[0];setImageDimensions(hero,first.file);hero.src=preview(first.file);
- heroButton.addEventListener("click",function(){open(0);});
+ // Choose an opening image from works close to the original 4:3 frame.
+ var reference=getDimensions(works[0].file),targetRatio=reference&&reference.width/reference.height||4/3;
+ var candidates=works.map(function(work,index){var size=getDimensions(work.file);return {work:work,index:index,ratio:size&&size.width/size.height};})
+  .filter(function(item){return item.ratio&&Math.abs(item.ratio-targetRatio)<=0.015&&item.index>=3;});
+ heroIndex=candidates.length?candidates[Math.floor(Math.random()*candidates.length)].index:0;
+ var first=works[heroIndex];setImageDimensions(hero,first.file);hero.src=preview(first.file);
+ heroButton.setAttribute("aria-label","Open opening photograph");
+ heroButton.addEventListener("click",function(){open(heroIndex);});
  for(var i=1;i<3&&i<works.length;i++)side.appendChild(makeOpening(works[i],i));
  var fragment=document.createDocumentFragment();
- for(var j=3;j<works.length;j++)fragment.appendChild(makePhoto(works[j],j));
+ if(heroIndex!==0)fragment.appendChild(makePhoto(works[0],0));
+ for(var j=3;j<works.length;j++)if(j!==heroIndex)fragment.appendChild(makePhoto(works[j],j));
  montage.appendChild(fragment);
  setupArchiveMotion();
 }
