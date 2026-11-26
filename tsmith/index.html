@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#21100d">
+  <meta name="description" content="Selected photography by Aizat Tanibergen, photographer and videographer from Almaty, based in Bangkok.">
+  <title>Aizat Tanibergen — Photographer &amp; Videographer</title>
+  <style>
+    :root{color-scheme:dark;--ink:#21100d;--wine:#3b0b27;--lemon:#f2ff79;--paper:#f6f0e8;--orange:#ff724c;--mono:"Courier New",monospace;--body:Arial,Helvetica,sans-serif;--display:"Cooper Black","Arial Rounded MT Bold",Georgia,serif}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--ink)}
+    body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--body);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit}
+    img{display:block;max-width:100%}
+    .skip{position:absolute;left:-10000px;top:12px;z-index:50;background:var(--lemon);color:var(--ink);padding:12px}
+    .skip:focus{left:12px}
+    .top{position:relative;min-height:126px;padding:12px 3vw 17px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;background:var(--ink)}
+    .social{font:11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);opacity:.8}
+    .social:hover,.nav a:hover{color:var(--lemon);opacity:1}
+    .brand{display:block;color:var(--lemon);font:clamp(37px,6vw,76px)/.88 var(--display);font-weight:900;letter-spacing:-.075em;text-align:center;text-transform:uppercase}
+    .brand small{display:block;margin-top:9px;color:var(--paper);font:10px/1.2 var(--mono);letter-spacing:.16em}
+    .nav{display:flex;justify-content:flex-end;gap:clamp(12px,2vw,30px);font:11px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .nav a{transition:color .2s}
+    .hero{position:relative;padding:0 2vw 20px}
+    .carousel{height:min(58vw,490px);min-height:290px;display:grid;grid-template-columns:1fr 1.8fr 1fr;gap:5px;overflow:hidden;background:#0c0907}
+    .slide{position:relative;min-width:0;overflow:hidden}
+    .slide img{width:100%;height:100%;object-fit:cover}
+    .slide:nth-child(1) img{object-position:center 40%}
+    .slide:nth-child(2) img{object-position:center}
+    .slide:nth-child(3) img{object-position:center 55%}
+    .hero-control{position:absolute;top:50%;transform:translateY(-50%);z-index:2;border:0;padding:12px 15px;background:var(--paper);color:var(--ink);font:11px var(--mono);text-transform:uppercase;cursor:pointer}
+    .hero-control:hover{background:var(--lemon)}
+    .hero-control.prev{left:3vw}.hero-control.next{right:3vw}
+    .hero-caption{display:flex;justify-content:space-between;gap:16px;padding:13px 1vw;color:rgba(246,240,232,.72);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .intro{position:relative;background:var(--wine);padding:clamp(42px,7vw,96px) 6vw clamp(54px,8vw,112px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,6vw,88px);align-items:center}
+    .intro h1{max-width:650px;margin:0;color:var(--lemon);font:clamp(45px,8.5vw,116px)/.82 var(--display);letter-spacing:-.075em}
+    .intro p{max-width:440px;margin:0;font-size:clamp(16px,1.7vw,21px);line-height:1.5}
+    .eyebrow{display:block;margin-bottom:15px;color:var(--lemon);font:10px var(--mono);letter-spacing:.12em;text-transform:uppercase}
+    .section{padding:clamp(60px,9vw,126px) 5vw}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:35px}
+    .section h2{margin:0;color:var(--lemon);font:clamp(38px,6.5vw,84px)/.88 var(--display);letter-spacing:-.06em}
+    .section-note{max-width:220px;color:rgba(246,240,232,.72);font:10px/1.5 var(--mono);letter-spacing:.04em;text-align:right;text-transform:uppercase}
+    .work-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(11px,1.8vw,24px)}
+    .work-card{display:block;min-width:0}
+    .work-card figure{margin:0;overflow:hidden;background:#39221b;aspect-ratio:4/5}
+    .work-card:nth-child(3n+2) figure{aspect-ratio:4/5}
+    .work-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+    .work-card:hover img{transform:scale(1.035)}
+    .work-meta{display:flex;justify-content:space-between;gap:8px;padding-top:10px;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .work-meta span:last-child{color:rgba(246,240,232,.6)}
+    .archive-link{display:inline-flex;margin-top:34px;padding:13px 17px;border:1px solid rgba(246,240,232,.5);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;transition:background .2s,color .2s}
+    .archive-link:hover{background:var(--lemon);border-color:var(--lemon);color:var(--ink)}
+    .about{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(30px,7vw,100px);align-items:center;background:var(--paper);color:var(--ink)}
+    .about h2{color:var(--wine)}
+    .about-copy{max-width:440px}
+    .about-copy p{font-size:clamp(17px,2vw,23px);line-height:1.45}
+    .about-copy .eyebrow{color:#57213a}
+    .about-portrait{width:100%;max-height:560px;object-fit:cover;object-position:center 35%;aspect-ratio:4/5}
+    .contact{background:var(--lemon);color:var(--ink);padding:clamp(56px,9vw,116px) 6vw;display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px}
+    .contact h2{max-width:850px;margin:0;font:clamp(44px,8vw,106px)/.84 var(--display);letter-spacing:-.07em}
+    .contact .eyebrow{color:#4f3820}
+    .contact-link{display:inline-block;padding:14px 17px;border:1px solid var(--ink);font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+    .contact-link:hover{background:var(--ink);color:var(--lemon)}
+    footer{display:flex;justify-content:space-between;gap:20px;padding:23px 5vw;color:rgba(246,240,232,.66);font:10px var(--mono);letter-spacing:.04em}
+    :focus-visible{outline:2px solid var(--orange);outline-offset:4px}
+    @media(max-width:700px){
+      .top{min-height:117px;padding:13px 16px;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:13px}
+      .brand{grid-column:1/-1;grid-row:1;font-size:clamp(38px,10vw,58px)}
+      .social{grid-column:1;grid-row:2;font-size:9px}
+      .nav{grid-column:2;grid-row:2;gap:11px;font-size:9px}
+      .carousel{height:68vw;min-height:250px;grid-template-columns:.62fr 1.7fr .62fr}
+      .hero{padding:0 6px 10px}
+      .hero-control{padding:9px 10px;font-size:9px}
+      .hero-control.prev{left:12px}.hero-control.next{right:12px}
+      .hero-caption{font-size:8px;padding:10px 5px}
+      .intro{grid-template-columns:1fr;gap:25px;padding:48px 21px 58px}
+      .intro h1{font-size:clamp(48px,14vw,82px)}
+      .section{padding:66px 17px}
+      .section-head{align-items:start;flex-direction:column;margin-bottom:24px}
+      .section-note{text-align:left}
+      .work-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 9px}
+      .work-card figure{aspect-ratio:4/5}
+      .work-meta{font-size:8px}
+      .about{grid-template-columns:1fr;gap:26px}
+      .about-portrait{max-height:470px}
+      .contact{grid-template-columns:1fr;align-items:start}
+      .contact h2{font-size:clamp(48px,14vw,82px)}
+      footer{padding:20px 17px;font-size:8px}
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="social" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">Instagram / @isaac_4u</a>
+    <a class="brand" href="#top" id="top">Aizat Tanibergen<small>Photographer &amp; Videographer</small></a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-label="Featured photographs">
+      <div class="carousel" id="carousel" aria-live="polite"></div>
+      <button class="hero-control prev" id="previous" type="button" aria-label="Previous featured photographs">Previous</button>
+      <button class="hero-control next" id="next" type="button" aria-label="Next featured photographs">Next</button>
+      <div class="hero-caption"><span>Selected frames / 2020—2026</span><span>Almaty · Bangkok · Everywhere</span></div>
+    </section>
+    <section class="intro">
+      <div><span class="eyebrow">Aizat Tanibergen / Visual archive</span><h1>Pictures with a pulse.</h1></div>
+      <p>Photographer and videographer from Almaty, now based in Bangkok. A collection of images, places and little moments worth keeping.</p>
+    </section>
+    <section class="section" id="work">
+      <div class="section-head"><div><span class="eyebrow">From the archive</span><h2>Selected work</h2></div><div class="section-note">Photographs from the Tanibergen archive</div></div>
+      <div class="work-grid" id="work-grid"></div>
+      <a class="archive-link" href="../alt/">Browse the full archive</a>
+    </section>
+    <section class="section about" id="about">
+      <div class="about-copy"><span class="eyebrow">A little about me</span><h2>Behind the camera</h2><p>I’m Aizat Tanibergen, a photographer and videographer from Almaty, now based in Bangkok. My personal work is a space to experiment, explore and make something new.</p><a class="archive-link" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">Follow along on Instagram</a></div>
+      <img class="about-portrait" src="../photos/me/me1.webp" alt="Portrait of Aizat Tanibergen" loading="lazy" onerror="this.onerror=null;this.src='../photos/me/me1.jpg'">
+    </section>
+    <section class="contact" id="contact"><div><span class="eyebrow">Have something in mind?</span><h2>Let’s make a picture.</h2></div><a class="contact-link" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">Get in touch on Instagram</a></section>
+  </main>
+  <footer><span>© Aizat Tanibergen</span><a href="../">tanibergen.online</a><span>Photography &amp; moving image</span></footer>
+  <script>
+    (function(){
+      const featured=[["1","1"],["2","1"],["3","1"],["4","1"],["5","1"],["6","1"],["7","1"]];
+      const work=[["1","1"],["2","3"],["3","5"],["4","7"],["5","9"],["6","11"],["7","3"],["1","12"],["3","10"]];
+      const path=(pair)=>"../photos/"+pair[0]+"/"+pair[1]+".webp";
+      const label=(pair)=>"Series "+String(pair[0]).padStart(2,"0")+" / Frame "+String(pair[1]).padStart(2,"0");
+      let start=0;
+      const carousel=document.getElementById("carousel");
+      function renderHero(){
+        carousel.replaceChildren();
+        for(let offset=0;offset<3;offset++){
+          const pair=featured[(start+offset)%featured.length];
+          const frame=document.createElement("div");frame.className="slide";
+          const image=document.createElement("img");image.src=path(pair);image.alt="Aizat Tanibergen photograph, "+label(pair);image.loading=offset===1?"eager":"lazy";image.decoding="async";
+          frame.appendChild(image);carousel.appendChild(frame);
+        }
+      }
+      document.getElementById("previous").addEventListener("click",()=>{start=(start-1+featured.length)%featured.length;renderHero()});
+      document.getElementById("next").addEventListener("click",()=>{start=(start+1)%featured.length;renderHero()});
+      const grid=document.getElementById("work-grid");
+      work.forEach((pair)=>{
+        const card=document.createElement("a");card.className="work-card";card.href=path(pair);card.target="_blank";card.rel="noopener";
+        const figure=document.createElement("figure");const image=document.createElement("img");image.src=path(pair);image.alt="Aizat Tanibergen photograph, "+label(pair);image.loading="lazy";image.decoding="async";
+        const meta=document.createElement("div");meta.className="work-meta";meta.innerHTML="<span>"+label(pair)+"</span><span>View image</span>";
+        figure.appendChild(image);card.append(figure,meta);grid.appendChild(card);
+      });
+      renderHero();
+    })();
+  </script>
+</body>
+</html>
