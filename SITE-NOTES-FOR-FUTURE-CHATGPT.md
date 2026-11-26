@@ -70,7 +70,7 @@ The user has deliberately explored different directions. These are not all simul
 - The user asked to remove "Chroma Diary" wording, semantic labels, and fake phrases. Random numbers/codes were preferred to invented poetic lore.
 - The user asked for the header to read exactly `tanibergen.online`.
 - The user said mobile collection navigation was poor and asked for a strict black/white interface, with no gradients, HUD lines, glass/color effects, or decorative animation. The photographs themselves should retain their actual colors.
-- A Repponen-inspired alternative was explored separately under `/repponen/`. It must remain an alternative, not silently replace the live main site.
+- The user asked to remove `/repponen/` on 27 November 2026. Do not recreate or link to it unless explicitly asked.
 - A Saul Leiter-inspired alternative was also created separately. Keep it separate and untouched unless the user explicitly asks to work on it. Do not treat it as the main site's permanent design instruction.
 
 ### 20 November 2026
@@ -111,7 +111,6 @@ The user has deliberately explored different directions. These are not all simul
 
 The repository contains or has contained separate design experiments, including:
 - `/white-room/`
-- `/repponen/`
 - `/saul-leiter-alt/`
 - `/alt/`
 - `/studio/`
@@ -147,7 +146,7 @@ These instructions apply to future work, especially the `/cut/` alternative, and
 - Photographs must have no visible frames, gray backing blocks, borders, card surfaces, shadows, or forced crops. Keep natural proportions and let the image edges sit directly on the page background.
 - The first archive frame is the user's self-portrait. Keep it as the first and largest opening image; never shuffle it behind other images.
 - The user wants the visual quality of gallery previews to be high. The existing 640px / quality-54 previews are too degraded for this route. Use a separate high-resolution WebP preview tier for `/cut/`, while retaining lazy loading and loading the untouched original only when a visitor opens a photograph.
-- Use Repponen as a reference for art direction, typography, composition, and editorial intelligence, not as a template to copy. Keep the site personal and image-led.
+- Keep the live site personal and image-led, using the user’s own photography and identity.
 - Prefer deliberate typographic scale, asymmetrical image placement, negative space, and a small number of strong decisions over decorative effects or interface chrome.
 - Streamline iconography should be restrained. Do not add icons merely to fill space; the photography and typography should remain dominant. If used, keep it to tiny functional details such as one external-link mark.
 
@@ -279,22 +278,10 @@ The user separately asked to rebuild `/repponen/` using the design principles of
 
 
 
-## 19. Repponen-inspired photographic archive - 21 November 2026
-
-- The user asked to apply the concept of https://repponen.com/ to their own work, not to copy the reference website. The route `/repponen/` is an independent alternative; never replace the root website as part of this work.
-- The direction uses large confident typography, asymmetrical editorial composition, deliberate negative space, a restrained warm paper palette, and a long photographic archive. The photographs remain the primary content.
-- The route now reads the current `index-main-works.js` manifest rather than the old hardcoded Repponen list. The generated manifest currently contains 98 unique archive image paths and keeps `photos/1/1.webp` (the user's self-portrait) first and largest.
-- Gallery thumbnails use `cut-previews/`; untouched originals load only after a visitor opens an image. Dimensions come from `previews/metadata.json`. All 98 unique paths have metadata and a matching high-resolution preview at the time of implementation.
-- The fullscreen viewer has image-only navigation, touch swipe, keyboard arrows, Escape, focus restoration, scroll restoration, and reduced-motion support. Do not reintroduce a prominent text Close button, red focus ring, or visible slideshow counter.
-- Streamline icons are from Core Line - Free: Move Left, Move Right, Delete 1. Keep the CC BY 4.0 attribution in `repponen/README.md`.
-- Canva generation was started for an editable visual prototype using three actual photographs from the user's archive. Treat any completed Canva result as an art-direction reference only; the GitHub Pages implementation remains the website source of truth.
-- Validation completed: JavaScript parses; all six permanent base routes exist on the experiment branch; 98 unique archive paths have metadata and matching `cut-previews/` files. Do not claim real iPhone or browser-device testing unless it is actually performed.
-
-
-## 20. Central photo library - 21 November 2026
+## 19. Removed Repponen alternative - 27 November 2026\n\n- The user explicitly asked to remove `/repponen/` from the repository. It is not the live Tanibergen website and must not be recreated unless the user asks.\n- The live site is the root route `tanibergen.online`. Its About Me section belongs in the root homepage and uses portraits from `photos/me/`.\n## 20. Central photo library - 21 November 2026
 
 - All original photography is organized under `photos/`. Numbered archive series live at `photos/1/` through `photos/7/`; new series continue as `photos/8/`, `photos/9/`, and so on. Personal About portraits live in `photos/me/`.
 - Generated lightweight previews live under `previews/photos/`; high-quality archive previews live under `cut-previews/photos/`. The metadata manifest uses original paths beginning with `photos/`.
 - All public archive routes must read image paths from the shared `index-main-works.js` manifest where possible. Do not reintroduce root-level numbered photo folders or hardcoded series paths.
-- The Repponen About section shows one randomly selected portrait from the 19 images in `photos/me/` each time the page loads. The full set must remain available; do not expose all 19 as a gallery unless asked.
+- The live Tanibergen homepage has an About Me section that randomly rotates portraits from `photos/me/` while visible. Preserve natural image proportions and use the repository’s own portrait files.
 - The preview-generation workflow automatically discovers every numeric folder under `photos/` (including future `8`, `9`, and later series), regenerates the shared manifest and both preview tiers, and preserves all originals. New archive series do not require manual code edits; add WebP files to the next numbered folder.
