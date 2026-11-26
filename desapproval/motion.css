@@ -54,13 +54,13 @@
 }
 
 
-/* Carry the coral-red chosen in the Canva direction into this preview only. */
+/* Preserve the black site palette in this preview. */
 :root {
-  color-scheme: light;
-  --black: #F0443A;
-  --white: #F5F0E9;
-  --muted: rgba(245,240,233,.72);
-  --red: #F5F0E9;
+  color-scheme: dark;
+  --black: #050505;
+  --white: #F2F1ED;
+  --muted: #8A8984;
+  --red: #ED3028;
 }
 
 .opening h1 {
