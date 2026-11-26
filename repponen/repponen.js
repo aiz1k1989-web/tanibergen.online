@@ -31,7 +31,7 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var metadata = {};
-  var aboutPhotos = ["me1.webp","me2.jpg","me3.jpg","me4.jpg","me5.jpg","me6.jpg","me7.webp","me8.webp","me9.webp","me10.webp","me11.webp","me12.webp","me13.webp","me14.webp","me15.webp","me16.webp","me17.jpg","me18.jpg","me19.jpg"];
+  var aboutPhotos = ["me1.webp","me2.jpg","me3.jpg","me4.jpg","me5.jpg","me6.jpg","me7.webp","me8.webp","me9.webp","me10.webp","me11.webp","me12.webp","me13.webp","me14.webp","me15.webp","me16.webp","me17.jpg","me18.jpg","me19.jpg","IMG_5148_Original.jpg","IMG_9519.jpg","d31bf371-c019-4ffc-9ce9-630375167175.jpg"];
 
   function previewUrl(file){
     return "../cut-previews/" + file;
