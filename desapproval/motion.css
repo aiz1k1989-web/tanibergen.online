@@ -54,7 +54,7 @@
 }
 
 
-/* Preserve the black site palette in this preview. */
+/* Keep the existing black palette and give the wordmark one quiet reveal. */
 :root {
   color-scheme: dark;
   --black: #050505;
@@ -66,47 +66,37 @@
 .opening h1 {
   font-weight: 300;
   letter-spacing: -.07em;
+  animation: none;
+}
+
+.opening h1 > span {
+  display: inline-block;
+  color: var(--white);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .opening h1 {
-    animation: desapproval-title-rise 560ms cubic-bezier(.2,.7,.2,1) both;
-  }
-
   .opening h1 > span {
-    display: inline-block;
-    animation: desapproval-title-track 760ms cubic-bezier(.2,.7,.2,1) both;
-  }
-
-  .opening h1 .title-letter {
-    display: inline-block;
-    color: var(--white);
-    font-style: normal;
-    animation: desapproval-letter-in 520ms cubic-bezier(.2,.7,.2,1) both;
-    animation-delay: calc(var(--i) * 32ms);
+    animation: desapproval-word-reveal 920ms cubic-bezier(.76,0,.24,1) both;
   }
 }
 
-@keyframes desapproval-title-rise {
-  from { opacity: 0; transform: translate3d(0,10px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-
-@keyframes desapproval-title-track {
-  from { letter-spacing: .015em; }
-  to { letter-spacing: -.07em; }
-}
-
-@keyframes desapproval-letter-in {
-  from { opacity: 0; transform: translate3d(0,.12em,0) scale(.985); }
-  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+@keyframes desapproval-word-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: .76;
+    transform: translate3d(-.012em,0,0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translate3d(0,0,0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .opening h1,
-  .opening h1 > span,
-  .opening h1 .title-letter {
+  .opening h1 > span {
     animation: none !important;
+    clip-path: none !important;
     opacity: 1 !important;
     transform: none !important;
   }
