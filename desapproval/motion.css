@@ -52,3 +52,57 @@
   from { opacity: 0; transform: translate3d(0,-4px,0); }
   to { opacity: 1; transform: translate3d(0,0,0); }
 }
+
+
+/* Carry the coral-red chosen in the Canva direction into this preview only. */
+:root {
+  color-scheme: light;
+  --black: #F0443A;
+  --white: #F5F0E9;
+  --muted: rgba(245,240,233,.72);
+  --red: #F5F0E9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .opening h1 {
+    animation: desapproval-title-rise 560ms cubic-bezier(.2,.7,.2,1) both;
+  }
+
+  .opening h1 > span {
+    display: inline-block;
+    animation: desapproval-title-track 760ms cubic-bezier(.2,.7,.2,1) both;
+  }
+
+  .opening h1 .title-letter {
+    display: inline-block;
+    color: var(--white);
+    font-style: normal;
+    animation: desapproval-letter-in 520ms cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: calc(var(--i) * 32ms);
+  }
+}
+
+@keyframes desapproval-title-rise {
+  from { opacity: 0; transform: translate3d(0,10px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+@keyframes desapproval-title-track {
+  from { letter-spacing: .035em; }
+  to { letter-spacing: -.095em; }
+}
+
+@keyframes desapproval-letter-in {
+  from { opacity: 0; transform: translate3d(0,.12em,0) scale(.985); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening h1,
+  .opening h1 > span,
+  .opening h1 .title-letter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
