@@ -6,7 +6,7 @@ var works=source.filter(function(work){if(!work||!work.file||seen[work.file])ret
 var hero=document.getElementById("hero-image"),heroButton=document.getElementById("hero-photo");
 var side=document.getElementById("opening-side"),montage=document.getElementById("montage");
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
-var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false,heroIndex=0;
+var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false,heroIndex=0;var aboutPhotos=["me1.webp","me2.jpg","me3.jpg","me4.jpg","me5.jpg","me6.jpg","me7.webp","me8.webp","me9.webp","me10.webp","me11.webp","me12.webp","me13.webp","me14.webp","me15.webp","me16.webp","me17.jpg","me18.jpg","me19.jpg","IMG_5148_Original.jpg","IMG_9519.jpg","d31bf371-c019-4ffc-9ce9-630375167175.jpg"],aboutImage=document.getElementById("about-image"),aboutSection=document.getElementById("about"),aboutTimer=null,currentAboutPhoto="";
 function pad(n){return String(n).padStart(3,"0");}
 function preview(file){return "cut-previews/"+file;}
 function original(file){return file;}
@@ -116,6 +116,31 @@ document.addEventListener("keydown",function(event){
  else if(event.key==="ArrowLeft")move(-1);
  else if(event.key==="ArrowRight")move(1);
 });
-function init(){render();}
+function loadAboutPhoto(){
+ if(!aboutImage||!aboutPhotos.length)return;
+ var options=aboutPhotos.filter(function(name){return name!==currentAboutPhoto;});
+ var selected=options[Math.floor(Math.random()*options.length)],previewSrc="previews/photos/me/"+selected.replace(/\.(jpe?g|png|avif)$/i,".webp"),originalSrc="photos/me/"+selected;
+ var loader=new Image();
+ function reveal(src){
+  currentAboutPhoto=selected;
+  aboutImage.classList.add("is-changing");
+  window.setTimeout(function(){aboutImage.src=src;aboutImage.alt="Portrait of Aizat Tanibergen";requestAnimationFrame(function(){aboutImage.classList.remove("is-changing");});},160);
+ }
+ loader.onload=function(){reveal(previewSrc);};
+ loader.onerror=function(){var fallback=new Image();fallback.onload=function(){reveal(originalSrc);};fallback.src=originalSrc;};
+ loader.src=previewSrc;
+}
+function setupAboutRotation(){
+ if(!aboutImage)return;
+ loadAboutPhoto();
+ if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ function start(){if(aboutTimer)return;aboutTimer=window.setInterval(loadAboutPhoto,8000);}
+ function stop(){if(aboutTimer){window.clearInterval(aboutTimer);aboutTimer=null;}}
+ if("IntersectionObserver" in window&&aboutSection){
+  var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting)start();else stop();});},{threshold:.15});
+  observer.observe(aboutSection);
+ }else start();
+}
+function init(){render();setupAboutRotation();}
 fetch("previews/metadata.json?v=photos-root-01",{cache:"force-cache"}).then(function(response){if(!response.ok)throw new Error("Image metadata unavailable");return response.json();}).then(function(data){metadata=data||{};init();}).catch(init);
 })();
