@@ -48,7 +48,7 @@ function render(){
  var candidates=works.map(function(work,index){var size=getDimensions(work.file);return {work:work,index:index,ratio:size&&size.width/size.height};})
   .filter(function(item){return item.ratio&&Math.abs(item.ratio-targetRatio)<=0.015&&item.index>=3;});
  heroIndex=candidates.length?candidates[Math.floor(Math.random()*candidates.length)].index:0;
- var first=works[heroIndex];setImageDimensions(hero,first.file);hero.src=preview(first.file);
+ var first=works[heroIndex];setImageDimensions(hero,first.file);hero.src=preview(first.file);hero.alt=heroIndex===0?"Self portrait by Aizat Tanibergen":"Photograph by Aizat Tanibergen";
  heroButton.setAttribute("aria-label","Open opening photograph");
  heroButton.addEventListener("click",function(){open(heroIndex);});
  for(var i=1;i<3&&i<works.length;i++)side.appendChild(makeOpening(works[i],i));
