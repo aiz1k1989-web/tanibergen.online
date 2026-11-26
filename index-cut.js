@@ -6,7 +6,7 @@ var works=source.filter(function(work){if(!work||!work.file||seen[work.file])ret
 var hero=document.getElementById("hero-image"),heroButton=document.getElementById("hero-photo");
 var side=document.getElementById("opening-side"),montage=document.getElementById("montage");
 var viewer=document.getElementById("viewer"),viewerImage=document.getElementById("viewer-image");
-var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false,heroIndex=0;var aboutPhotos=["me1.webp","me2.jpg","me3.jpg","me4.jpg","me5.jpg","me6.jpg","me7.webp","me8.webp","me9.webp","me10.webp","me11.webp","me12.webp","me13.webp","me14.webp","me15.webp","me16.webp","me17.jpg","me18.jpg","me19.jpg","IMG_5148_Original.jpg","IMG_9519.jpg","d31bf371-c019-4ffc-9ce9-630375167175.jpg"],aboutImage=document.getElementById("about-image"),aboutSection=document.getElementById("about"),aboutTimer=null,currentAboutPhoto="";
+var active=0,lastFocus=null,savedY=0,bodyState=null,touchStart=null,metadata={},closeByPointer=false,heroIndex=0;var aboutPhotos=["d31bf371-c019-4ffc-9ce9-630375167175.jpg","IMG_5148_Original.jpg","IMG_9519.jpg","IMG_9607-Edit.jpg"],aboutImage=document.getElementById("about-image"),aboutSection=document.getElementById("about"),aboutTimer=null,currentAboutPhoto="";
 function pad(n){return String(n).padStart(3,"0");}
 function preview(file){return "cut-previews/"+file;}
 function original(file){return file;}
@@ -127,7 +127,7 @@ function loadAboutPhoto(){
   window.setTimeout(function(){aboutImage.src=src;aboutImage.alt="Portrait of Aizat Tanibergen";requestAnimationFrame(function(){aboutImage.classList.remove("is-changing");});},160);
  }
  loader.onload=function(){reveal(previewSrc);};
- loader.onerror=function(){var fallback=new Image();fallback.onload=function(){reveal(originalSrc);};fallback.src=originalSrc;};
+ loader.onerror=function(){var fallback=new Image();fallback.onload=function(){reveal(originalSrc);};fallback.onerror=function(){aboutPhotos=aboutPhotos.filter(function(name){return name!==selected;});if(aboutPhotos.length)loadAboutPhoto();};fallback.src=originalSrc;};
  loader.src=previewSrc;
 }
 function setupAboutRotation(){
