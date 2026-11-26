@@ -63,6 +63,11 @@
   --red: #F5F0E9;
 }
 
+.opening h1 {
+  font-weight: 300;
+  letter-spacing: -.07em;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .opening h1 {
     animation: desapproval-title-rise 560ms cubic-bezier(.2,.7,.2,1) both;
@@ -88,8 +93,8 @@
 }
 
 @keyframes desapproval-title-track {
-  from { letter-spacing: .035em; }
-  to { letter-spacing: -.095em; }
+  from { letter-spacing: .015em; }
+  to { letter-spacing: -.07em; }
 }
 
 @keyframes desapproval-letter-in {
