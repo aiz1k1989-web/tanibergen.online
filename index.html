@@ -7,17 +7,19 @@
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Aizat Tanibergen.">
 <title>tanibergen.online - Aizat Tanibergen</title>
-<link rel="preload" as="image" href="cut-previews/photos/1/1.webp" fetchpriority="high">
-<link rel="stylesheet" href="cut/style.css?v=photos-root-02">
+<link rel="stylesheet" href="cut/style.css?v=photos-root-03">
 </head>
 <body>
 <header class="site-header">
   <a class="wordmark" href="#top">tanibergen.online</a>
   <!-- Link icon by Streamline, Micro Line - Free, CC BY 4.0: https://www.streamlinehq.com/icons/micro-line-free -->
+  <nav class="header-actions" aria-label="Site links">
+  <a class="about-nav" href="#about">About me</a>
   <a class="contact-link" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer" aria-label="Instagram @isaac_4u">
     <span>@isaac_4u</span>
     <img src="https://assets.streamlinehq.com/image/private/w_68,h_68,ar_1/f_auto/v1/icons/interface-essential/link-abc7b.png?_a=DATAiZkSZAA0" alt="" aria-hidden="true">
   </a>
+</nav>
 </header>
 <main id="top">
   <section class="opening" aria-label="Photographs">
@@ -30,6 +32,24 @@
   <section class="archive" aria-label="Photographic archive">
     <div class="montage" id="montage"></div>
   </section>
+  <section class="about-section" id="about" aria-labelledby="about-title">
+    <div class="about-index">02 / About</div>
+    <div class="about-content">
+      <h2 id="about-title">About Me</h2>
+      <div class="about-grid">
+        <figure class="about-portrait">
+          <img id="about-image" alt="Portrait of Aizat Tanibergen" loading="lazy" decoding="async">
+        </figure>
+        <div class="about-copy">
+          <p>I’m a photographer and videographer from Almaty, now based in Bangkok.</p>
+          <a class="about-social" href="https://instagram.com/isaac_4u" target="_blank" rel="noopener noreferrer">
+            <span>Instagram / @isaac_4u</span>
+            <img src="https://assets.streamlinehq.com/image/private/w_68,h_68,ar_1/f_auto/v1/icons/interface-essential/link-abc7b.png?_a=DATAiZkSZAA0" alt="" aria-hidden="true">
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Photograph viewer">
   <button class="viewer-close" id="viewer-close" type="button" aria-label="Close photograph">×</button>
@@ -38,6 +58,6 @@
   <button class="viewer-nav next" id="viewer-next" type="button" aria-label="Next photograph"></button>
 </div>
 <script src="index-main-works.js?v=photos-root-01"></script>
-<script src="index-cut.js?v=photos-root-03"></script>
+<script src="index-cut.js?v=photos-root-04"></script>
 </body>
 </html>
