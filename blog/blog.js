@@ -10,8 +10,10 @@ function render(posts){
   const aside=document.createElement("div");aside.className="entry-aside";
   const date=document.createElement("time");date.className="entry-meta";date.dateTime=post.date;date.textContent=post.displayDate;
   const location=document.createElement("span");location.className="entry-location";location.textContent=post.location;
+  aside.append(date,location);
+  if(post.mood){const mood=document.createElement("span");mood.className="entry-mood";mood.textContent="MOOD / "+post.mood;aside.appendChild(mood);}
   const number=document.createElement("span");number.className="entry-number";number.textContent=String(posts.length-index).padStart(2,"0");
-  aside.append(date,location,number);
+  aside.appendChild(number);
   const content=document.createElement("div");content.className="entry-content";
   const title=document.createElement("h2");title.textContent=post.title;
   const body=document.createElement("div");body.className="entry-body";
