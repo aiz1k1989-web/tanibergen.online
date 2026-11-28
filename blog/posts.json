@@ -1,17 +1,133 @@
 [
   {
     "date": "2026-11-28",
-    "publishedAt": "2026-11-28T10:06:00+07:00",
+    "publishedAt": "2026-11-28T11:16:00+07:00",
     "displayDate": "28 NOV 2026",
-    "displayTime": "10:06 ICT",
-    "location": "Bangkok",
+    "displayTime": "11:16 ICT",
     "author": "Aizat Tanibergen",
-    "avatar": "../previews/photos/me/IMG_9519.webp",
-    "title": "A chapter ends",
+    "title": "Lately",
     "paragraphs": [
-      "Four years is a long time to believe in something. I thought I was building a life with someone. Now it has ended, and I am left with the feeling that so much of my time, care and effort went somewhere I can no longer reach.",
-      "I gave a lot to these years. Looking back, it is painful to feel that it may all have been for nothing. The hardest part is not only losing someone. It is realizing how quickly trust can break, and how easily another person can make you question the feelings you once gave without hesitation.",
-      "Love can be generous, but it can also be cruel. Sometimes it leaves you with more questions than memories, and with the strange regret of having been sincere. For now, I am letting this be an ending."
+      "I've been thinking about how quickly things change. Some days feel familiar, others don't. You go to the same places, see the same things, but somehow it's not quite the same anymore."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-09",
+    "publishedAt": "2026-09-01T12:00:00+07:00",
+    "displayDate": "SEP 2026",
+    "author": "Aizat Tanibergen",
+    "title": "People",
+    "paragraphs": [
+      "I've been thinking about people and relationships lately. Sometimes I wonder if all the effort is worth it. I like having people around, but there are times when I don't really know what I want from them, or what they want from me. I haven't figured it out. It's just been on my mind."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-08",
+    "publishedAt": "2026-08-19T12:00:00+07:00",
+    "displayDate": "AUG 2026",
+    "author": "Aizat Tanibergen",
+    "title": "August",
+    "paragraphs": [
+      "The health scare I wrote about last year is behind me now. Treatment is over, and I don't have to think about it every day anymore.",
+      "I left my office job in March, too. I wouldn't say I've figured out what comes next. I'm still trying things and changing my mind, but I do feel a bit better about the way I'm living."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-08-16",
+    "publishedAt": "2026-08-16T12:00:00+07:00",
+    "displayDate": "16 AUG 2026",
+    "author": "Aizat Tanibergen",
+    "title": "Raim",
+    "paragraphs": [
+      "Met Raim today through Nadir's circle. He's a cool guy, and it's been really nice talking to him.",
+      "I haven't had much of a social life for the last few years, so getting to know new people again feels good. I'd forgotten how much I missed having friends."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-07-17",
+    "publishedAt": "2026-07-17T12:00:00+07:00",
+    "displayDate": "17 JUL 2026",
+    "author": "Aizat Tanibergen",
+    "title": "Her birthday",
+    "paragraphs": [
+      "Celebrated her birthday today. It was nice, but I don't think she enjoyed it that much. It wasn't what she'd planned, and we didn't end up going abroad like she had hoped.",
+      "Last year's birthday was better, at least that's how she felt. This one didn't quite go to plan."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-07",
+    "publishedAt": "2026-07-01T12:00:00+07:00",
+    "displayDate": "JUL 2026",
+    "author": "Aizat Tanibergen",
+    "title": "A ladybug",
+    "paragraphs": [
+      "Went for a walk in the mountains sometime this summer. A ladybug landed on me and stayed there for a bit. I got ridiculously happy about it. It was such a tiny thing, but it made me smile for the rest of the walk."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-04-03",
+    "publishedAt": "2026-04-03T12:00:00+07:00",
+    "displayDate": "EARLY APR 2026",
+    "author": "Aizat Tanibergen",
+    "title": "Someone close",
+    "paragraphs": [
+      "Something difficult happened around this time. Someone very close to me was going through a vulnerable period, and I felt awful seeing it.",
+      "I couldn't fix everything, but I wanted to do what I could to make things a little easier and more stable for them. I don't want to write about the details here."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-03-20",
+    "publishedAt": "2026-03-20T12:00:00+07:00",
+    "displayDate": "20 MAR 2026",
+    "author": "Aizat Tanibergen",
+    "title": "Last day at the office",
+    "paragraphs": [
+      "March 20 was my last day at the office. After a few years there, I decided to leave.",
+      "It's strange to finish something that has been part of your everyday life for so long. I don't really know what comes next yet."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-03-05",
+    "publishedAt": "2026-03-05T12:00:00+07:00",
+    "displayDate": "05 MAR 2026",
+    "location": "Almaty",
+    "author": "Aizat Tanibergen",
+    "title": "A birthday cheesecake",
+    "paragraphs": [
+      "It was my birthday today, and I ran into Nadir at Pasta La Vista in Almaty. We hadn't really talked for three or four years, so I wasn't expecting to see him.",
+      "He was there with his girlfriend. He ordered a cheesecake for me, but didn't come over or interrupt my evening. He just sat with her, looked over and smiled. Before that, he told me he'd missed me.",
+      "It was a really nice surprise. Nadir is a good guy."
+    ],
+    "images": []
+  },
+  {
+    "date": "2026-02-19",
+    "publishedAt": "2026-02-19T12:00:00+07:00",
+    "displayDate": "19 FEB 2026",
+    "author": "Aizat Tanibergen",
+    "title": "Seeing someone again",
+    "paragraphs": [
+      "Saw someone again today. It was unexpected, and I wasn't quite sure what to say. Some things are difficult to explain, especially when you haven't seen a person for a while.",
+      "Anyway, it was good to see them."
+    ],
+    "images": []
+  },
+  {
+    "date": "2025-12-20",
+    "publishedAt": "2025-12-20T12:00:00+07:00",
+    "displayDate": "20 DEC 2025",
+    "author": "Aizat Tanibergen",
+    "title": "December 20",
+    "paragraphs": [
+      "I found out I had skin cancer today. I wasn't expecting that, and I don't really know what to write about it yet.",
+      "It's a lot to take in. I don't feel like sharing all the details here, so for now I'll leave it at that."
     ],
     "images": []
   }
