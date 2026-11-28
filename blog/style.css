@@ -16,8 +16,9 @@ h1 span{color:#777}
 .intro-note{margin:30px 0 0;color:var(--muted);font:italic clamp(17px,2vw,23px)/1.5 var(--serif)}
 .entries{padding-top:clamp(44px,7vw,90px)}
 .entry{display:grid;grid-template-columns:minmax(120px,.45fr) minmax(0,1.55fr);gap:clamp(28px,7vw,100px);padding:0 0 clamp(70px,10vw,130px);margin:0 0 clamp(60px,8vw,110px);border-bottom:1px solid var(--rule)}
-.entry-aside{display:flex;flex-direction:column;gap:12px;padding-top:9px}
-.entry-location{color:var(--muted);font:10px var(--mono);letter-spacing:.04em}
+.entry-aside{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-top:9px}
+.entry-location,.entry-mood{color:var(--muted);font:10px var(--mono);letter-spacing:.04em}
+.entry-mood{max-width:190px;line-height:1.6}
 .entry-content{max-width:760px}
 .entry h2{margin:0 0 30px;font:400 clamp(36px,5vw,64px)/1.05 var(--serif);letter-spacing:-.055em}
 .entry-body{font:400 clamp(16px,1.45vw,19px)/1.85 var(--serif);color:#d1d0cb;white-space:normal}
@@ -28,5 +29,5 @@ h1 span{color:#777}
 .loading,.empty{color:var(--muted);font:11px var(--mono)}
 footer{min-height:76px;padding:20px var(--gutter);border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;color:var(--muted);font:9px var(--mono);letter-spacing:.06em}
 footer a{color:var(--ink)}
-@media(max-width:650px){.site-header{height:58px;padding-inline:18px}.site-header nav{gap:18px;font-size:9px}main{padding:58px 18px 80px}.entry{grid-template-columns:1fr;gap:24px;padding-bottom:54px;margin-bottom:54px}.entry-aside{flex-direction:row;justify-content:space-between}.entry h2{font-size:42px;margin-bottom:22px}.entry-body{font-size:17px}footer{padding-inline:18px}}
+@media(max-width:650px){.site-header{height:58px;padding-inline:18px}.site-header nav{gap:18px;font-size:9px}main{padding:58px 18px 80px}.entry{grid-template-columns:1fr;gap:24px;padding-bottom:54px;margin-bottom:54px}.entry-aside{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;column-gap:14px;row-gap:9px}.entry h2{font-size:42px;margin-bottom:22px}.entry-body{font-size:17px}footer{padding-inline:18px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
